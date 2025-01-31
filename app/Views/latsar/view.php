@@ -1,5 +1,3 @@
-<?= $this->include('layout/sidebar'); ?>
-
 <h2>Detail Peserta Latsar</h2>
 <table border="1">
     <tr>
@@ -38,7 +36,7 @@
         <th>Sertifikat</th>
         <td>
             <?php if ($peserta['sertifikat']): ?>
-                <a href="<?= base_url('public/uploads/sertifikat/'.$peserta['sertifikat']); ?>" target="_blank">Lihat Sertifikat</a>
+                <a href="<?= base_url('public/uploads/sertifikat/' . $peserta['sertifikat']); ?>" target="_blank">Lihat Sertifikat</a>
             <?php else: ?>
                 Tidak Ada Sertifikat
             <?php endif; ?>
