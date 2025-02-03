@@ -20,3 +20,6 @@ $routes->get('/pesertaLatsar/edit/(:num)', 'PesertaLatsar::edit/$1');
 $routes->post('/pesertaLatsar/update/(:num)', 'PesertaLatsar::update/$1');
 $routes->get('/pesertaLatsar/delete/(:num)', 'PesertaLatsar::delete/$1');
 $routes->post('pesertaLatsar/importExcel', 'PesertaLatsar::importExcel');
+
+//modul Inventaris
+$routes->get('/inventaris', 'inventaris::index');
