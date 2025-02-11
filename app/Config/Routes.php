@@ -23,3 +23,9 @@ $routes->post('pesertaLatsar/importExcel', 'PesertaLatsar::importExcel');
 
 //modul Inventaris
 $routes->get('/inventaris', 'inventaris::index');
+$routes->get('/inventaris/create', 'Inventaris::create');
+$routes->post('/inventaris/store', 'Inventaris::store');
+$routes->get('/inventaris/edit/(:num)', 'Inventaris::edit/$1');
+$routes->post('/inventaris/update/(:num)', 'Inventaris::update/$1');
+$routes->get('/inventaris/delete/(:num)', 'Inventaris::delete/$1');
+$routes->get('/inventaris', 'Inventaris::insert');
