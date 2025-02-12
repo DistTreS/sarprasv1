@@ -26,11 +26,10 @@
             </ul>
         </li>
 
-        <li><a href="<?= base_url('pesertaLatsar'); ?>">Latsar</a></li>
+        <li><a href="<?= base_url('diklat'); ?>">Diklat</a></li>
         <li><a href="<?= base_url('inventaris'); ?>">Inventaris</a></li>
         <li><a href="<?= base_url('insert'); ?>">Insert Inventaris</a></li>
         <li><a href="<?= base_url('logout'); ?>">Logout</a></li>
-
     </ul>
 </div>
 
