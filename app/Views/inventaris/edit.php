@@ -15,6 +15,6 @@
     <input type="text" name="deskripsi" value="<?= $persediaan['deskripsi']; ?>" required><br>
 
 
-    <button type="submit">Simpan Perubahan</button>
-    <a href="<?= base_url('inventaris'); ?>">Batal</a>
+    <a type="submit" href="<?= base_url('inventaris/index'); ?>">Simpan Perubahan</a>
+    <a href="<?= base_url('inventaris/index'); ?>">Batal</a>
 </form>
