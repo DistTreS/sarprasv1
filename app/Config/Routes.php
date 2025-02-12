@@ -40,7 +40,30 @@ $routes->group('diklat', function ($routes) {
 
 
 
-//modul inventory
+//modul Inventaris
+$routes->get('/inventaris', 'inventaris::index');
+$routes->get('/inventaris/create', 'Inventaris::create');
+$routes->post('/inventaris/store', 'Inventaris::store');
+$routes->get('/inventaris/edit/(:num)', 'Inventaris::edit/$1');
+$routes->post('/inventaris/update/(:num)', 'Inventaris::update/$1');
+$routes->get('/inventaris/delete/(:num)', 'Inventaris::delete/$1');
+$routes->get('/inventaris', 'Inventaris::insert');
+=======
 
 
 //modul pinjam barang
+$routes->get('kategoriAset', 'KategoriAsetController::index'); // Menampilkan daftar kategori aset
+$routes->get('kategoriAset/tambah', 'KategoriAsetController::tambah'); // Form tambah kategori aset
+$routes->post('kategoriAset/store', 'KategoriAsetController::store'); // Proses simpan kategori aset
+$routes->get('kategoriAset/detail/(:num)', 'AsetController::index/$1'); // Menampilkan daftar aset berdasarkan kategori
+$routes->post('kategoriAset/update', 'KategoriAsetController::update');
+$routes->get('kategoriAset/delete/(:segment)', 'KategoriAsetController::delete/$1');
+
+
+$routes->get('aset', 'AsetController::index');
+$routes->get('aset/create', 'AsetController::create');
+$routes->post('aset/store', 'AsetController::store');
+$routes->get('aset/edit/(:num)', 'AsetController::edit/$1');
+$routes->post('aset/update/(:num)', 'AsetController::update/$1');
+$routes->get('aset/delete/(:num)', 'AsetController::delete/$1');
+
