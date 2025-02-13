@@ -10,8 +10,11 @@
                 Inventaris <i class="fas fa-chevron-down"></i>
             </a>
             <ul id="inventaris" class="submenu">
-                <li><a href="<?= base_url('inventaris/daftar'); ?>">Daftar Inventaris</a></li>
-                <li><a href="<?= base_url('inventaris/permintaan'); ?>">Permintaan</a></li>
+                <li><a href="<?= base_url('inventaris/index'); ?>">Daftar Inventaris</a></li>
+                <li><a href="<?= base_url('inventaris/insert'); ?>">Insert Inventaris</a></li>
+                <li><a href="<?= base_url('inventaris/transaction_history'); ?>">Riwayat Transaksi</a></li>
+                <li><a href="<?= base_url('inventaris/manage_requests'); ?>">Daftar Permintaan</a></li>
+                <li><a href="<?= base_url('inventaris/user_request_items'); ?>">Request Items</a></li>
             </ul>
         </li>
 
@@ -26,7 +29,9 @@
             </ul>
         </li>
 
-        <li><a href="<?= base_url('pesertaLatsar'); ?>">Latsar</a></li>
+        <li><a href="<?= base_url('diklat'); ?>">Diklat</a></li>
+        <li><a href="<?= base_url('inventaris'); ?>">Inventaris</a></li>
+        <li><a href="<?= base_url('insert'); ?>">Insert Inventaris</a></li>
         <li><a href="<?= base_url('logout'); ?>">Logout</a></li>
     </ul>
 </div>
