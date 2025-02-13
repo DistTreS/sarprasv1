@@ -42,46 +42,46 @@ $routes->group('diklat', ['filter' => 'admin'], function ($routes) {
     $routes->get('hapusJenisDiklat/(:num)', 'DiklatController::hapusJenisDiklat/$1'); // Hapus jenis diklat
 });
 
+// Modul Peminjaman
+$routes->get('kategoriAset', 'KategoriAsetController::index', ['filter' => 'admin']); // Menampilkan daftar kategori aset
+$routes->get('kategoriAset/tambah', 'KategoriAsetController::tambah', ['filter' => 'admin']); // Form tambah kategori aset
+$routes->post('kategoriAset/store', 'KategoriAsetController::store', ['filter' => 'admin']); // Proses simpan kategori aset
+$routes->get('kategoriAset/detail/(:num)', 'AsetController::index/$1', ['filter' => 'admin']); // Menampilkan daftar aset berdasarkan kategori
+$routes->post('kategoriAset/update', 'KategoriAsetController::update', ['filter' => 'admin']); // Proses update kategori aset
+$routes->post('kategoriAset/delete/(:segment)', 'KategoriAsetController::delete/$1', ['filter' => 'admin']); // Hapus kategori aset
+$routes->get('/kategori-aset', 'KategoriAsetController::indexWithCount', ['filter' => 'admin']); // Menampilkan kategori aset dengan jumlah aset di dalamnya
 
-$routes->get('kategoriAset', 'KategoriAsetController::index'); // Menampilkan daftar kategori aset
-$routes->get('kategoriAset/tambah', 'KategoriAsetController::tambah'); // Form tambah kategori aset
-$routes->post('kategoriAset/store', 'KategoriAsetController::store'); // Proses simpan kategori aset
-$routes->get('kategoriAset/detail/(:num)', 'AsetController::index/$1'); // Menampilkan daftar aset berdasarkan kategori
-$routes->post('kategoriAset/update', 'KategoriAsetController::update');
-$routes->get('kategoriAset/delete/(:segment)', 'KategoriAsetController::delete/$1');
-$routes->post('kategoriAset/delete/(:segment)', 'KategoriAsetController::delete/$1');
-$routes->get('/kategori-aset', 'KategoriAsetController::indexWithCount');
+$routes->get('aset', 'AsetController::index', ['filter' => 'admin']);  // Menampilkan semua aset
+$routes->get('aset/create', 'AsetController::create', ['filter' => 'admin']); // Form tambah aset
+$routes->post('aset/store', 'AsetController::store', ['filter' => 'admin']); // Simpan aset baru
+$routes->get('aset/edit/(:num)', 'AsetController::edit/$1', ['filter' => 'admin']); // Form edit aset
+$routes->post('aset/update', 'AsetController::update', ['filter' => 'admin']); // Proses update aset
+$routes->post('aset/delete/(:num)', 'AsetController::delete/$1', ['filter' => 'admin']); // Hapus aset berdasarkan ID
+$routes->get('aset/(:num)', 'AsetController::index/$1', ['filter' => 'admin']); // Menampilkan aset berdasarkan kategori
+$routes->put('aset/update/(:num)', 'AsetController::update/$1', ['filter' => 'admin']); // Update aset menggunakan metode PUT
+$routes->patch('aset/update/(:num)', 'AsetController::update/$1', ['filter' => 'admin']); // Update aset menggunakan metode PATCH
 
+$routes->get('/peminjaman', 'PeminjamanController::index', ['filter' => 'admin']); // Menampilkan daftar peminjaman
+$routes->get('/peminjaman/detail/(:num)', 'PeminjamanController::detail/$1', ['filter' => 'admin']); // Menampilkan detail peminjaman berdasarkan ID
+$routes->get('peminjaman/riwayat', 'Peminjaman::riwayat', ['filter' => 'admin']); // Menampilkan riwayat peminjaman
+$routes->post('peminjaman/update_status/(:num)', 'PeminjamanController::update_status/$1', ['filter' => 'admin']); // Mengubah status peminjaman
+$routes->get('peminjaman/cetak/(:num)', 'PeminjamanController::cetak/$1', ['filter' => 'admin']); // Mencetak detail peminjaman
+$routes->get('peminjaman/pengembalian/(:num)', 'PeminjamanController::pengembalian/$1', ['filter' => 'admin']); // Form pengembalian aset
+$routes->post('peminjaman/uploadPengembalian/(:num)', 'PeminjamanController::uploadPengembalian/$1', ['filter' => 'admin']); // Upload bukti pengembalian aset
 
+// Route untuk Pegawai (User Biasa)
+$routes->get('/pegawai/peminjaman', 'PeminjamanController::indexPegawai', ['filter' => 'pegawai']); // Menampilkan riwayat peminjaman pegawai
+$routes->get('/pegawai/peminjaman/detail/(:num)', 'PeminjamanController::detail/$1', ['filter' => 'pegawai']); // Detail peminjaman pegawai
+$routes->get('/pegawai/peminjaman/pengembalian/(:num)', 'PeminjamanController::pengembalian/$1', ['filter' => 'pegawai']); // Form pengembalian aset
+$routes->post('/pegawai/peminjaman/uploadPengembalian/(:num)', 'PeminjamanController::uploadPengembalian/$1', ['filter' => 'pegawai']); // Upload bukti pengembalian
+$routes->get('/pegawai/peminjaman/ajukan', 'PeminjamanController::formPengajuan', ['filter' => 'pegawai']); // Form pengajuan peminjaman
+$routes->post('/pegawai/peminjaman/simpan', 'PeminjamanController::simpanPengajuan', ['filter' => 'pegawai']); // Simpan pengajuan peminjaman
 
-
-$routes->get('aset', 'AsetController::index');  // Semua aset
-$routes->get('aset/create', 'AsetController::create'); // Form tambah aset
-$routes->post('aset/store', 'AsetController::store'); // Simpan aset baru
-$routes->get('aset/edit/(:num)', 'AsetController::edit/$1'); // Form edit aset
-$routes->post('aset/update', 'AsetController::update'); // Proses update aset
-$routes->post('aset/delete/(:num)', 'AsetController::delete/$1'); // Hapus aset (pakai DELETE)
-$routes->get('aset/(:num)', 'AsetController::index/$1'); // Daftar aset berdasarkan kategori
-// Opsional: Bisa pakai PATCH/PUT untuk update yang lebih RESTful
-$routes->put('aset/update/(:num)', 'AsetController::update/$1'); // Jika ingin pakai PUT
-$routes->patch('aset/update/(:num)', 'AsetController::update/$1'); // Jika ingin pakai PATCH
-
-
-
-$routes->get('/peminjaman', 'PeminjamanController::index');
-$routes->get('/peminjaman/detail/(:num)', 'PeminjamanController::detail/$1');
-$routes->get('peminjaman/riwayat', 'Peminjaman::riwayat');
-$routes->post('peminjaman/update_status/(:num)', 'PeminjamanController::update_status/$1');
-$routes->get('peminjaman/cetak/(:num)', 'PeminjamanController::cetak/$1');
-$routes->get('peminjaman/pengembalian/(:num)', 'PeminjamanController::pengembalian/$1');
-$routes->post('peminjaman/uploadPengembalian/(:num)', 'PeminjamanController::uploadPengembalian/$1');
-
-
-$routes->get('aset_rusak', 'AsetRusakController::index');
-$routes->get('aset_rusak/create/(:num)', 'AsetRusakController::create/$1');
-$routes->post('aset_rusak/store', 'AsetRusakController::store');
-$routes->get('aset-rusak/detail/(:num)', 'AsetRusakController::detail/$1');
-$routes->get('aset_rusak/cetak/(:num)', 'AsetRusakController::cetak/$1');
+$routes->get('aset_rusak', 'AsetRusakController::index', ['filter' => 'admin']); // Menampilkan daftar aset rusak
+$routes->get('aset_rusak/create/(:num)', 'AsetRusakController::create/$1', ['filter' => 'admin']); // Form tambah aset rusak berdasarkan ID aset
+$routes->post('aset_rusak/store', 'AsetRusakController::store', ['filter' => 'admin']); // Proses simpan aset rusak
+$routes->get('aset-rusak/detail/(:num)', 'AsetRusakController::detail/$1', ['filter' => 'admin']); // Menampilkan detail aset rusak berdasarkan ID
+$routes->get('aset_rusak/cetak/(:num)', 'AsetRusakController::cetak/$1', ['filter' => 'admin']); // Mencetak laporan aset rusak
 
 
 //modul Inventaris
