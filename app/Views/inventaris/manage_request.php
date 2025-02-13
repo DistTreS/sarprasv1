@@ -2,49 +2,116 @@
 
 <?= $this->section('content') ?>
 
-<h2>Daftar Permintaan</h2>
+<style>
+    .container {
+        max-width: 100%;
+        padding: 20px;
+    }
 
-<table border="1">
-    <tr>
-        <th>No</th>
-        <th>Tanggal Request</th>
-        <th>Nama Peminta</th>
-        <th>Items</th>
-        <th>Status</th>
-        <th>Aksi</th>
-    </tr>
-    <?php foreach ($requests as $index => $request): ?>
+    h2 {
+        color: #333;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .status-sent { color: orange; font-weight: bold; }
+    .status-accepted { color: green; font-weight: bold; }
+    .status-rejected { color: red; font-weight: bold; }
+
+    select {
+        padding: 5px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<div class="container">
+    <h2>Daftar Permintaan</h2>
+    
+    <table>
         <tr>
-            <td><?= $index + 1; ?></td>
-            <td><?= htmlspecialchars(date('d-m-Y', strtotime($request['tanggal_request']))); ?></td>
-            <td><?= htmlspecialchars($request['nama_peminta']); ?></td>
-            <td>
-                <ul>
-                <?php foreach ($request['details'] as $detail): ?>
-                    <li>
-                        <?= htmlspecialchars($detail['nama_barang']); ?> - 
-                        <?= htmlspecialchars($detail['jumlah']); ?> units
-                    </li>
-                <?php endforeach; ?>
-                </ul>
-            </td>
-            <td><?= htmlspecialchars($request['status']); ?></td>
-            <td>
-                <?php if($request['status'] === 'Sent'): ?>
-                    <select onchange="updateStatus(<?= $request['id_request']; ?>, this.value)">
-                        <option value="Sent" <?= $request['status'] === 'Sent' ? 'selected' : ''; ?>>Sent</option>
-                        <option value="Processed" <?= $request['status'] === 'Processed' ? 'selected' : ''; ?>>Processed</option>
-                        <option value="Accepted" <?= $request['status'] === 'Accepted' ? 'selected' : ''; ?>>Accepted</option>
-                        <option value="Rejected" <?= $request['status'] === 'Rejected' ? 'selected' : ''; ?>>Rejected</option>
-                    </select>
-                <?php else: ?>
-                    <?= htmlspecialchars($request['status']); ?>
-                <?php endif; ?>
-                |
-            </td>
+            <th>No</th>
+            <th>Tanggal Request</th>
+            <th>Nama Peminta</th>
+            <th>Items</th>
+            <th>Status</th>
+            <th>Aksi</th>
         </tr>
-    <?php endforeach; ?>
-</table>
+        <?php foreach ($requests as $index => $request): ?>
+            <tr>
+                <td><?= $index + 1; ?></td>
+                <td><?= htmlspecialchars(date('d-m-Y', strtotime($request['tanggal_request']))); ?></td>
+                <td><?= htmlspecialchars($request['nama_peminta']); ?></td>
+                <td>
+                    <ul>
+                        <?php foreach ($request['details'] as $detail): ?>
+                            <li>
+                                <?= htmlspecialchars($detail['nama_barang']); ?> - 
+                                <?= htmlspecialchars($detail['jumlah']); ?> units
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </td>
+                <td>
+                    <?php 
+                        $statusClass = '';
+                        switch ($request['status']) {
+                            case 'Sent': 
+                                $statusClass = 'status-sent'; 
+                                break;
+                            case 'Accepted': 
+                                $statusClass = 'status-accepted'; 
+                                break;
+                            case 'Rejected': 
+                                $statusClass = 'status-rejected'; 
+                                break;
+                        }
+                    ?>
+                    <span class="<?= $statusClass; ?>"> <?= htmlspecialchars($request['status']); ?> </span>
+                </td>
+                <td>
+                    <?php if ($request['status'] === 'Sent'): ?>
+                        <select onchange="updateStatus(<?= $request['id_request']; ?>, this.value)">
+                            <option value="Sent" <?= $request['status'] === 'Sent' ? 'selected' : ''; ?>>Sent</option>
+                            <option value="Accepted">Accept</option>
+                            <option value="Rejected">Reject</option>
+                        </select>
+                    <?php else: ?>
+                        <?= htmlspecialchars($request['status']); ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
 
 <script>
 function updateStatus(requestId, newStatus) {
@@ -74,7 +141,6 @@ function updateStatus(requestId, newStatus) {
         });
     }
 }
-
 
 </script>
 

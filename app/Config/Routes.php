@@ -86,6 +86,7 @@ $routes->get('aset_rusak/cetak/(:num)', 'AsetRusakController::cetak/$1', ['filte
 
 //modul Inventaris
 $routes->get('/inventaris/index', 'inventaris::index');
+$routes->get('/inventaris/index_pegawai', 'inventaris::index_pegawai');
 $routes->get('/inventaris/create', 'Inventaris::create');
 $routes->post('/inventaris/store', 'Inventaris::store');
 $routes->get('/inventaris/edit/(:num)', 'Inventaris::edit/$1');
