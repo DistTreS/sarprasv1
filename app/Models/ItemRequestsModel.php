@@ -6,11 +6,19 @@ use CodeIgniter\Model;
 
 class ItemRequestsModel extends Model
 {
-    protected $table      = 'request_details'; // The correct table for item details
-    protected $primaryKey = 'id';
+    protected $table = 'item_requests';  // The table name
+    protected $primaryKey = 'id_request'; // Primary key
+
     protected $allowedFields = [
-        'id_request', 'id_barang', 'jumlah'
+        'user_id', 
+        'nama_peminta', 
+        'tanggal_request', 
+        'status'
     ];
+
+    protected $useTimestamps = false; // Since `tanggal_request` is manually set
+
+
 
     /**
      * Get all items related to a specific request.

@@ -1,4 +1,7 @@
-<?= $this->include('layout/sidebar'); ?>
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('content') ?>
+
 <h2>Item History: <?= $item_name; ?></h2>
 
 <table border="1">
@@ -37,3 +40,5 @@
         <?php endif; ?>
     </div>
 <?php endif; ?>
+
+<?= $this->endSection() ?>

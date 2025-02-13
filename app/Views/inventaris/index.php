@@ -1,4 +1,7 @@
-<?= $this->include('layout/sidebar'); ?>
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('content') ?>
+
 <h2>Daftar Inventaris</h2> 
 <a href="<?= base_url('inventaris/create'); ?>" class="btn btn-primary">Tambah Item</a>
 <table border="1">
@@ -32,3 +35,4 @@
     <?php endforeach; ?>
 </table>
 
+<?= $this->endSection() ?>
