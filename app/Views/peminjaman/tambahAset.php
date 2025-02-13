@@ -129,7 +129,7 @@
         </select>
 
         <!-- 🔹 Tambahkan input hidden agar id_kategori tetap dikirim ke backend -->
-        <input type="hidden" name="id_kategori" value="<?= $id_kategori ?? ''; ?>">
+        <input type="hidden" name="id_kategori" value="<?= old('id_kategori', $id_kategori); ?>">
 
 
         <label for="status">Status:</label>
@@ -146,9 +146,24 @@
 
         <label for="gambar">Gambar:</label>
         <input type="file" name="gambar">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
         <button type="submit"><i class="fas fa-save"></i> Simpan</button>
     </form>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        <?php if (session()->has('error')) : ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '<?= session('error'); ?>'
+            });
+        <?php endif; ?>
+    });
+</script>
+
 
 <?= $this->endSection(); ?>

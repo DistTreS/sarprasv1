@@ -47,6 +47,31 @@ class PeminjamanController extends Controller
         return view('peminjaman/detailPengajuan', $data);
     }
 
+    public function indexpegawai()
+    {   
+        $usersModel = new UsersModel();
+        
+        // Ambil role user dari session
+        $session = session();
+        $role = $session->get('role');
+        $user_id = $session->get('id'); // ID user login
+
+        $this->peminjamanModel->select('peminjaman.*, users.full_name as user_name, aset.id_aset, kategori_aset.nama_kategori as nama_aset')
+            ->join('users', 'users.id = peminjaman.id_user')
+            ->join('aset', 'aset.id_aset = peminjaman.id_aset')
+            ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori') 
+            ->orderBy('peminjaman.tanggal_pengajuan', 'DESC');
+
+        // Jika pegawai, hanya tampilkan data miliknya
+        if ($role == 'pegawai') {
+            $this->peminjamanModel->where('peminjaman.id_user', $user_id);
+        }
+
+        $data['peminjaman'] = $this->peminjamanModel->findAll();
+        $data['role'] = $role; // Kirim role ke view
+
+        return view('peminjaman/riwayatPegawai', $data);
+    }
 
 
     public function update_status($id_peminjaman)

@@ -10,9 +10,6 @@ class PegawaiFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to('/login');
-        }
 
         if (session()->get('jabatan') === 'Admin') {
             return redirect()->to('/login')->with('error', 'Halaman yang coba anda akses adalah halaman untuk pegawai silahkan login sebagai pegawai jika ingin mengakses halaman tersebut !');

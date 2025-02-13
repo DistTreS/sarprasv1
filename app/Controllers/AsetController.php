@@ -17,73 +17,90 @@ class AsetController extends BaseController
     }
 
     public function index($id_kategori = null)
-{
-    if ($id_kategori) {
-        $kategori = $this->kategoriAsetModel->find($id_kategori);
-        if (!$kategori) {
-            return redirect()->to('/aset')->with('error', 'Kategori tidak ditemukan.');
+    {
+        if ($id_kategori) {
+            $kategori = $this->kategoriAsetModel->find($id_kategori);
+            if (!$kategori) {
+                return redirect()->to('/aset')->with('error', 'Kategori tidak ditemukan.');
+            }
+
+            $data = [
+                'title' => "Daftar Aset: " . $kategori['nama_kategori'],
+                'kategori' => $kategori,
+                'id_kategori' => $id_kategori, // Kirim ke view
+                'asetList' => $this->asetModel->where('id_kategori', $id_kategori)->findAll()
+            ];
+        } else {
+            $data = [
+                'title' => "Daftar Semua Aset",
+                'kategori' => null,
+                'id_kategori' => null, // Pastikan dikirim meskipun null
+                'asetList' => $this->asetModel->findAll()
+            ];
         }
 
-        $data = [
-            'title' => "Daftar Aset: " . $kategori['nama_kategori'],
-            'kategori' => $kategori,
-            'id_kategori' => $id_kategori, // Kirim ke view
-            'asetList' => $this->asetModel->where('id_kategori', $id_kategori)->findAll()
-        ];
-    } else {
-        $data = [
-            'title' => "Daftar Semua Aset",
-            'kategori' => null,
-            'id_kategori' => null, // Pastikan dikirim meskipun null
-            'asetList' => $this->asetModel->findAll()
-        ];
+        return view('peminjaman/daftarAset', $data);
     }
-
-    return view('peminjaman/daftarAset', $data);
-}
 
 
     public function create()
-{
-    $id_kategori = $this->request->getGet('id_kategori'); // Ambil id_kategori dari URL
-    $data = [
-        'title' => "Tambah Aset",
-        'kategori' => $this->kategoriAsetModel->findAll(),
-        'id_kategori' => $id_kategori // Kirim ke view
-    ];
-    return view('peminjaman/tambahAset', $data);
-}
+    {
+        $id_kategori = $this->request->getGet('id_kategori') ?? old('id_kategori'); // Pastikan id_kategori tetap ada
 
-    // Menyimpan aset ke database
+        $data = [
+            'title' => "Tambah Aset",
+            'kategori' => $this->kategoriAsetModel->findAll(),
+            'id_kategori' => $id_kategori, // Pastikan tetap mengarah ke kategori yang benar
+            'validation' => \Config\Services::validation()
+        ];
+        return view('peminjaman/tambahAset', $data);
+    }
+
     public function store()
     {
         $idKategori = $this->request->getPost('id_kategori');
-        $kategori = $this->kategoriAsetModel->find($idKategori);
 
+        // Validasi kategori
+        $kategori = $this->kategoriAsetModel->find($idKategori);
         if (!$kategori) {
-            die("Kategori tidak ditemukan!");  // Debugging
+            return redirect()->to(base_url('aset'))->with('error', 'Kategori tidak ditemukan.');
         }
 
+        // Validasi input termasuk gambar
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'status' => 'required',
+            'kondisi' => 'required',
+            'gambar' => 'uploaded[gambar]|max_size[gambar,2048]|is_image[gambar]|mime_in[gambar,image/png,image/jpg,image/jpeg]',
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('error', 'Format gambar tidak valid! Hanya PNG, JPG, atau JPEG dengan ukuran maksimal 2MB.');
+        }
+
+        // Upload gambar jika valid
         $gambar = $this->request->getFile('gambar');
         if ($gambar->isValid() && !$gambar->hasMoved()) {
             $namaGambar = $gambar->getRandomName();
             $gambar->move('uploads/aset', $namaGambar);
         } else {
-            die("Upload gambar gagal!"); // Debugging
+            return redirect()->back()->withInput()->with('error', 'Gagal mengupload gambar.');
         }
 
+        // Simpan ke database
         $data = [
             'id_kategori' => $idKategori,
             'status'      => $this->request->getPost('status'),
             'kondisi'     => $this->request->getPost('kondisi'),
             'gambar'      => $namaGambar
         ];
-
         $this->asetModel->insert($data);
 
-        return redirect()->to('/aset')->with('success', 'Aset berhasil ditambahkan berdasarkan kategori!');
-        
+        // ✅ Redirect ke daftar aset berdasarkan kategori
+        return redirect()->to(base_url('aset/' . $idKategori))->with('success', 'Aset berhasil ditambahkan!');
     }
+
+
 
     // 🔹 Menampilkan form edit aset
     public function edit($id)
