@@ -17,9 +17,13 @@ class KategoriAsetController extends Controller
     // Menampilkan daftar kategori aset
     public function index()
     {
-        $model = new KategoriAsetModel();
-        $data['kategoriList'] = $model->findAll(); // Ambil semua data kategori
+        $data['kategoriList'] = $this->kategoriAsetModel->getKategoriWithCount();
+        return view('peminjaman/daftarKategoriAset', $data);
+    }
 
+    public function indexWithCount()
+    {
+        $data['kategoriList'] = $this->kategoriAsetModel->getKategoriWithCount();
         return view('peminjaman/daftarKategoriAset', $data);
     }
 
@@ -49,25 +53,25 @@ class KategoriAsetController extends Controller
         return redirect()->to('kategoriAset')->with('success', 'Kategori aset berhasil ditambahkan!');
     }
 
-    // Menyimpan data update kategori aset ke database
     public function update()
-{
-    $kategoriModel = new KategoriAsetModel();
+    {
+        $kategoriModel = new KategoriAsetModel();
 
-    $kodeKategori = $this->request->getPost('kode_kategori');
-    $data = [
-        'nama_kategori' => $this->request->getPost('nama_kategori'),
-        'deskripsi'     => $this->request->getPost('deskripsi')
-    ];
+        $kodeKategori = $this->request->getPost('kode_kategori');
+        $data = [
+            'nama_kategori' => $this->request->getPost('nama_kategori'),
+            'deskripsi'     => $this->request->getPost('deskripsi')
+        ];
 
-    if (!empty($kodeKategori)) {
-        $kategoriModel->where('kode_kategori', $kodeKategori)->set($data)->update();
-        return redirect()->to(base_url('kategoriAset'))->with('success', 'Kategori berhasil diperbarui');
-    } else {
-        return redirect()->back()->with('error', 'Kode kategori tidak ditemukan!');
+        if (!empty($kodeKategori)) {
+            $kategoriModel->where('kode_kategori', $kodeKategori)->set($data)->update();
+            
+            // ✅ Arahkan kembali ke daftar aset dalam kategori yang diperbarui
+            return redirect()->to(base_url('kategoriAset'))->with('success', 'Kategori berhasil diperbarui');
+        } else {
+            return redirect()->back()->with('error', 'Kode kategori tidak ditemukan!');
+        }
     }
-}
-
 
     // Menghapus Data Kategori Aset
     public function delete($kode_kategori)

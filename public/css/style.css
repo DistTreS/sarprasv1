@@ -6,9 +6,41 @@ body {
   background-color: #ffffff;
 }
 
+.wrapper {
+  display: flex;
+}
+
+.content-wrapper {
+  flex-grow: 1; /* Supaya mengisi sisa ruang */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex-grow: 1; /* Isi ruang utama */
+  padding: 20px;
+}
+
+.footer {
+  background-color: white;
+  text-align: center;
+  padding: 5px;
+  border-top: 1px solid #0B3D91;
+  color: #0B3D91;
+  font-size: 12px;
+  font-weight: normal;
+
+  width: calc(100% - 250px); /* Menyesuaikan lebar konten tanpa sidebar */
+  margin-left: 250px; /* Geser ke kanan sejajar dengan konten */
+}
+
+
+
+
 /* Styling untuk sidebar */
 .sidebar {
-  width: 220px; /* Lebar sidebar diperbesar sedikit */
+  width: 200px; /* Lebar sidebar diperbesar sedikit */
   height: 100vh; /* Sidebar memenuhi tinggi layar */
   background-color: #0d3b66; /* Warna sidebar */
   color: white;
