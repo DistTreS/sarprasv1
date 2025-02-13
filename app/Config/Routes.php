@@ -5,13 +5,20 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Auth::index');
-$routes->get('/login', 'Auth::index');
-$routes->post('/login', 'Auth::login');
-$routes->get('/dashboard', 'Dashboard::index');
+$routes->get('/', 'AuthController::login');
+$routes->get('/login', 'AuthController::login');
+$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'admin']);
+$routes->get('/dashboard/pegawai', 'Dashboard::indexpegawai');
+$routes->post('/auth/loginProcess', 'AuthController::loginProcess');
+$routes->get('/logout', 'AuthController::logout');
+
+
+//gunakan filter untuk membedakan mana untuk admin mana untuk pegawai
+//['filter' => 'admin'] -> ini fungsi filter untuk admin
+//['filter' => 'pegawai'] -> ini fungsi untuk filter untuk pegawai
 
 // Modul Diklat
-$routes->group('diklat', function ($routes) {
+$routes->group('diklat', ['filter' => 'admin'], function ($routes) {
     $routes->get('/', 'DiklatController::index'); // Halaman utama daftar peserta diklat
 
     // Peserta Diklat
@@ -81,4 +88,3 @@ $routes->post('aset/store', 'AsetController::store');
 $routes->get('aset/edit/(:num)', 'AsetController::edit/$1');
 $routes->post('aset/update/(:num)', 'AsetController::update/$1');
 $routes->get('aset/delete/(:num)', 'AsetController::delete/$1');
-

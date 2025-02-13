@@ -52,13 +52,29 @@
         .login-container button:hover {
             background: #041b4d;
         }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="/login" method="post">
+
+        <!-- Menampilkan pesan error jika ada -->
+        <?php if (session()->getFlashdata('error')) : ?>
+            <div class="error-message">
+                <?= session()->getFlashdata('error') ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="/auth/loginProcess" method="post">
+            <?= csrf_field() ?>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
