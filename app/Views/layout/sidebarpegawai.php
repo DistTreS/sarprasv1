@@ -10,11 +10,8 @@
                 Inventaris <i class="fas fa-chevron-down"></i>
             </a>
             <ul id="inventaris" class="submenu">
-                <li><a href="<?= base_url('#'); ?>">Daftar Inventaris</a></li>
-                <li><a href="<?= base_url('#'); ?>">Insert Inventaris</a></li>
-                <li><a href="<?= base_url('#'); ?>">Riwayat Transaksi</a></li>
-                <li><a href="<?= base_url('#'); ?>">Daftar Permintaan</a></li>
-                <li><a href="<?= base_url('#'); ?>">Request Items</a></li>
+                <li><a href="<?= base_url('inventaris/index_pegawai'); ?>">Daftar Inventaris</a></li>
+                <li><a href="<?= base_url('inventaris/user_request_item'); ?>">Request Items</a></li>
             </ul>
         </li>
 

@@ -31,6 +31,12 @@ class Inventaris extends Controller
         return view('inventaris/index', $data);
     }
 
+    public function index_pegawai()
+    {
+        $data['persediaan'] = $this->inventarisModel->findAll();
+        return view('inventaris/index_pegawai', $data);
+    }
+
      // Form Tambah Data
      public function create()
      {
@@ -66,7 +72,7 @@ class Inventaris extends Controller
     public function update($id)
     {
         $this->inventarisModel->update($id, $this->request->getPost());
-        return redirect()->to('/inventaris');
+        return redirect()->to('/inventaris/index');
     }
 
     // Hapus Data
@@ -156,15 +162,13 @@ class Inventaris extends Controller
     return redirect()->to('inventaris/index')->with('success', 'Items inserted successfully.');
 }
 
-
 public function transaction_history()
 {
-
-    $page = $this->request->getVar('page');
-    $page = isset($page) ? (int) $page : 1;
+    $page = $this->request->getVar('page') ?? 1;
     $perPage = 10;
-    
+
     $filters = [];
+
     if ($this->request->getGet('date_from')) {
         $filters['date_from'] = $this->request->getGet('date_from');
     }
@@ -172,10 +176,13 @@ public function transaction_history()
         $filters['date_to'] = $this->request->getGet('date_to');
     }
     if ($this->request->getGet('type')) {
-        $filters['type'] = $this->request->getGet('type');
+        $type = $this->request->getGet('type');
+        if (in_array($type, ['Masuk', 'Keluar'])) { // Ensure case-sensitive match
+            $filters['tipe_transaksi'] = $type;
+        }
     }
     if ($this->request->getGet('user')) {
-        $filters['user'] = $this->request->getGet('user');
+        $filters['nama_peminta'] = $this->request->getGet('user');
     }
 
     $transactions = $this->transactionModel->getFilteredTransactions($filters, $perPage, ($page - 1) * $perPage);
@@ -189,6 +196,41 @@ public function transaction_history()
         ]
     ]);
 }
+
+
+
+// public function transaction_history()
+// {
+
+//     $page = $this->request->getVar('page');
+//     $page = isset($page) ? (int) $page : 1;
+//     $perPage = 10;
+    
+//     $filters = [];
+//     if ($this->request->getGet('date_from')) {
+//         $filters['date_from'] = $this->request->getGet('date_from');
+//     }
+//     if ($this->request->getGet('date_to')) {
+//         $filters['date_to'] = $this->request->getGet('date_to');
+//     }
+//     if ($this->request->getGet('type')) {
+//         $filters['type'] = $this->request->getGet('tipe_transaksi');
+//     }
+//     if ($this->request->getGet('user')) {
+//         $filters['user'] = $this->request->getGet('nama_user');
+//     }
+
+//     $transactions = $this->transactionModel->getFilteredTransactions($filters, $perPage, ($page - 1) * $perPage);
+//     $total = $this->transactionModel->countFilteredTransactions($filters);
+
+//     return view('inventaris/transaction_history', [
+//         'transactions' => $transactions,
+//         'pager' => [
+//             'current_page' => $page,
+//             'total_pages' => ceil($total / $perPage),
+//         ]
+//     ]);
+// }
 
 public function item_history($id_barang)
 {
@@ -362,8 +404,8 @@ public function update_status($requestId)
                 $this->transactionModel->insert([
                     'id_barang' => $itemId,
                     'jumlah' => $quantity,
-                    'jenis_transaksi' => 'Request Accepted',
-                    'tanggal' => date('Y-m-d H:i:s'),
+                    'tipe_transaksi' => 'Keluar',
+                    'tanggal_request' => date('Y-m-d H:i:s'),
                     'user_id' => $requestData['user_id']
                 ]);
 
