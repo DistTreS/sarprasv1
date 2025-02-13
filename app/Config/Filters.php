@@ -24,6 +24,8 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
+        'admin'         => \App\Filters\AdminFilter::class,
+        'pegawai'       => \App\Filters\PegawaiFilter::class,
     ];
 
     /**

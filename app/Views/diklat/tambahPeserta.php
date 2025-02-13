@@ -1,6 +1,177 @@
 <?= $this->extend('layout/main') ?>
 <?= $this->section('content') ?>
 
+<style>
+    /* Form Container Styles */
+    .container.mt-4 {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Header Styles */
+    h2.mb-4 {
+        font-size: 28px;
+        color: #1a1a1a;
+        margin-bottom: 30px;
+        font-weight: 600;
+        text-align: center;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    h2.mb-4:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: #007bff;
+        border-radius: 2px;
+    }
+
+    /* Import Excel Button */
+    .btn-success {
+        margin-bottom: 25px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        background-color: #28a745;
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+        background-color: #218838;
+    }
+
+    /* Form Styles */
+    form {
+        display: grid;
+        gap: 20px;
+        margin-top: 25px;
+    }
+
+    label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: #f8f9fa;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        background-color: #ffffff;
+    }
+
+    /* Select Styles */
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+        padding-right: 45px;
+    }
+
+    /* File Input Styles */
+    input[type="file"].form-control {
+        padding: 8px 12px;
+    }
+
+    /* Submit Button */
+    .btn-primary {
+        margin-top: 10px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+        background-color: #0056b3;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 2px solid #f8f9fa;
+        padding: 20px;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        border-top: 2px solid #f8f9fa;
+        padding: 20px;
+    }
+
+    .btn-close {
+        opacity: 0.5;
+        transition: opacity 0.2s ease;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .container.mt-4 {
+            margin: 20px;
+            padding: 20px;
+        }
+
+        h2.mb-4 {
+            font-size: 24px;
+        }
+
+        .form-control {
+            padding: 10px 12px;
+        }
+    }
+</style>
+
 <div class="container mt-4">
     <h2 class="mb-4">Tambah Peserta Diklat</h2>
 
