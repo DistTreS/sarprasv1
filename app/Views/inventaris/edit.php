@@ -1,4 +1,6 @@
-<?= $this->include('layout/sidebar'); ?>
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('content') ?>
 
 <h2>Edit Data Persediaan</h2>
 <form action="<?= base_url('inventaris/update/' . $persediaan['id_barang']); ?>" method="post" enctype="multipart/form-data">
@@ -18,3 +20,5 @@
     <a type="submit" href="<?= base_url('inventaris/index'); ?>">Simpan Perubahan</a>
     <a href="<?= base_url('inventaris/index'); ?>">Batal</a>
 </form>
+
+<?= $this->endSection() ?>

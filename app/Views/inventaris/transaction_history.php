@@ -1,4 +1,7 @@
-<?= $this->include('layout/sidebar'); ?>
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('content') ?>
+
 <h2>Riwayat Transaksi</h2>
 
 <form method="GET">
@@ -56,3 +59,5 @@
         <?php endif; ?>
     </div>
 <?php endif; ?>
+
+<?= $this->endSection() ?>
