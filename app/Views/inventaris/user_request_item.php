@@ -83,6 +83,19 @@
 
 <div class="container">
     <h2>Form Permintaan Barang</h2>
+
+    <?php if (session()->getFlashdata('success')): ?>
+        <script>
+            alert("<?= session()->getFlashdata('success'); ?>");
+        </script>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+        <script>
+            alert("<?= session()->getFlashdata('error'); ?>");
+        </script>
+    <?php endif; ?>
+
     <form action="<?= site_url('inventaris/submit_request') ?>" method="post">
         <!-- Requester Information -->
         <div class="requester-info">

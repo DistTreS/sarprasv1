@@ -7,6 +7,7 @@ use App\Models\PersediaanInventarisModel;
 use App\Models\RiwayatInventarisModel;
 use App\Models\TransaksiInventarisModel;
 use App\Models\RequestDetailsModel;
+use App\Models\UsersModel;
 use CodeIgniter\Controller;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -16,6 +17,7 @@ class Inventaris extends Controller
     protected $transactionModel;
     protected $itemRequestsModel;
     protected $requestDetailsModel;
+    protected $UsersModel;
     
     public function __construct()
     {
@@ -23,6 +25,7 @@ class Inventaris extends Controller
         $this->transactionModel = new TransaksiInventarisModel();
         $this->itemRequestsModel = new ItemRequestsModel();
         $this->requestDetailsModel = new RequestDetailsModel();
+        $this->UsersModel = new UsersModel();
     }
 
     public function index()
@@ -79,7 +82,7 @@ class Inventaris extends Controller
     public function delete($id)
     {
         $this->inventarisModel->delete($id);
-        return redirect()->to('/inventaris');
+        return redirect()->to('/inventaris/index');
     }
 
     public function insert()
@@ -134,11 +137,15 @@ class Inventaris extends Controller
         $newJumlah = $existingItem['jumlah'] + $jumlah;
         $inventoryModel->update($id_barang, ['jumlah' => $newJumlah]);
 
+        $session = session();
+        $role = $session->get('role');
+        $user_id = $session->get('id'); 
+
         // Insert transaction
         $transactionData = [
             'id_barang' => $id_barang,
-            'id_user' => 1, // Replace with actual user ID
-            'nama_peminta' => 'System', // Replace if needed
+            'id_user' => '1', // Replace with actual user ID
+            'nama_peminta' => 'Administrator', // Replace if needed
             'tipe_transaksi' => 'Masuk',
             'jumlah' => $jumlah,
             'tanggal_transaksi' => date('Y-m-d'),
@@ -197,40 +204,6 @@ public function transaction_history()
     ]);
 }
 
-
-
-// public function transaction_history()
-// {
-
-//     $page = $this->request->getVar('page');
-//     $page = isset($page) ? (int) $page : 1;
-//     $perPage = 10;
-    
-//     $filters = [];
-//     if ($this->request->getGet('date_from')) {
-//         $filters['date_from'] = $this->request->getGet('date_from');
-//     }
-//     if ($this->request->getGet('date_to')) {
-//         $filters['date_to'] = $this->request->getGet('date_to');
-//     }
-//     if ($this->request->getGet('type')) {
-//         $filters['type'] = $this->request->getGet('tipe_transaksi');
-//     }
-//     if ($this->request->getGet('user')) {
-//         $filters['user'] = $this->request->getGet('nama_user');
-//     }
-
-//     $transactions = $this->transactionModel->getFilteredTransactions($filters, $perPage, ($page - 1) * $perPage);
-//     $total = $this->transactionModel->countFilteredTransactions($filters);
-
-//     return view('inventaris/transaction_history', [
-//         'transactions' => $transactions,
-//         'pager' => [
-//             'current_page' => $page,
-//             'total_pages' => ceil($total / $perPage),
-//         ]
-//     ]);
-// }
 
 public function item_history($id_barang)
 {
@@ -347,7 +320,7 @@ public function submit_request()
             throw new \Exception('Gagal menyimpan permintaan.');
         }
 
-        return redirect()->to('inventaris/manage_request')
+        return redirect()->to('inventaris/user_request_item')
                         ->with('success', 'Permintaan berhasil disubmit.');
 
     } catch (\Exception $e) {
@@ -358,6 +331,75 @@ public function submit_request()
                         ->withInput();
     }
 }
+
+
+// public function update_status($requestId)
+// {
+//     if ($this->request->getMethod() === 'post') {
+//         $newStatus = $this->request->getPost('status');
+
+//         log_message('debug', "Updating request ID: {$requestId} with status: {$newStatus}");
+
+//         // Validate status
+//         if (!in_array($newStatus, ['Sent', 'Processed', 'Accepted', 'Rejected'])) {
+//             log_message('error', 'Invalid status: ' . $newStatus);
+//             return $this->response->setJSON(['success' => false, 'message' => 'Status tidak valid!']);
+//         }
+
+//         // Check if the request exists
+//         $requestData = $this->itemRequestsModel->find($requestId);
+//         if (!$requestData) {
+//             log_message('error', "Request ID {$requestId} not found!");
+//             return $this->response->setJSON(['success' => false, 'message' => 'Request tidak ditemukan!']);
+//         }
+
+//         // If Accepted, reduce inventory
+//         if ($newStatus === 'Accepted') {
+//             $requestDetails = $this->requestDetailsModel->where('id_request', $requestId)->findAll();
+
+//             foreach ($requestDetails as $detail) {
+//                 $itemId = $detail['id_barang'];
+//                 $quantity = $detail['jumlah'];
+
+//                 $item = $this->inventarisModel->find($itemId);
+//                 if (!$item || $item['jumlah'] < $quantity) {
+//                     log_message('error', "Not enough stock for item ID: {$itemId}");
+//                     return $this->response->setJSON([
+//                         'success' => false,
+//                         'message' => 'jumlah tidak cukup untuk ' . $item['nama_barang']
+//                     ]);
+//                 }
+
+//                 // Reduce stock
+//                 $this->inventarisModel->update($itemId, ['jumlah' => $item['jumlah'] - $quantity]);
+
+//                 // Insert into transaksi_inventaris
+//                 $this->transactionModel->insert([
+//                     'id_barang' => $itemId,
+//                     'jumlah' => $quantity,
+//                     'tipe_transaksi' => 'Keluar',
+//                     'tanggal_request' => date('Y-m-d H:i:s'),
+//                     'user_id' => $requestData['user_id']
+//                 ]);
+
+//                 // Insert into riwayat_inventaris
+                
+
+//             }
+//         }
+
+//         // Update request status
+//         if ($this->itemRequestsModel->update($requestId, ['status' => $newStatus])) {
+//             log_message('debug', "Request ID: {$requestId} updated successfully.");
+//             return $this->response->setJSON(['success' => true, 'message' => 'Status berhasil diperbarui!']);
+//         } else {
+//             log_message('error', "Failed to update request ID: {$requestId}");
+//             return $this->response->setJSON(['success' => false, 'message' => 'Gagal memperbarui status!']);
+//         }
+//     }
+
+//     return $this->response->setJSON(['success' => false, 'message' => 'Metode tidak diizinkan!']);
+// }
 
 
 public function update_status($requestId)
@@ -380,7 +422,10 @@ public function update_status($requestId)
             return $this->response->setJSON(['success' => false, 'message' => 'Request tidak ditemukan!']);
         }
 
-        // If Accepted, reduce inventory
+        // Prepare update data
+        $updateData = ['status' => $newStatus];
+
+        // If Accepted, reduce inventory and update tanggal_request
         if ($newStatus === 'Accepted') {
             $requestDetails = $this->requestDetailsModel->where('id_request', $requestId)->findAll();
 
@@ -393,30 +438,31 @@ public function update_status($requestId)
                     log_message('error', "Not enough stock for item ID: {$itemId}");
                     return $this->response->setJSON([
                         'success' => false,
-                        'message' => 'jumlah tidak cukup untuk ' . $item['nama_barang']
+                        'message' => 'Jumlah tidak cukup untuk ' . $item['nama_barang']
                     ]);
                 }
 
                 // Reduce stock
                 $this->inventarisModel->update($itemId, ['jumlah' => $item['jumlah'] - $quantity]);
+                // $user = $this->UsersModel->find($requestData['user_id']); // Fetch user info
 
-                // Insert into transaksi_inventaris
                 $this->transactionModel->insert([
                     'id_barang' => $itemId,
                     'jumlah' => $quantity,
                     'tipe_transaksi' => 'Keluar',
-                    'tanggal_request' => date('Y-m-d H:i:s'),
-                    'user_id' => $requestData['user_id']
+                    'tanggal_transaksi' => date('Y-m-d H:i:s'),
+                    'keterangan' => 'Approved request'
                 ]);
-
-                // Insert into riwayat_inventaris
                 
 
             }
+
+            // **Update tanggal_request to the current date when accepted**
+            $updateData['tanggal_request'] = date('Y-m-d H:i:s');
         }
 
-        // Update request status
-        if ($this->itemRequestsModel->update($requestId, ['status' => $newStatus])) {
+        // Update request status (and tanggal_request if accepted)
+        if ($this->itemRequestsModel->update($requestId, $updateData)) {
             log_message('debug', "Request ID: {$requestId} updated successfully.");
             return $this->response->setJSON(['success' => true, 'message' => 'Status berhasil diperbarui!']);
         } else {
@@ -427,6 +473,8 @@ public function update_status($requestId)
 
     return $this->response->setJSON(['success' => false, 'message' => 'Metode tidak diizinkan!']);
 }
+
+
 
 
 

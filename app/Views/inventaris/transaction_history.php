@@ -114,13 +114,13 @@
     <form method="GET">
         <label>Tanggal mulai: <input type="date" name="date_from" value="<?= $_GET['date_from'] ?? ''; ?>"></label>
         <label>Tanggal Selesai: <input type="date" name="date_to" value="<?= $_GET['date_to'] ?? ''; ?>"></label>
-        <label>Tipe Transaksi:
+        <!-- <label>Tipe Transaksi:
             <select name="type">
                 <option value="">All</option>
                 <option value="in" <?= ($_GET['type'] ?? '') === 'in' ? 'selected' : ''; ?>>Masuk</option>
                 <option value="out" <?= ($_GET['type'] ?? '') === 'out' ? 'selected' : ''; ?>>Keluar</option>
             </select>
-        </label>
+        </label> -->
         <!-- <label>User: <input type="text" name="user" value="<?= $_GET['user'] ?? ''; ?>"></label> -->
         <button type="submit">Filter</button>
     </form>

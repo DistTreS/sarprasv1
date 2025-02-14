@@ -114,8 +114,7 @@
             <th>Nama Barang</th>
             <th>Satuan</th>
             <th>Jumlah</th>
-            <th>Terpakai</th>
-            <th>Sisa</th>
+
             <th>Nilai</th>
             <th>Keterangan</th>
             <th>Aksi</th>
@@ -126,8 +125,7 @@
                 <td><?= htmlspecialchars($p['nama_barang']); ?></td>
                 <td><?= htmlspecialchars($p['satuan']); ?></td>
                 <td><?= htmlspecialchars($p['jumlah']); ?></td>
-                <td><?= htmlspecialchars($p['unknown_column1'] ?? ''); ?></td>
-                <td><?= htmlspecialchars($p['unknown_column2'] ?? ''); ?></td>
+
                 <td><?= htmlspecialchars($p['nilai']); ?></td>
                 <td><?= htmlspecialchars($p['deskripsi']); ?></td>
                 <td class="action-buttons">
