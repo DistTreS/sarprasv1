@@ -8,7 +8,7 @@ class PeminjamanModel extends Model
     protected $table = 'peminjaman';
     protected $primaryKey = 'id_peminjaman';
     protected $allowedFields = [
-        'user_id',
+        'id_user',
         'id_aset',
         'nama_aset',
         'jumlah',

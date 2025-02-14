@@ -24,7 +24,8 @@
             <td><span class="status <?= strtolower($item['status_layanan']); ?>"><?= esc($item['status_layanan']); ?></span></td>
             <td>
                 <a href="<?= base_url('peminjaman/detail/' . $item['id_peminjaman']); ?>" class="btn btn-detail">Lihat Detail</a>
-                <?php if ($item['status_layanan'] == 'Proses') : ?>
+                
+                <?php if ($item['status_layanan'] == 'Proses' || $item['status_layanan'] == 'Selesai') : ?>
                     <a href="<?= base_url('peminjaman/pengembalian/' . $item['id_peminjaman']); ?>" class="btn btn-kembali">Pengembalian</a>
                 <?php endif; ?>
             </td>

@@ -21,6 +21,12 @@ class KategoriAsetController extends Controller
         return view('peminjaman/daftarKategoriAset', $data);
     }
 
+    public function indexpegawai()
+    {
+        $data['kategoriList'] = $this->kategoriAsetModel->getKategoriWithCount();
+        return view('peminjaman/daftarKategoriAsetPegawai', $data);
+    }
+
     public function indexWithCount()
     {
         $data['kategoriList'] = $this->kategoriAsetModel->getKategoriWithCount();
