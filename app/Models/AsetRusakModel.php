@@ -10,8 +10,8 @@ class AsetRusakModel extends Model
     protected $allowedFields = [
         'id_aset',
         'id_user',
-        'tanggal_rusak',
-        'status_pengajuan',
+        'tanggal_pengajuan',
+        'status_rusak',
         'keterangan',
         'bukti_foto'
     ];

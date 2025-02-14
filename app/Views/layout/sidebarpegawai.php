@@ -20,9 +20,9 @@
                 Aset <i class="fas fa-chevron-down"></i>
             </a>
             <ul id="aset" class="submenu">
-                <li><a href="<?= base_url('#'); ?>">Daftar Kategori Aset</a></li>
+                <li><a href="<?= base_url('pegawai/kategoriAset'); ?>">Daftar Kategori Aset</a></li>
                 <li><a href="<?= base_url('pegawai/peminjaman'); ?>">Peminjaman</a></li>
-                <li><a href="<?= base_url('#'); ?>">Aset Rusak</a></li>
+                <li><a href="<?= base_url('aset-rusak/riwayat'); ?>">Aset Rusak</a></li>
             </ul>
         </li>
 

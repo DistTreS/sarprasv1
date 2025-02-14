@@ -42,6 +42,32 @@ class AsetController extends BaseController
         return view('peminjaman/daftarAset', $data);
     }
 
+    public function indexpegawai($id_kategori = null)
+    {
+        if ($id_kategori) {
+            $kategori = $this->kategoriAsetModel->find($id_kategori);
+            if (!$kategori) {
+                return redirect()->to('/aset')->with('error', 'Kategori tidak ditemukan.');
+            }
+
+            $data = [
+                'title' => "Daftar Aset: " . $kategori['nama_kategori'],
+                'kategori' => $kategori,
+                'id_kategori' => $id_kategori, // Kirim ke view
+                'asetList' => $this->asetModel->where('id_kategori', $id_kategori)->findAll()
+            ];
+        } else {
+            $data = [
+                'title' => "Daftar Semua Aset",
+                'kategori' => null,
+                'id_kategori' => null, // Pastikan dikirim meskipun null
+                'asetList' => $this->asetModel->findAll()
+            ];
+        }
+
+        return view('peminjaman/daftarAsetPegawai', $data);
+    }
+
 
     public function create()
     {

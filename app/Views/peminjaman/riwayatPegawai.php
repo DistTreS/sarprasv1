@@ -4,7 +4,7 @@
 <div class="container">
     <h2>Riwayat Peminjaman</h2>
     
-    <a href="<?= base_url('peminjaman/ajukan'); ?>" class="btn btn-ajukan">Ajukan Peminjaman</a>
+    <a href="<?= base_url('pegawai/peminjaman/ajukan'); ?>" class="btn btn-ajukan">Ajukan Peminjaman</a>
     
     <table>
         <tr>
@@ -23,9 +23,9 @@
             <td><?= esc($item['tanggal_rencana_pengembalian']); ?></td>
             <td><span class="status <?= strtolower($item['status_layanan']); ?>"><?= esc($item['status_layanan']); ?></span></td>
             <td>
-                <a href="<?= base_url('peminjaman/detail/' . $item['id_peminjaman']); ?>" class="btn btn-detail">Lihat Detail</a>
+                <a href="<?= base_url('/pegawai/peminjaman/detail/' . $item['id_peminjaman']); ?>" class="btn btn-detail">Lihat Detail</a>
                 <?php if ($item['status_layanan'] == 'Proses') : ?>
-                    <a href="<?= base_url('peminjaman/pengembalian/' . $item['id_peminjaman']); ?>" class="btn btn-kembali">Pengembalian</a>
+                    <a href="<?= base_url('/pegawai/peminjaman/pengembalian/' . $item['id_peminjaman']); ?>" class="btn btn-kembali">Pengembalian</a>
                 <?php endif; ?>
             </td>
         </tr>

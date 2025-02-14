@@ -4,19 +4,39 @@
 <div class="container mt-4">
     <div class="card p-4 shadow-lg border-0">
         <h2 class="text-primary mb-3">Detail Pengembalian</h2>
-        <p><strong>Nama Peminjam:</strong> <?= esc($peminjaman['user_name']) ?></p>
-        <p><strong>Nama Aset:</strong> <?= esc($peminjaman['nama_kategori']); ?></p>
-        <p><strong>Tanggal Pengembalian:</strong> <?= !empty($peminjaman['tanggal_pengembalian']) ? esc($peminjaman['tanggal_pengembalian']) : '<span class="text-danger">Belum dikembalikan</span>' ?></p>
+
+        <div class="mb-3">
+            <p><strong>Nama Peminjam:</strong> <?= esc($peminjaman['user_name']) ?></p>
+            <p><strong>Nama Aset:</strong> <?= esc($peminjaman['nama_kategori']); ?></p>
+            <p><strong>Tanggal Pengembalian:</strong> 
+                <?php if (!empty($peminjaman['tanggal_pengembalian'])): ?>
+                    <span class="badge bg-success"><?= esc($peminjaman['tanggal_pengembalian']) ?></span>
+                <?php else: ?>
+                    <span class="badge bg-danger">Belum dikembalikan</span>
+                <?php endif; ?>
+            </p>
+        </div>
 
         <h3 class="mt-4">Bukti Pengembalian</h3>
-        <?php if (!empty($peminjaman['bukti_pengembalian'])): ?>
-            <img src="<?= base_url('uploads/bukti_pengembalian/' . $peminjaman['bukti_pengembalian']) ?>" alt="Bukti Pengembalian" class="img-fluid rounded shadow-sm border" width="300">
-        <?php else: ?>
-            <p class="text-danger">Tidak ada bukti pengembalian</p>
-        <?php endif; ?>
+        <div class="text-center mt-3">
+            <?php if (!empty($peminjaman['bukti_pengembalian'])): ?>
+                <img src="<?= base_url('uploads/bukti_pengembalian/' . $peminjaman['bukti_pengembalian']) ?>" 
+                     alt="Bukti Pengembalian" 
+                     class="img-fluid rounded shadow-sm border" 
+                     style="max-width: 350px; height: auto;">
+            <?php else: ?>
+                <div class="alert alert-danger mt-2" role="alert">
+                    <strong>Belum ada bukti pengembalian!</strong> Pengguna belum mengunggah bukti pengembalian aset.
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 
-    <a href="<?= base_url('peminjaman') ?>" class="btn btn-secondary mt-4">Kembali ke Riwayat</a>
+    <div class="text-center mt-4">
+        <a href="<?= base_url('peminjaman') ?>" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Riwayat
+        </a>
+    </div>
 </div>
 
 <style>
