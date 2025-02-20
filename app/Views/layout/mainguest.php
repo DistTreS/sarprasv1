@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <?= $this->include('layout/sidebar'); ?>
+    <?= $this->include('layout/sidebarguest'); ?>
 
     <div class="content">
         <?= $this->renderSection('content'); ?>

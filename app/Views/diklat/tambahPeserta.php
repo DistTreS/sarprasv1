@@ -214,13 +214,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
-    <!-- Pilihan Jenis Diklat -->
     <form action="<?= base_url('diklat/tambahPeserta') ?>" method="post">
-        <label for="nama">Nama</label>
-        <input type="text" class="form-control" name="nama" required>
 
         <label for="nip">NIP</label>
         <input type="text" class="form-control" name="nip" required>
+
+        <label for="nama">Nama</label>
+        <input type="text" class="form-control" name="nama" required>
 
         <label for="tempat_lahir">Tempat Lahir</label>
         <input type="text" class="form-control" name="tempat_lahir" required>
@@ -256,6 +256,9 @@
 
         <label for="judul_tugas_akhir">Judul Tugas Akhir</label>
         <input type="text" class="form-control" name="judul_tugas_akhir">
+
+        <label for="tugas_akhir">Upload Tugas Akhir (PDF)</label>
+        <input type="file" class="form-control" name="tugas_akhir" accept="application/pdf">
 
         <button type="submit" class="btn btn-primary">Tambah</button>
     </form>

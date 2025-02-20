@@ -12,4 +12,9 @@ class Dashboard extends BaseController
     {
         return view('pages/dashboardpegawai');
     }
+
+    public function indexguest()
+    {
+        return view('pages/dashboardguest');
+    }
 }

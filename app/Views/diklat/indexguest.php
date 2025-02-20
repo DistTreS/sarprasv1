@@ -1,4 +1,4 @@
-<?= $this->extend('layout/main') ?>
+<?= $this->extend('layout/mainguest') ?>
 
 <?= $this->section('content') ?>
 
@@ -256,19 +256,14 @@
 
 <div class="container">
     <h2>Data Peserta Diklat</h2>
-    <div class="mb-3 d-flex justify-content-between">
-        <a href="<?= base_url('diklat/tambahPeserta'); ?>" class="btn btn-primary">Tambah Peserta</a>
-        <a href="<?= base_url('diklat/jenisDiklat') ?>" class="btn btn-secondary">Kelola Jenis Diklat</a>
-        <a href="<?= site_url('diklat/exportToPdf') ?>?keyword=<?= esc($keyword) ?>&jenis_diklat=<?= esc($filterDiklat) ?>&instansi=<?= esc($instansi) ?>&angkatan=<?= esc($angkatan) ?>&tahun=<?= esc($tahun) ?>" class="btn btn-danger">Export ke PDF</a>
-    </div>
 
     <!-- Form Pencarian dan Filter -->
-    <form action="<?= site_url('diklat') ?>" method="GET" class="d-flex mb-3">
+    <form action="<?= site_url('diklatguest') ?>" method="GET" class="d-flex mb-3">
         <input type="text" name="keyword" placeholder="Cari Nama atau NIP" value="<?= esc($keyword) ?>" class="form-control me-2">
         <button type="submit" class="btn btn-primary">Cari</button>
     </form>
 
-    <form action="<?= site_url('diklat') ?>" method="GET" class="d-flex flex-wrap gap-2 mb-3">
+    <form action="<?= site_url('diklatguest') ?>" method="GET" class="d-flex flex-wrap gap-2 mb-3">
         <select name="jenis_diklat" class="form-select">
             <option value="">Pilih Jenis Diklat</option>
             <?php foreach ($jenisDiklat as $jd) : ?>
@@ -338,9 +333,7 @@
                         <td><?= esc($peserta['angkatan']); ?></td>
                         <td><?= esc($peserta['tahun']); ?></td>
                         <td>
-                            <a href="<?= base_url('diklat/viewPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-info">View</a>
-                            <a href="<?= base_url('diklat/editPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-warning">Edit</a>
-                            <a href="<?= base_url('diklat/hapusPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?');">Delete</a>
+                            <a href="<?= base_url('viewPesertaGuest/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-info">View</a>
                         </td>
 
                     </tr>

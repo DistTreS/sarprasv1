@@ -9,8 +9,12 @@ $routes->get('/', 'AuthController::login');
 $routes->get('/login', 'AuthController::login');
 $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'admin']);
 $routes->get('/dashboard/pegawai', 'Dashboard::indexpegawai');
+$routes->get('/dashboard/guest', 'Dashboard::indexguest');
 $routes->post('/auth/loginProcess', 'AuthController::loginProcess');
 $routes->get('/logout', 'AuthController::logout');
+$routes->get('/diklatguest', 'DiklatController::indexguest');
+$routes->get('viewPesertaGuest/(:num)/(:num)', 'DiklatController::viewPesertaGuest/$1/$2');
+$routes->get('diklat/lihatTugasAkhir/(:num)/(:num)', 'DiklatController::lihatTugasAkhir/$1/$2');
 
 
 //gunakan filter untuk membedakan mana untuk admin mana untuk pegawai
@@ -20,15 +24,14 @@ $routes->get('/logout', 'AuthController::logout');
 // Modul Diklat
 $routes->group('diklat', ['filter' => 'admin'], function ($routes) {
     $routes->get('/', 'DiklatController::index'); // Halaman utama daftar peserta diklat
-
-    // Peserta Diklat
-    $routes->get('viewPeserta/(:num)', 'DiklatController::viewPeserta/$1'); // Lihat detail peserta
-    $routes->get('editPeserta/(:num)', 'DiklatController::editPeserta/$1'); // Edit peserta
-    $routes->post('updatePeserta/(:num)', 'DiklatController::updatePeserta/$1'); // Update peserta
+    $routes->get('cekPesertaByNip/(:any)', 'DiklatController::cekPesertaByNip/$1');
+    $routes->get('viewPeserta/(:num)/(:num)', 'DiklatController::viewPeserta/$1/$2'); // Lihat detail peserta
+    $routes->get('editPeserta/(:num)/(:num)', 'DiklatController::editPeserta/$1/$2'); // Edit peserta
+    $routes->post('updatePeserta/(:num)/(:num)', 'DiklatController::updatePeserta/$1/$2'); // Update peserta
     $routes->get('tambahPeserta', 'DiklatController::tambahPeserta'); // Form tambah peserta
     $routes->post('tambahPeserta', 'DiklatController::tambahPeserta'); // Simpan peserta baru
     $routes->post('importPeserta', 'DiklatController::importPeserta'); // Import peserta dari Excel
-    $routes->get('hapusPeserta/(:num)', 'DiklatController::hapusPeserta/$1'); // Hapus peserta
+    $routes->get('hapusPeserta/(:num)/(:num)', 'DiklatController::hapusPeserta/$1/$2'); // Hapus peserta
     $routes->post('importExcel', 'DiklatController::importExcel');
     $routes->get('exportToPdf', 'DiklatController::exportToPdf');
 
