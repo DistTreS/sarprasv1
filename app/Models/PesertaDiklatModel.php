@@ -119,28 +119,57 @@ class PesertaDiklatModel extends Model
             ->findAll();
     }
 
-     // Ambil satu peserta diklat dengan composite key
-     public function findComposite($id_peserta, $id_diklat)
-     {
-         return $this->where('id_peserta', $id_peserta)
-                     ->where('id_diklat', $id_diklat)
-                     ->first();
-     }
- 
-     // Update data dengan composite key
-     public function updateComposite($id_peserta, $id_diklat, $data)
-     {
-         return $this->where('id_peserta', $id_peserta)
-                     ->where('id_diklat', $id_diklat)
-                     ->set($data)
-                     ->update();
-     }
- 
-     // Delete data dengan composite key
-     public function deleteComposite($id_peserta, $id_diklat)
-     {
-         return $this->where('id_peserta', $id_peserta)
-                     ->where('id_diklat', $id_diklat)
-                     ->delete();
-     }
+    // Ambil satu peserta diklat dengan composite key
+    public function findComposite($id_peserta, $id_diklat)
+    {
+        return $this->where('id_peserta', $id_peserta)
+            ->where('id_diklat', $id_diklat)
+            ->first();
+    }
+
+    // Update data dengan composite key
+    public function updateComposite($id_peserta, $id_diklat, $data)
+    {
+        return $this->where('id_peserta', $id_peserta)
+            ->where('id_diklat', $id_diklat)
+            ->set($data)
+            ->update();
+    }
+
+    // Delete data dengan composite key
+    public function deleteComposite($id_peserta, $id_diklat)
+    {
+        return $this->where('id_peserta', $id_peserta)
+            ->where('id_diklat', $id_diklat)
+            ->delete();
+    }
+
+    public function getPublikasiTugasAkhir($keyword = null)
+    {
+        $query = $this->select('
+            peserta_diklat.id_peserta, 
+            peserta_diklat.id_diklat,
+            peserta_diklat.judul_tugas_akhir, 
+            peserta_diklat.tahun,
+            peserta_diklat.tugas_akhir, 
+            peserta.nama, 
+            peserta.nip, 
+            peserta.instansi
+        ')
+            ->join('peserta', 'peserta.id_peserta = peserta_diklat.id_peserta', 'left')
+            ->where('peserta_diklat.judul_tugas_akhir IS NOT NULL')
+            ->where('peserta_diklat.judul_tugas_akhir !=', '')
+            ->where('peserta_diklat.tugas_akhir IS NOT NULL')
+            ->where('peserta_diklat.tugas_akhir !=', '');
+
+        // Jika ada keyword, tambahkan filter pencarian
+        if (!empty($keyword)) {
+            $query->groupStart()
+                ->like('peserta_diklat.judul_tugas_akhir', $keyword)
+                ->orLike('peserta_diklat.tahun', $keyword)
+                ->groupEnd();
+        }
+
+        return $query->findAll();
+    }
 }

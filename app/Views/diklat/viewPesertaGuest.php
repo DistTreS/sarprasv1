@@ -174,7 +174,7 @@
             </table>
         </div>
         <div class="mt-4">
-            <a href="<?= base_url('diklat') ?>" class="btn btn-secondary">
+            <a href="<?= base_url('diklatguest') ?>" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
         </div>

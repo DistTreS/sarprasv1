@@ -162,7 +162,7 @@
             <span>or</span>
         </div>
 
-        <form action="/dashboard/guest" method="get">
+        <form action="/diklatguest" method="get">
             <button type="submit" class="btn btn-guest">Continue as Guest</button>
         </form>
     </div>

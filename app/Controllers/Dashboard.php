@@ -1,5 +1,8 @@
 <?php
+
 namespace App\Controllers;
+
+use App\Models\PesertaDiklatModel;
 
 class Dashboard extends BaseController
 {
@@ -15,6 +18,15 @@ class Dashboard extends BaseController
 
     public function indexguest()
     {
-        return view('pages/dashboardguest');
+        $pesertaDiklatModel = new PesertaDiklatModel();
+        $keyword = $this->request->getGet('keyword');
+
+        
+        $publikasi = $pesertaDiklatModel->getPublikasiTugasAkhir($keyword);
+
+        return view('pages/dashboardguest', [
+            'publikasi' => $publikasi,
+            'keyword' => $keyword
+        ]);
     }
 }
