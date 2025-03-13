@@ -20,6 +20,18 @@ $routes->get('diklat/lihatTugasAkhir/(:num)/(:num)', 'DiklatController::lihatTug
 //gunakan filter untuk membedakan mana untuk admin mana untuk pegawai
 //['filter' => 'admin'] -> ini fungsi filter untuk admin
 //['filter' => 'pegawai'] -> ini fungsi untuk filter untuk pegawai
+$routes->group('users', ['filter' => 'admin'],  function ($routes) {
+    $routes->get('/', 'UserController::index');
+    $routes->get('create', 'UserController::create');
+    $routes->post('store', 'UserController::store');
+    $routes->get('view/(:num)', 'UserController::view/$1');
+    $routes->get('delete/(:num)', 'UserController::delete/$1');
+    $routes->get('edit/(:num)', 'UserController::edit/$1');
+    $routes->post('update/(:num)', 'UserController::update/$1');
+});
+
+
+
 
 // Modul Diklat
 $routes->group('diklat', ['filter' => 'admin'], function ($routes) {

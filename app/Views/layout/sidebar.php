@@ -32,16 +32,17 @@
         <li><a href="<?= base_url('diklat'); ?>">Diklat</a></li>
         <li><a href="<?= base_url('inventaris'); ?>">Inventaris</a></li>
         <li><a href="<?= base_url('insert'); ?>">Insert Inventaris</a></li>
+        <li><a href="<?= base_url('users'); ?>">kelola Users</a></li>
         <li><a href="<?= base_url('logout'); ?>">Logout</a></li>
     </ul>
 </div>
 
 <script>
-  function toggleDropdown(id) {
-    var menu = document.getElementById(id);
-    var parent = menu.parentElement;
-    
-    // Toggle class "active" untuk menampilkan atau menyembunyikan submenu
-    parent.classList.toggle("active");
-  }
+    function toggleDropdown(id) {
+        var menu = document.getElementById(id);
+        var parent = menu.parentElement;
+
+        // Toggle class "active" untuk menampilkan atau menyembunyikan submenu
+        parent.classList.toggle("active");
+    }
 </script>
