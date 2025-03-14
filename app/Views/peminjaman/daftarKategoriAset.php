@@ -28,7 +28,7 @@
             <td><?= esc($kategori['deskripsi']); ?></td>
             <td><?= esc($kategori['jumlah_aset'] ?? 0); ?></td>
             <td>
-                <a href="<?= base_url('kategoriAset/detail/' . $kategori['id_kategori']); ?>" class="btn btn-info">
+                <a href="<?= base_url('kategoriAset/detail/' . $kategori['kode_kategori']); ?>" class="btn btn-info">
                     <i class="fas fa-eye"></i> Lihat Aset
                 </a>
                 

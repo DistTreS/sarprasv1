@@ -2,7 +2,7 @@
 
 <?= $this->section('content'); ?>
 <div class="container" id="printArea">
-    <h2>Detail Aset Rusak</h2>
+    <h2 class="page-title">Detail Pengajuan Aset Rusak</h2>
     <div class="form-container">
         <div class="form-group">
             <label>Nama Pelapor:</label>
@@ -22,8 +22,20 @@
         </div>
         <div class="form-group">
             <label>Status Kerusakan:</label>
-            <span class="status <?= strtolower(str_replace(' ', '-', $asetRusak['status_rusak'])); ?>">
-                <?= esc($asetRusak['status_rusak']); ?>
+            <?php 
+                $status = strtolower($asetRusak['status_kerusakan']);
+                
+
+                if ($status === 'rusak ringan') {
+                    $statusColor = 'green';
+                } elseif ($status === 'rusak sedang') {
+                    $statusColor = 'orange';
+                } elseif ($status === 'rusak berat') {
+                    $statusColor = 'red';
+                }
+            ?>
+            <span class="status" style="background: <?= $statusColor ?>; color: white; padding: 8px 15px; border-radius: 5px; font-weight: bold;">
+                <?= esc($asetRusak['status_kerusakan']); ?>
             </span>
         </div>
         <div class="form-group">
@@ -31,16 +43,16 @@
             <div class="image-container">
                 <?php if (!empty($asetRusak['bukti_foto'])): ?>
                     <?php foreach (explode(',', $asetRusak['bukti_foto']) as $foto): ?>
-                        <img src="<?= base_url('uploads/aset_rusak/' . $foto); ?>" alt="Bukti Foto" class="bukti-foto">
+                        <img src="<?= base_url('uploads/aset_rusak/' . esc($foto)); ?>" alt="Bukti Foto" class="bukti-foto">
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p>Tidak ada bukti foto</p>
+                    <p class="text-muted">Tidak ada bukti foto</p>
                 <?php endif; ?>
             </div>
         </div>
         <div class="button-group">
-            <a href="javascript:void(0);" class="btn-print" onclick="printContent()">Cetak</a>
-            <a href="javascript:history.back()" class="btn-back">Kembali</a>
+            <a href="javascript:void(0);" class="btn btn-primary btn-print" onclick="printContent()">Cetak</a>
+            <a href="javascript:history.back()" class="btn btn-secondary btn-back">Kembali</a>
         </div>
     </div>
 </div>
@@ -57,11 +69,25 @@ function printContent() {
 </script>
 
 <style>
-   .form-container {
-        max-width: 800px;
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        background: #f4f4f9;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .page-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff;
+    }
+    .form-container {
         background: white;
         padding: 30px;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     }
     .form-group {
@@ -69,59 +95,67 @@ function printContent() {
     }
     .form-control {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 8px;
         background: #f9f9f9;
         height: 50px;
+        font-size: 16px;
     }
     textarea.form-control {
-        height: 100px;
-    }
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .btn-print {
-        display: block;
-        text-align: center;
-        margin-top: 20px;
-        padding: 10px;
-        background: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-    }
-    .btn-back {
-        display: block;
-        text-align: center;
-        margin-top: 10px;
-        padding: 10px;
-        background: #6c757d;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-    }
-    .btn-back:hover {
-        background: #5a6268;
+        height: 120px;
+        resize: none;
     }
     .image-container {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        justify-content: center;
     }
     .bukti-foto {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
         object-fit: cover;
-        border-radius: 5px;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
+    }
+    .bukti-foto:hover {
+        transform: scale(1.1);
+    }
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: 0.3s;
+        text-align: center;
+    }
+    .btn-print {
+        background: #007bff;
+        color: white;
+    }
+    .btn-print:hover {
+        background: #0056b3;
+    }
+    .btn-back {
+        background: #6c757d;
+        color: white;
+    }
+    .btn-back:hover {
+        background: #5a6268;
     }
     @media print {
         body * {
             visibility: hidden;
         }
-        .container, .container * {
+        #printArea, #printArea * {
             visibility: visible;
         }
         .btn-print, .btn-back {

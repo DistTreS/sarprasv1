@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\AsetModel;
 use App\Models\KategoriAsetModel; 
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class AsetController extends BaseController
 {
@@ -16,67 +17,130 @@ class AsetController extends BaseController
         $this->kategoriAsetModel = new KategoriAsetModel();
     }
 
-    public function index($id_kategori = null)
+    public function index($kode_kategori = null) // Jadikan parameter opsional
     {
-        if ($id_kategori) {
-            $kategori = $this->kategoriAsetModel->find($id_kategori);
-            if (!$kategori) {
-                return redirect()->to('/aset')->with('error', 'Kategori tidak ditemukan.');
-            }
+        $data = ['title' => "Daftar Aset"];
 
-            $data = [
-                'title' => "Daftar Aset: " . $kategori['nama_kategori'],
-                'kategori' => $kategori,
-                'id_kategori' => $id_kategori, // Kirim ke view
-                'asetList' => $this->asetModel->where('id_kategori', $id_kategori)->findAll()
-            ];
+        if (!empty($kode_kategori)) {
+            $kategori = $this->kategoriAsetModel->find($kode_kategori);
+            if (!$kategori) {
+                throw PageNotFoundException::forPageNotFound('Kategori tidak ditemukan.');
+            }
+            $data['title'] = "Daftar Aset: " . $kategori['nama_kategori'];
+            $data['kode_kategori'] = $kode_kategori;
+            $data['asetList'] = $this->asetModel->where('kode_kategori', $kode_kategori)->findAll();
         } else {
-            $data = [
-                'title' => "Daftar Semua Aset",
-                'kategori' => null,
-                'id_kategori' => null, // Pastikan dikirim meskipun null
-                'asetList' => $this->asetModel->findAll()
-            ];
+            // Jika tidak ada kategori, ambil semua aset
+            $data['asetList'] = $this->asetModel->findAll();
         }
 
         return view('peminjaman/daftarAset', $data);
     }
 
-    public function indexpegawai($id_kategori = null)
-    {
-        if ($id_kategori) {
-            $kategori = $this->kategoriAsetModel->find($id_kategori);
-            if (!$kategori) {
-                return redirect()->to('/aset')->with('error', 'Kategori tidak ditemukan.');
-            }
 
-            $data = [
-                'title' => "Daftar Aset: " . $kategori['nama_kategori'],
-                'kategori' => $kategori,
-                'id_kategori' => $id_kategori, // Kirim ke view
-                'asetList' => $this->asetModel->where('id_kategori', $id_kategori)->findAll()
-            ];
+
+    public function indexPegawai($kode_kategori = null)
+    {
+        $data = ['title' => "Daftar Aset"];
+
+        if (!empty($kode_kategori)) {
+            $kategori = $this->kategoriAsetModel->find($kode_kategori);
+            if (!$kategori) {
+                throw PageNotFoundException::forPageNotFound('Kategori tidak ditemukan.');
+            }
+            $data['title'] = "Daftar Aset: " . $kategori['nama_kategori'];
+            $data['kategori'] = $kategori;
+            $data['kode_kategori'] = $kode_kategori;
+            $data['asetList'] = $this->asetModel->where('kode_kategori', $kode_kategori)->findAll();
         } else {
-            $data = [
-                'title' => "Daftar Semua Aset",
-                'kategori' => null,
-                'id_kategori' => null, // Pastikan dikirim meskipun null
-                'asetList' => $this->asetModel->findAll()
-            ];
+            // Jika tidak ada kategori, ambil semua aset
+            $data['asetList'] = $this->asetModel->findAll();
         }
 
         return view('peminjaman/daftarAsetPegawai', $data);
     }
 
 
+    public function cariAset($kode_kategori = null)
+    {
+        $search = $this->request->getGet('search'); // Bisa berupa nama aset atau NUP
+
+        $data = ['title' => "Daftar Aset"];
+
+        if (!empty($kode_kategori)) {
+            $kategori = $this->kategoriAsetModel->find($kode_kategori);
+            if (!$kategori) {
+                throw PageNotFoundException::forPageNotFound('Kategori tidak ditemukan.');
+            }
+            $data['title'] = "Daftar Aset: " . $kategori['nama_kategori'];
+            $data['kode_kategori'] = $kode_kategori;
+
+            // Pencarian berdasarkan nama aset atau NUP dalam kategori yang dipilih
+            if (!empty($search)) {
+                $data['asetList'] = $this->asetModel
+                    ->where('kode_kategori', $kode_kategori)
+                    ->groupStart()
+                        ->like('nama_aset', $search)
+                        ->orLike('nup', $search)
+                    ->groupEnd()
+                    ->findAll();
+                $data['search'] = $search; // Simpan nilai pencarian untuk ditampilkan kembali
+            } else {
+                $data['asetList'] = $this->asetModel->where('kode_kategori', $kode_kategori)->findAll();
+            }
+        } else {
+            // Jika tidak ada kategori, ambil semua aset
+            $data['asetList'] = $this->asetModel->findAll();
+        }
+
+        return view('peminjaman/daftarAset', $data);
+    }
+
+
+    public function cariAsetPegawai($kode_kategori = null)
+    {
+        $search = $this->request->getGet('search'); // Bisa berupa nama aset atau NUP
+
+        $data = ['title' => "Daftar Aset"];
+
+        if (!empty($kode_kategori)) {
+            $kategori = $this->kategoriAsetModel->find($kode_kategori);
+            if (!$kategori) {
+                throw PageNotFoundException::forPageNotFound('Kategori tidak ditemukan.');
+            }
+            $data['title'] = "Daftar Aset: " . $kategori['nama_kategori'];
+            $data['kode_kategori'] = $kode_kategori;
+
+            // Pencarian berdasarkan nama aset atau NUP dalam kategori yang dipilih
+            if (!empty($search)) {
+                $data['asetList'] = $this->asetModel
+                    ->where('kode_kategori', $kode_kategori)
+                    ->groupStart()
+                        ->like('nama_aset', $search)
+                        ->orLike('nup', $search)
+                    ->groupEnd()
+                    ->findAll();
+                $data['search'] = $search; // Simpan nilai pencarian untuk ditampilkan kembali
+            } else {
+                $data['asetList'] = $this->asetModel->where('kode_kategori', $kode_kategori)->findAll();
+            }
+        } else {
+            // Jika tidak ada kategori, ambil semua aset
+            $data['asetList'] = $this->asetModel->findAll();
+        }
+
+        return view('peminjaman/daftarAsetPegawai', $data);
+    }
+
+
+
+
     public function create()
     {
-        $id_kategori = $this->request->getGet('id_kategori') ?? old('id_kategori'); // Pastikan id_kategori tetap ada
-
         $data = [
             'title' => "Tambah Aset",
             'kategori' => $this->kategoriAsetModel->findAll(),
-            'id_kategori' => $id_kategori, // Pastikan tetap mengarah ke kategori yang benar
+            'kode_kategori' => old('kode_kategori', ''), // Tambahkan ini
             'validation' => \Config\Services::validation()
         ];
         return view('peminjaman/tambahAset', $data);
@@ -84,27 +148,28 @@ class AsetController extends BaseController
 
     public function store()
     {
-        $idKategori = $this->request->getPost('id_kategori');
+        // Debug: Periksa apakah data dari form terkirim
+        
 
-        // Validasi kategori
-        $kategori = $this->kategoriAsetModel->find($idKategori);
-        if (!$kategori) {
-            return redirect()->to(base_url('aset'))->with('error', 'Kategori tidak ditemukan.');
-        }
-
-        // Validasi input termasuk gambar
-        $validation = \Config\Services::validation();
-        $validation->setRules([
-            'status' => 'required',
+        // Validasi input
+        if (!$this->validate([
+            'nama_aset' => 'required',
+            'nup' => 'required|numeric',
+            'status_aset' => 'required',
             'kondisi' => 'required',
             'gambar' => 'uploaded[gambar]|max_size[gambar,2048]|is_image[gambar]|mime_in[gambar,image/png,image/jpg,image/jpeg]',
-        ]);
-
-        if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->withInput()->with('error', 'Format gambar tidak valid! Hanya PNG, JPG, atau JPEG dengan ukuran maksimal 2MB.');
+        ])) {
+            return redirect()->back()->withInput()->with('error', 'Harap isi semua field dengan benar.');
         }
 
-        // Upload gambar jika valid
+        // Ambil data dari form
+        $kode_kategori = $this->request->getPost('kode_kategori'); // 🔥 Data dari input hidden
+        $nama_aset = $this->request->getPost('nama_aset');
+        $nup = $this->request->getPost('nup');
+        $status_aset = $this->request->getPost('status_aset');
+        $kondisi = $this->request->getPost('kondisi');
+
+        // Proses upload gambar
         $gambar = $this->request->getFile('gambar');
         if ($gambar->isValid() && !$gambar->hasMoved()) {
             $namaGambar = $gambar->getRandomName();
@@ -113,65 +178,47 @@ class AsetController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Gagal mengupload gambar.');
         }
 
-        // Simpan ke database
-        $data = [
-            'id_kategori' => $idKategori,
-            'status'      => $this->request->getPost('status'),
-            'kondisi'     => $this->request->getPost('kondisi'),
-            'gambar'      => $namaGambar
-        ];
-        $this->asetModel->insert($data);
+        // Debug: Pastikan gambar terupload
+        
 
-        // ✅ Redirect ke daftar aset berdasarkan kategori
-        return redirect()->to(base_url('aset/' . $idKategori))->with('success', 'Aset berhasil ditambahkan!');
+        // Simpan data ke database
+        $this->asetModel->insert([
+            'kode_kategori' => $kode_kategori,
+            'nama_aset' => $nama_aset,
+            'nup' => $nup,
+            'status_aset' => $status_aset,
+            'kondisi' => $kondisi,
+            'gambar' => $namaGambar
+        ]);
+
+        return redirect()->to('kategoriAset/detail/' . $kode_kategori)->with('success', 'Aset berhasil ditambahkan!');
     }
 
 
+    
 
-    // 🔹 Menampilkan form edit aset
-    public function edit($id)
+    public function update($id_aset)
     {
-        $aset = $this->asetModel->find($id);
+        $asetModel = new AsetModel();
+        $aset = $asetModel->find($id_aset);
+
         if (!$aset) {
-            return redirect()->back()->with('error', 'Aset tidak ditemukan!');
+            return redirect()->to(base_url('peminjaman/daftarAset'))->with('error', 'Data aset tidak ditemukan!');
         }
 
         $data = [
-            'title' => "Edit Aset",
-            'asetEdit' => $aset, 
-            'kategori' => $this->kategoriAsetModel->findAll(),
-            'asetList' => $this->asetModel->where('id_kategori', $aset['id_kategori'])->findAll() 
+            'nama_aset' => $this->request->getPost('nama_aset'),
+            'nup' => $this->request->getPost('nup'),
+            'kondisi' => $this->request->getPost('kondisi'),
+            'status_aset' => $this->request->getPost('status_aset'),
         ];
 
-        return view('peminjaman/daftarAset', $data);
-    }
-
-    // 🔹 Update aset dan kembali ke daftar aset dalam kategori yang sama
-    public function update()
-    {
-        $id = $this->request->getPost('id_aset');
-
-        // Ambil id_kategori untuk redirect setelah update
-        $aset = $this->asetModel->find($id);
-        if (!$aset) {
-            return redirect()->to('/aset')->with('error', 'Aset tidak ditemukan!');
-        }
-        $id_kategori = $aset['id_kategori'];
-
-        if (!$this->validate([
-            'status'  => 'required|in_list[Tersedia,Terpakai]',
-            'kondisi' => 'required|in_list[Baik,Perbaikan]',
-            'gambar'  => 'max_size[gambar,2048]|is_image[gambar]|mime_in[gambar,image/jpg,image/jpeg,image/png]'
-        ])) {
-            return redirect()->back()->withInput()->with('error', 'Validasi gagal!');
-        }
-
+        // Jika ada gambar baru diunggah
         $gambar = $this->request->getFile('gambar');
-        $namaGambar = $aset['gambar']; // Gunakan gambar lama jika tidak diubah
-
-        if ($gambar->isValid() && !$gambar->hasMoved()) {
-            $namaGambar = $gambar->getRandomName();
-            $gambar->move('uploads/aset', $namaGambar);
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+            $gambarName = $gambar->getRandomName();
+            $gambar->move('uploads/aset', $gambarName);
+            $data['gambar'] = $gambarName;
 
             // Hapus gambar lama jika ada
             if (!empty($aset['gambar']) && file_exists('uploads/aset/' . $aset['gambar'])) {
@@ -179,32 +226,35 @@ class AsetController extends BaseController
             }
         }
 
-        // Update data aset
-        $this->asetModel->update($id, [
-            'status'  => $this->request->getPost('status'),
-            'kondisi' => $this->request->getPost('kondisi'),
-            'gambar'  => $namaGambar
-        ]);
-
-        return redirect()->to('/aset/' . $id_kategori)->with('success', 'Aset berhasil diperbarui!');
+        $asetModel->update($id_aset, $data);
+        return redirect()->to(base_url('aset'))->with('success', 'Aset berhasil diperbarui');
     }
+
+    
 
     public function delete($id)
     {
-        // Ambil data aset sebelum dihapus
         $aset = $this->asetModel->find($id);
-
         if (!$aset) {
-            return redirect()->to(base_url('aset'))->with('error', 'Aset tidak ditemukan.');
+            throw PageNotFoundException::forPageNotFound('Aset tidak ditemukan.');
         }
 
-        $id_kategori = $aset['id_kategori']; // Dapatkan kategori aset
+        $kode_kategori = $aset['kode_kategori']?? null;
 
-        // Hapus aset
         $this->asetModel->delete($id);
+        return redirect()->to('kategoriAset/detail/' . $kode_kategori)->with('success', 'Aset berhasil dihapus!');
 
-        // Redirect kembali ke daftar aset berdasarkan kategori
-        return redirect()->to(base_url('aset/' . $id_kategori))->with('success', 'Aset berhasil dihapus!');
+    }
+
+    public function edit($id_aset)
+    {
+        $aset = $this->asetModel->find($id_aset);
+
+        if (!$aset) {
+            return redirect()->to(base_url('peminjaman/daftarAset'))->with('error', 'Aset tidak ditemukan');
+        }
+
+        return view('peminjaman/editAset', ['title' => 'Edit Aset', 'aset' => $aset]);
     }
 
 }

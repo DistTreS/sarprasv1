@@ -8,16 +8,24 @@
         <p style="color: red;"><?= session()->getFlashdata('error') ?></p>
     <?php endif; ?>
 
-    <form action="<?= base_url('/pegawai/peminjaman/pengembalian/simpan') ?>" method="post" enctype="multipart/form-data">
+    <form action="<?= base_url('/pegawai/peminjaman/pengembalian/simpan/' . $peminjaman['id_peminjaman']) ?>" method="post" enctype="multipart/form-data">
         <input type="hidden" name="id_peminjaman" value="<?= esc($peminjaman['id_peminjaman']) ?>">
 
         <label>Tanggal Pengembalian:</label>
         <input type="text" value="<?= date('Y-m-d H:i:s') ?>" disabled>
 
-        <label>Bukti Pengembalian:</label>
-        <input type="file" name="bukti_pengembalian" required>
 
-        <button type="submit">Kembalikan</button>
+        <?php if (!empty($peminjaman['bukti_pengembalian'])): ?>
+            <strong>Anda Sudah Upload Bukti <P></P>Pengembalian!</strong>
+            <?php else: ?>
+                <div class="alert alert-danger mt-2" role="alert">
+                <label>Bukti Pengembalian:</label>
+                <input type="file" name="bukti_pengembalian" required>
+                </div>
+            <?php endif; ?>
+
+        <button type="submit">Submit</button>
+        <a href="<?= base_url('pegawai/peminjaman') ?>" class="btn btn-secondary">Kembali</a>
     </form>
 </div>
 
