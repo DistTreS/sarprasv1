@@ -6,10 +6,13 @@ use CodeIgniter\Model;
 class AsetRusakModel extends Model
 {
     protected $table = 'aset_rusak';
-    protected $primaryKey = 'id_aset';
+    protected $primaryKey = 'id_rusak';
     protected $allowedFields = [
-        'id',
+        'id_aset',
+        'id_user',
+        'tanggal_pengajuan',
+        'status_rusak',
         'keterangan',
-        'gambar'
+        'bukti_foto'
     ];
 }

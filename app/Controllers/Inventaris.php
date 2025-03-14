@@ -6,8 +6,9 @@ use App\Models\ItemRequestsModel;
 use App\Models\PersediaanInventarisModel;
 use App\Models\RiwayatInventarisModel;
 use App\Models\TransaksiInventarisModel;
+use App\Models\RequestDetailsModel;
+use App\Models\UsersModel;
 use CodeIgniter\Controller;
-use App\Models\RequestHistoryModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Inventaris extends Controller
@@ -15,21 +16,28 @@ class Inventaris extends Controller
     protected $inventarisModel;
     protected $transactionModel;
     protected $itemRequestsModel;
-    protected $requestHistoryModel;
+    protected $requestDetailsModel;
+    protected $UsersModel;
     
     public function __construct()
     {
         $this->inventarisModel = new PersediaanInventarisModel();
         $this->transactionModel = new TransaksiInventarisModel();
         $this->itemRequestsModel = new ItemRequestsModel();
-        $this->requestHistoryModel = new RequestHistoryModel();
-        $this->persediaanModel = new PersediaanInventarisModel();
+        $this->requestDetailsModel = new RequestDetailsModel();
+        $this->UsersModel = new UsersModel();
     }
 
     public function index()
     {
         $data['persediaan'] = $this->inventarisModel->findAll();
         return view('inventaris/index', $data);
+    }
+
+    public function index_pegawai()
+    {
+        $data['persediaan'] = $this->inventarisModel->findAll();
+        return view('inventaris/index_pegawai', $data);
     }
 
      // Form Tambah Data
@@ -67,14 +75,14 @@ class Inventaris extends Controller
     public function update($id)
     {
         $this->inventarisModel->update($id, $this->request->getPost());
-        return redirect()->to('/inventaris');
+        return redirect()->to('/inventaris/index');
     }
 
     // Hapus Data
     public function delete($id)
     {
         $this->inventarisModel->delete($id);
-        return redirect()->to('/inventaris');
+        return redirect()->to('/inventaris/index');
     }
 
     public function insert()
@@ -129,11 +137,15 @@ class Inventaris extends Controller
         $newJumlah = $existingItem['jumlah'] + $jumlah;
         $inventoryModel->update($id_barang, ['jumlah' => $newJumlah]);
 
+        $session = session();
+        $role = $session->get('role');
+        $user_id = $session->get('id'); 
+
         // Insert transaction
         $transactionData = [
             'id_barang' => $id_barang,
-            'id_user' => 1, // Replace with actual user ID
-            'nama_peminta' => 'System', // Replace if needed
+            'id_user' => '1', // Replace with actual user ID
+            'nama_peminta' => 'Administrator', // Replace if needed
             'tipe_transaksi' => 'Masuk',
             'jumlah' => $jumlah,
             'tanggal_transaksi' => date('Y-m-d'),
@@ -154,18 +166,16 @@ class Inventaris extends Controller
         $historyModel->insert($historyData);
     }
 
-    return redirect()->to('/inventaris')->with('success', 'Items inserted successfully.');
+    return redirect()->to('inventaris/index')->with('success', 'Items inserted successfully.');
 }
-
 
 public function transaction_history()
 {
-
-    $page = $this->request->getVar('page');
-    $page = isset($page) ? (int) $page : 1;
+    $page = $this->request->getVar('page') ?? 1;
     $perPage = 10;
-    
+
     $filters = [];
+
     if ($this->request->getGet('date_from')) {
         $filters['date_from'] = $this->request->getGet('date_from');
     }
@@ -173,10 +183,13 @@ public function transaction_history()
         $filters['date_to'] = $this->request->getGet('date_to');
     }
     if ($this->request->getGet('type')) {
-        $filters['type'] = $this->request->getGet('type');
+        $type = $this->request->getGet('type');
+        if (in_array($type, ['Masuk', 'Keluar'])) { // Ensure case-sensitive match
+            $filters['tipe_transaksi'] = $type;
+        }
     }
     if ($this->request->getGet('user')) {
-        $filters['user'] = $this->request->getGet('user');
+        $filters['nama_peminta'] = $this->request->getGet('user');
     }
 
     $transactions = $this->transactionModel->getFilteredTransactions($filters, $perPage, ($page - 1) * $perPage);
@@ -190,6 +203,7 @@ public function transaction_history()
         ]
     ]);
 }
+
 
 public function item_history($id_barang)
 {
@@ -214,177 +228,311 @@ public function item_history($id_barang)
     ]);
 }
 
-/**
-     * Display user request form
-     */
-    public function userRequestItems()
+public function user_request_item()
     {
-        $data['persediaan'] = $this->inventarisModel->getAvailableItems();
-        return view('inventaris/user_request_items', $data);
+        $data['items'] = $this->inventarisModel->findAll();
+        return view('inventaris/user_request_item', $data);
     }
 
-    /**
-     * Handle item request submission
-     */
-    // public function submitRequest()
-    // {
-    //     $nama_peminta = $this->request->getPost('nama_peminta');
-    //     $items = $this->request->getPost('items'); // Expecting array of id_barang => jumlah
 
-    //     if (empty($nama_peminta) || empty($items)) {
-    //         return redirect()->back()->with('error', 'Please provide all required information.');
-    //     }
 
-    //     $db = \Config\Database::connect();
-    //     $db->transStart();
 
-    //     // Insert the main request record
-    //     $requestData = [
-    //         'nama_peminta' => $nama_peminta,
-    //         'status' => 'Sent',
-    //         'tanggal_request' => date('Y-m-d H:i:s'),
-    //     ];
-    //     $db->table('item_requests')->insert($requestData);
-    //     $id_request = $db->insertID();
+public function manage_request()
+{
+    $requestModel = new ItemRequestsModel();
+    $detailModel = new RequestDetailsModel();
+    
+    // Get all requests
+    $requests = $requestModel->findAll();
+    
+    // Get details for each request
+    foreach ($requests as &$request) {
+        $details = $detailModel
+            ->select('request_details.*, persediaan.nama_barang')
+            ->join('persediaan', 'persediaan.id_barang = request_details.id_barang')
+            ->where('id_request', $request['id_request'])
+            ->findAll();
+            
+        $request['details'] = $details;
+    }
+    
+    return view('inventaris/manage_request', ['requests' => $requests]);
+}
 
-    //     // Insert requested items
-    //     foreach ($items as $id_barang => $jumlah) {
-    //         $this->itemRequestsModel->insert([
-    //             'id_request' => $id_request,
-    //             'id_barang' => $id_barang,
-    //             'jumlah' => $jumlah
-    //         ]);
-    //     }
 
-    //     // Log the request creation in history
-    //     $this->requestHistoryModel->logStatusChange($id_request, 'Sent');
-
-    //     $db->transComplete();
-
-    //     return redirect()->to('/inventaris/manage_requests')->with('success', 'Request submitted successfully.');
-    // }
-
-    public function submitRequest()
+public function submit_request()
 {
     $itemRequestsModel = new ItemRequestsModel();
+    $requestDetailsModel = new RequestDetailsModel();
     $db = \Config\Database::connect();
-    
-    $nama_peminta = $this->request->getPost('nama_peminta');
-    $tanggal_request = date('Y-m-d H:i:s');
-    $status = 'Sent';
-    $items = $this->request->getPost('items'); // Should be an array
 
+    // Get form data
+    $nama_peminta = $this->request->getPost('nama_peminta');
+    $items = $this->request->getPost('items');
+
+    // Basic validation
     if (empty($nama_peminta) || empty($items)) {
-        return redirect()->back()->with('error', 'Requester name and items are required.');
+        return redirect()->back()
+                        ->with('error', 'Nama peminta dan items harus diisi.')
+                        ->withInput();
     }
 
     // Start transaction
     $db->transStart();
 
-    $data = [
-        'id_request' => $this->request->getPost('id_request'),
-        'id_barang'  => $this->request->getPost('id_barang'),
-        'jumlah'     => $this->request->getPost('jumlah')
-    ];
+    try {
+        // Insert main request - now including user_id
+        $requestData = [
+            'nama_peminta' => $nama_peminta,
+            'tanggal_request' => date('Y-m-d H:i:s'),
+            'status' => 'Sent',
+            'user_id' => 1  // Set a default user_id or get it from your authentication system
+        ];
 
-    // Dump and die to see the data
-    dd($data);
-
-    $this->itemRequestsModel->insert($data);
-    
-    // Insert into item_requests table
-    $db->table('item_requests')->insert([
-        'nama_peminta' => $nama_peminta,
-        'tanggal_request' => $tanggal_request,
-        'status' => $status
-    ]);
-
-    // Get the last inserted request ID
-    $id_request = $db->insertID();
-
-    // Insert items into request_details
-    foreach ($items as $item) {
-        $db->table('request_details')->insert([
-            'id_request' => $id_request,
-            'id_barang' => $item['id_barang'],
-            'jumlah' => $item['jumlah']
-        ]);
-    }
-
-    // Commit transaction
-    $db->transComplete();
-
-    if ($db->transStatus() === false) {
-        return redirect()->back()->with('error', 'Failed to submit request.');
-    }
-
-    return redirect()->back()->with('success', 'Request submitted successfully.');
-}
-
-
-    /**
-     * Display list of requests
-     */
-    // public function manageRequests()
-    // {
-    //     $db = \Config\Database::connect();
-    //     $requests = $db->table('item_requests')->get()->getResultArray();
-        
-    //     foreach ($requests as &$request) {
-    //         $request['items'] = $this->itemRequestsModel->getItemsByRequestId($request['id']);
-    //     }
-
-    //     $data['item_requests'] = $requests;
-    //     return view('inventaris/manage_requests', $data);
-    // }
-
-    public function manageRequests()
-{
-    $db = \Config\Database::connect();
-    $itemRequestsModel = new ItemRequestsModel(); // Initialize the model
-
-    // Fetch all requests
-    $requests = $db->table('item_requests')->get()->getResultArray();
-
-    foreach ($requests as &$request) {
-        // Get items for each request
-        $request['items'] = $itemRequestsModel->getItemsByRequestId($request['id']);
-    }
-
-    // Pass the corrected variable name
-    return view('inventaris/manage_requests', ['requests' => $requests]);
-}
-
-
-    /**
-     * Update request status
-     */
-    public function updateRequestStatus($id_request)
-    {
-        $status = $this->request->getPost('status');
-
-        if (!$status) {
-            return redirect()->back()->with('error', 'Invalid status update.');
+        if (!$itemRequestsModel->insert($requestData)) {
+            log_message('error', 'Failed to insert request: ' . print_r($itemRequestsModel->errors(), true));
+            throw new \Exception('Gagal menyimpan data permintaan utama.');
         }
 
-        $db = \Config\Database::connect();
-        $db->table('item_requests')->where('id', $id_request)->update(['status' => $status]);
-        $this->requestHistoryModel->logStatusChange($id_request, $status);
+        $id_request = $db->insertID();
 
-        return redirect()->back()->with('success', 'Status updated successfully.');
+        // Process each requested item
+        foreach ($items as $item) {
+            if (empty($item['id_barang']) || empty($item['jumlah']) || $item['jumlah'] <= 0) {
+                throw new \Exception('Data item tidak valid.');
+            }
+
+            $detailData = [
+                'id_request' => $id_request,
+                'id_barang' => $item['id_barang'],
+                'jumlah' => $item['jumlah']
+            ];
+            
+            if (!$requestDetailsModel->insert($detailData)) {
+                log_message('error', 'Failed to insert detail: ' . print_r($requestDetailsModel->errors(), true));
+                throw new \Exception('Gagal menyimpan detail permintaan.');
+            }
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === false) {
+            throw new \Exception('Gagal menyimpan permintaan.');
+        }
+
+        return redirect()->to('inventaris/user_request_item')
+                        ->with('success', 'Permintaan berhasil disubmit.');
+
+    } catch (\Exception $e) {
+        $db->transRollback();
+        log_message('error', 'Request submission error: ' . $e->getMessage());
+        return redirect()->back()
+                        ->with('error', $e->getMessage())
+                        ->withInput();
     }
-
-    /**
-     * View request history
-     */
-    public function viewRequestHistory($id_request)
-    {
-        $data['history'] = $this->requestHistoryModel->getHistoryByRequestId($id_request);
-        return view('inventaris/request_history', $data);
-    }
-
-
 }
 
 
+// public function update_status($requestId)
+// {
+//     if ($this->request->getMethod() === 'post') {
+//         $newStatus = $this->request->getPost('status');
+
+//         log_message('debug', "Updating request ID: {$requestId} with status: {$newStatus}");
+
+//         // Validate status
+//         if (!in_array($newStatus, ['Sent', 'Processed', 'Accepted', 'Rejected'])) {
+//             log_message('error', 'Invalid status: ' . $newStatus);
+//             return $this->response->setJSON(['success' => false, 'message' => 'Status tidak valid!']);
+//         }
+
+//         // Check if the request exists
+//         $requestData = $this->itemRequestsModel->find($requestId);
+//         if (!$requestData) {
+//             log_message('error', "Request ID {$requestId} not found!");
+//             return $this->response->setJSON(['success' => false, 'message' => 'Request tidak ditemukan!']);
+//         }
+
+//         // If Accepted, reduce inventory
+//         if ($newStatus === 'Accepted') {
+//             $requestDetails = $this->requestDetailsModel->where('id_request', $requestId)->findAll();
+
+//             foreach ($requestDetails as $detail) {
+//                 $itemId = $detail['id_barang'];
+//                 $quantity = $detail['jumlah'];
+
+//                 $item = $this->inventarisModel->find($itemId);
+//                 if (!$item || $item['jumlah'] < $quantity) {
+//                     log_message('error', "Not enough stock for item ID: {$itemId}");
+//                     return $this->response->setJSON([
+//                         'success' => false,
+//                         'message' => 'jumlah tidak cukup untuk ' . $item['nama_barang']
+//                     ]);
+//                 }
+
+//                 // Reduce stock
+//                 $this->inventarisModel->update($itemId, ['jumlah' => $item['jumlah'] - $quantity]);
+
+//                 // Insert into transaksi_inventaris
+//                 $this->transactionModel->insert([
+//                     'id_barang' => $itemId,
+//                     'jumlah' => $quantity,
+//                     'tipe_transaksi' => 'Keluar',
+//                     'tanggal_request' => date('Y-m-d H:i:s'),
+//                     'user_id' => $requestData['user_id']
+//                 ]);
+
+//                 // Insert into riwayat_inventaris
+                
+
+//             }
+//         }
+
+//         // Update request status
+//         if ($this->itemRequestsModel->update($requestId, ['status' => $newStatus])) {
+//             log_message('debug', "Request ID: {$requestId} updated successfully.");
+//             return $this->response->setJSON(['success' => true, 'message' => 'Status berhasil diperbarui!']);
+//         } else {
+//             log_message('error', "Failed to update request ID: {$requestId}");
+//             return $this->response->setJSON(['success' => false, 'message' => 'Gagal memperbarui status!']);
+//         }
+//     }
+
+//     return $this->response->setJSON(['success' => false, 'message' => 'Metode tidak diizinkan!']);
+// }
+
+
+public function update_status($requestId)
+{
+    if ($this->request->getMethod() === 'post') {
+        $newStatus = $this->request->getPost('status');
+
+        log_message('debug', "Updating request ID: {$requestId} with status: {$newStatus}");
+
+        // Validate status
+        if (!in_array($newStatus, ['Sent', 'Processed', 'Accepted', 'Rejected'])) {
+            log_message('error', 'Invalid status: ' . $newStatus);
+            return $this->response->setJSON(['success' => false, 'message' => 'Status tidak valid!']);
+        }
+
+        // Check if the request exists
+        $requestData = $this->itemRequestsModel->find($requestId);
+        if (!$requestData) {
+            log_message('error', "Request ID {$requestId} not found!");
+            return $this->response->setJSON(['success' => false, 'message' => 'Request tidak ditemukan!']);
+        }
+
+        // Prepare update data
+        $updateData = ['status' => $newStatus];
+
+        // If Accepted, reduce inventory and update tanggal_request
+        if ($newStatus === 'Accepted') {
+            $requestDetails = $this->requestDetailsModel->where('id_request', $requestId)->findAll();
+
+            foreach ($requestDetails as $detail) {
+                $itemId = $detail['id_barang'];
+                $quantity = $detail['jumlah'];
+
+                $item = $this->inventarisModel->find($itemId);
+                if (!$item || $item['jumlah'] < $quantity) {
+                    log_message('error', "Not enough stock for item ID: {$itemId}");
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Jumlah tidak cukup untuk ' . $item['nama_barang']
+                    ]);
+                }
+
+                // Reduce stock
+                $this->inventarisModel->update($itemId, ['jumlah' => $item['jumlah'] - $quantity]);
+                // $user = $this->UsersModel->find($requestData['user_id']); // Fetch user info
+
+                $this->transactionModel->insert([
+                    'id_barang' => $itemId,
+                    'jumlah' => $quantity,
+                    'tipe_transaksi' => 'Keluar',
+                    'tanggal_transaksi' => date('Y-m-d H:i:s'),
+                    'keterangan' => 'Approved request'
+                ]);
+                
+
+            }
+
+            // **Update tanggal_request to the current date when accepted**
+            $updateData['tanggal_request'] = date('Y-m-d H:i:s');
+        }
+
+        // Update request status (and tanggal_request if accepted)
+        if ($this->itemRequestsModel->update($requestId, $updateData)) {
+            log_message('debug', "Request ID: {$requestId} updated successfully.");
+            return $this->response->setJSON(['success' => true, 'message' => 'Status berhasil diperbarui!']);
+        } else {
+            log_message('error', "Failed to update request ID: {$requestId}");
+            return $this->response->setJSON(['success' => false, 'message' => 'Gagal memperbarui status!']);
+        }
+    }
+
+    return $this->response->setJSON(['success' => false, 'message' => 'Metode tidak diizinkan!']);
+}
+
+
+
+
+
+public function store_request()
+{
+    $postData = $this->request->getPost();
+
+    // Check if items exist
+    if (!isset($postData['items']) || empty($postData['items'])) {
+        log_message('error', 'Request submission error: No items selected.');
+        return $this->response->setJSON(['success' => false, 'message' => 'No items selected.']);
+    }
+
+    // Get user information (nullable)
+    $userId = session()->get('user_id') ?? null;
+    $namaPeminta = $postData['nama_peminta'] ?? session()->get('username') ?? 'Guest';
+
+    // Main request data
+    $requestData = [
+        'user_id' => $userId,
+        'nama_peminta' => $namaPeminta,
+        'tanggal_request' => date('Y-m-d H:i:s'),
+        'status' => 'Sent'
+    ];
+
+    // Debugging log
+    log_message('debug', 'Request Data: ' . json_encode($requestData));
+    log_message('debug', 'Testing log: Request data => ' . json_encode($this->request->getPost()));
+
+
+    // Insert into `item_requests`
+    if (!$this->itemRequestsModel->insert($requestData)) {
+        log_message('error', 'Request submission error: Failed to insert into item_requests.');
+        return $this->response->setJSON(['success' => false, 'message' => 'Failed to create request.']);
+    }
+
+    // Get the last inserted ID
+    $requestId = $this->itemRequestsModel->insertID();
+
+    // Insert request details
+    foreach ($postData['items'] as $item) {
+        if ($item['jumlah'] > 0) {
+            $detailData = [
+                'id_request' => $requestId,
+                'id_barang' => $item['id_barang'],
+                'jumlah' => $item['jumlah']
+            ];
+
+            log_message('debug', 'Inserting Request Detail: ' . json_encode($detailData));
+
+            if (!$this->requestDetailsModel->insert($detailData)) {
+                log_message('error', 'Request submission error: Failed to insert request details for item ' . $item['id_barang']);
+            }
+        }
+    }
+
+    return $this->response->setJSON(['success' => true, 'message' => 'Request submitted successfully.']);
+}
+
+}
 

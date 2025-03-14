@@ -13,8 +13,7 @@
                 <li><a href="<?= base_url('inventaris/index'); ?>">Daftar Inventaris</a></li>
                 <li><a href="<?= base_url('inventaris/insert'); ?>">Insert Inventaris</a></li>
                 <li><a href="<?= base_url('inventaris/transaction_history'); ?>">Riwayat Transaksi</a></li>
-                <li><a href="<?= base_url('inventaris/manage_requests'); ?>">Daftar Permintaan</a></li>
-                <li><a href="<?= base_url('inventaris/user_request_items'); ?>">Request Items</a></li>
+                <li><a href="<?= base_url('inventaris/manage_request'); ?>">Daftar Permintaan</a></li>
             </ul>
         </li>
 

@@ -1,4 +1,4 @@
-<?= $this->extend('layout/main'); ?>
+<?= $this->extend('layout/mainpegawai'); ?>
 
 <?= $this->section('content'); ?>
 <h1>Dashboard</h1>
