@@ -7,33 +7,34 @@ use CodeIgniter\Model;
 class PesertaDiklatModel extends Model
 {
     protected $table = 'peserta_diklat';
-    protected $primaryKey = 'id_peserta_diklat';
+
+    protected $primaryKey = 'id_peserta';
+
     protected $allowedFields = [
         'id_peserta',
         'id_diklat',
         'angkatan',
         'tahun',
         'sertifikat',
-        'judul_tugas_akhir'
+        'judul_tugas_akhir',
+        'tugas_akhir'
     ];
 
+    // Fungsi untuk mendapatkan data peserta berdasarkan berbagai filter
     public function getFilteredPeserta($keyword = null, $jenis_diklat = null, $instansi = null, $angkatan = null, $tahun = null)
     {
         $query = $this->select('
-        peserta_diklat.*, 
-        peserta.nama, 
-        peserta.nip, 
-        peserta.instansi, 
-        peserta.golruang, 
-        CONCAT(peserta.tempat_lahir, ", ", peserta.tanggal_lahir) AS tempat_tgl_lahir,
-        peserta.nama_jabatan, 
-        peserta_diklat.angkatan, 
-        peserta_diklat.tahun, 
-        peserta_diklat.judul_tugas_akhir
-    ')
+            peserta_diklat.*, 
+            peserta.nama, 
+            peserta.nip, 
+            peserta.instansi, 
+            peserta.golruang, 
+            CONCAT(peserta.tempat_lahir, ", ", peserta.tanggal_lahir) AS tempat_tgl_lahir,
+            peserta.nama_jabatan
+        ')
             ->join('peserta', 'peserta.id_peserta = peserta_diklat.id_peserta', 'left');
 
-        // Pencarian berdasarkan nama atau NIP
+        // Filter berdasarkan nama atau NIP
         if (!empty($keyword)) {
             $query->groupStart()
                 ->like('peserta.nama', $keyword)
@@ -64,23 +65,19 @@ class PesertaDiklatModel extends Model
         return $query->paginate(25);
     }
 
-    public function getFilteredPesertaforpdf($keyword = null, $jenis_diklat = null, $instansi = null, $angkatan = null, $tahun = null)
+    // Fungsi untuk mendapatkan data peserta yang difilter untuk keperluan cetak PDF
+    public function getFilteredPesertaForPdf($keyword = null, $jenis_diklat = null, $instansi = null, $angkatan = null, $tahun = null)
     {
         $query = $this->select('
-        peserta_diklat.*, 
-        peserta.nama, 
-        peserta.nip, 
-        peserta.instansi, 
-        peserta.golruang, 
-        CONCAT(peserta.tempat_lahir, ", ", peserta.tanggal_lahir) AS tempat_tgl_lahir,
-        peserta.nama_jabatan, 
-        peserta_diklat.angkatan, 
-        peserta_diklat.tahun, 
-        peserta_diklat.judul_tugas_akhir
-    ')
+            peserta_diklat.*, 
+            CONCAT(peserta.nama, "\n", peserta.nip, "\n", peserta.tempat_lahir, ", ", peserta.tanggal_lahir ) AS nama_dan_nip,
+            peserta.instansi, 
+            peserta.golruang, 
+            peserta.nama_jabatan
+        ')
             ->join('peserta', 'peserta.id_peserta = peserta_diklat.id_peserta', 'left');
 
-        // Filter yang ada sebelumnya
+        // Filter yang sama seperti fungsi sebelumnya
         if (!empty($keyword)) {
             $query->groupStart()
                 ->like('peserta.nama', $keyword)
@@ -93,12 +90,10 @@ class PesertaDiklatModel extends Model
         if (!empty($angkatan)) $query->where('peserta_diklat.angkatan', $angkatan);
         if (!empty($tahun)) $query->where('peserta_diklat.tahun', $tahun);
 
-        return $query->findAll(); // Menampilkan semua data
+        return $query->findAll(); // Mengembalikan semua data untuk PDF
     }
 
-
-
-
+    // Fungsi untuk mendapatkan daftar instansi unik
     public function getInstansiList()
     {
         return $this->select('peserta.instansi')
@@ -107,6 +102,7 @@ class PesertaDiklatModel extends Model
             ->findAll();
     }
 
+    // Fungsi untuk mendapatkan daftar angkatan unik
     public function getAngkatanList()
     {
         return $this->select('angkatan')
@@ -114,11 +110,66 @@ class PesertaDiklatModel extends Model
             ->findAll();
     }
 
+    // Fungsi untuk mendapatkan daftar tahun unik
     public function getTahunList()
     {
         return $this->select('tahun')
             ->distinct()
             ->orderBy('tahun', 'DESC')
             ->findAll();
+    }
+
+    // Ambil satu peserta diklat dengan composite key
+    public function findComposite($id_peserta, $id_diklat)
+    {
+        return $this->where('id_peserta', $id_peserta)
+            ->where('id_diklat', $id_diklat)
+            ->first();
+    }
+
+    // Update data dengan composite key
+    public function updateComposite($id_peserta, $id_diklat, $data)
+    {
+        return $this->where('id_peserta', $id_peserta)
+            ->where('id_diklat', $id_diklat)
+            ->set($data)
+            ->update();
+    }
+
+    // Delete data dengan composite key
+    public function deleteComposite($id_peserta, $id_diklat)
+    {
+        return $this->where('id_peserta', $id_peserta)
+            ->where('id_diklat', $id_diklat)
+            ->delete();
+    }
+
+    public function getPublikasiTugasAkhir($keyword = null)
+    {
+        $query = $this->select('
+            peserta_diklat.id_peserta, 
+            peserta_diklat.id_diklat,
+            peserta_diklat.judul_tugas_akhir, 
+            peserta_diklat.tahun,
+            peserta_diklat.tugas_akhir, 
+            peserta.nama, 
+            peserta.nip, 
+            peserta.instansi
+        ')
+            ->join('peserta', 'peserta.id_peserta = peserta_diklat.id_peserta', 'left')
+            ->where('peserta_diklat.judul_tugas_akhir IS NOT NULL')
+            ->where('peserta_diklat.judul_tugas_akhir !=', '')
+            ->where('peserta_diklat.tugas_akhir IS NOT NULL')
+            ->where('peserta_diklat.tugas_akhir !=', '');
+
+        // Jika ada keyword, tambahkan filter pencarian
+        if (!empty($keyword)) {
+            $query->groupStart()
+                ->like('peserta_diklat.judul_tugas_akhir', $keyword)
+                ->orLike('peserta_diklat.tahun', $keyword)
+                ->groupEnd();
+        }
+
+        return $query->findAll();
     }
 }

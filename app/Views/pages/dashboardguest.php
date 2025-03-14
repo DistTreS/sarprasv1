@@ -1,6 +1,6 @@
-<?= $this->extend('layout/main') ?>
+<?= $this->extend('layout/mainguest'); ?>
 
-<?= $this->section('content') ?>
+<?= $this->section('content'); ?>
 
 <style>
     /* Reset and base styles */
@@ -254,107 +254,54 @@
     }
 </style>
 
-<div class="container">
-    <h2>Data Peserta Diklat</h2>
-    <div class="mb-3 d-flex justify-content-between">
-        <a href="<?= base_url('diklat/tambahPeserta'); ?>" class="btn btn-primary">Tambah Peserta</a>
-        <a href="<?= base_url('diklat/jenisDiklat') ?>" class="btn btn-secondary">Kelola Jenis Diklat</a>
-        <a href="<?= site_url('diklat/exportToPdf') ?>?keyword=<?= esc($keyword) ?>&jenis_diklat=<?= esc($filterDiklat) ?>&instansi=<?= esc($instansi) ?>&angkatan=<?= esc($angkatan) ?>&tahun=<?= esc($tahun) ?>" class="btn btn-danger">Export ke PDF</a>
-    </div>
+<h2>Daftar Publikasi Tugas Akhir</h2>
 
-    <!-- Form Pencarian dan Filter -->
-    <form action="<?= site_url('diklat') ?>" method="GET" class="d-flex mb-3">
-        <input type="text" name="keyword" placeholder="Cari Nama atau NIP" value="<?= esc($keyword) ?>" class="form-control me-2">
-        <button type="submit" class="btn btn-primary">Cari</button>
-    </form>
+<form action="<?= site_url('dashboard/guest') ?>" method="GET" class="d-flex mb-3">
+    <input type="text" name="keyword" placeholder="Cari Judul atau Tahun" value="<?= esc($keyword ?? '') ?>" class="form-control me-2">
+    <button type="submit" class="btn btn-primary">Cari</button>
+</form>
 
-    <form action="<?= site_url('diklat') ?>" method="GET" class="d-flex flex-wrap gap-2 mb-3">
-        <select name="jenis_diklat" class="form-select">
-            <option value="">Pilih Jenis Diklat</option>
-            <?php foreach ($jenisDiklat as $jd) : ?>
-                <option value="<?= $jd['id_diklat'] ?>" <?= $filterDiklat == $jd['id_diklat'] ? 'selected' : '' ?>>
-                    <?= esc($jd['nama_diklat']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="instansi" class="form-select">
-            <option value="">Semua Instansi</option>
-            <?php foreach ($instansi_list as $instansi) : ?>
-                <option value="<?= esc($instansi['instansi']) ?>" <?= $instansi == $instansi['instansi'] ? 'selected' : '' ?>>
-                    <?= esc($instansi['instansi']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="angkatan" class="form-select">
-            <option value="">Pilih Angkatan</option>
-            <?php foreach ($angkatan_list as $row) : ?>
-                <option value="<?= esc($row['angkatan']) ?>" <?= $angkatan == $row['angkatan'] ? 'selected' : '' ?>>
-                    <?= esc($row['angkatan']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="tahun" class="form-select">
-            <option value="">Pilih Tahun</option>
-            <?php foreach ($tahun_list as $row) : ?>
-                <option value="<?= esc($row['tahun']) ?>" <?= $tahun == $row['tahun'] ? 'selected' : '' ?>>
-                    <?= esc($row['tahun']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <button type="submit" class="btn btn-success">Filter</button>
-    </form>
-
-    <!-- Tabel Peserta Diklat -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>NIP</th>
-                <th>Instansi</th>
-                <th>Angkatan</th>
-                <th>Tahun</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($peserta_diklat)) : ?>
-                <?php
-                // Hitung nomor urut berdasarkan halaman saat ini
-                $currentPage = $pager->getCurrentPage(); // Halaman saat ini
-                $perPage = $pager->getPerPage(); // Jumlah data per halaman
-                $no = ($currentPage - 1) * $perPage + 1; // Nomor awal untuk halaman ini
-                ?>
-                <?php foreach ($peserta_diklat as $peserta) : ?>
-                    <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= esc($peserta['nama']); ?></td>
-                        <td><?= esc($peserta['nip']); ?></td>
-                        <td><?= esc($peserta['instansi']); ?></td>
-                        <td><?= esc($peserta['angkatan']); ?></td>
-                        <td><?= esc($peserta['tahun']); ?></td>
-                        <td>
-                            <a href="<?= base_url('diklat/viewPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-info">View</a>
-                            <a href="<?= base_url('diklat/editPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-warning">Edit</a>
-                            <a href="<?= base_url('diklat/hapusPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?');">Delete</a>
-                        </td>
-
-                    </tr>
-                <?php endforeach; ?>
-            <?php else : ?>
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Judul Tugas Akhir</th>
+            <th>Tahun</th>
+            <th>Nama</th>
+            <th>NIP</th>
+            <th>Instansi</th>
+            <th>File</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (!empty($publikasi)) : ?>
+            <?php $no = 1;
+            foreach ($publikasi as $item) : ?>
                 <tr>
-                    <td colspan="7" style="text-align: center;">Tidak ada data peserta diklat.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                    <td><?= $no++; ?></td>
+                    <td><?= esc($item['judul_tugas_akhir']); ?></td>
+                    <td><?= esc($item['tahun']); ?></td>
+                    <td><?= esc($item['nama']); ?></td>
+                    <td><?= esc($item['nip']); ?></td>
+                    <td><?= esc($item['instansi']); ?></td>
 
-    <!-- Pagination -->
-    <?= $pager->links() ?>
-</div>
+                    <td>
+                        <?php if (!empty($item['tugas_akhir'])) : ?>
+                            <a href="<?= base_url('diklat/lihatTugasAkhir/' . esc($item['id_peserta']) . '/' . esc($item['id_diklat'])) ?>" class="btn btn-primary">
+                                Lihat Tugas Akhir
+                            </a>
+                        <?php else : ?>
+                            Tidak ada file
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <tr>
+                <td colspan="6">Belum ada publikasi tugas akhir.</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
 
 <?= $this->endSection() ?>

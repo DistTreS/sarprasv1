@@ -115,10 +115,8 @@
     <table class="peserta-table">
         <thead>
             <tr>
-                <th>Nama</th>
-                <th>NIP</th>
+                <th>Nama/NIP/Tempat,Tgl Lahir</th>
                 <th>Golruang</th>
-                <th>Tempat & Tanggal Lahir</th>
                 <th>Nama Jabatan</th>
                 <th>Instansi</th>
                 <th>Angkatan</th>
@@ -129,10 +127,8 @@
         <tbody>
             <?php foreach ($peserta_diklat as $peserta): ?>
                 <tr>
-                    <td><?= esc($peserta['nama']) ?></td>
-                    <td><?= esc($peserta['nip']) ?></td>
+                    <td><?= esc($peserta['nama_dan_nip']) ?></td>
                     <td><?= esc($peserta['golruang']) ?></td>
-                    <td><?= esc($peserta['tempat_tgl_lahir']) ?></td>
                     <td><?= esc($peserta['nama_jabatan']) ?></td>
                     <td><?= esc($peserta['instansi']) ?></td>
                     <td><?= esc($peserta['angkatan']) ?></td>

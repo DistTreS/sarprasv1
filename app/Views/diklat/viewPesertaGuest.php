@@ -1,4 +1,4 @@
-<?= $this->extend('layout/main') ?>
+<?= $this->extend('layout/mainguest') ?>
 
 <?= $this->section('content') ?>
 <style>
@@ -152,18 +152,7 @@
                     <th>Tahun</th>
                     <td><?= esc($peserta_diklat['tahun'] ?? '-') ?></td>
                 </tr>
-                <tr>
-                    <th>Sertifikat</th>
-                    <td>
-                        <?php if (!empty($peserta_diklat['sertifikat'])) : ?>
-                            <a href="<?= base_url('uploads/sertifikat/' . $peserta_diklat['sertifikat']) ?>" class="btn btn-primary" download>
-                                Download Sertifikat
-                            </a>
-                        <?php else : ?>
-                            -
-                        <?php endif; ?>
-                    </td>
-                </tr>
+
                 <tr>
                     <th>Judul Tugas Akhir</th>
                     <td><?= esc($peserta_diklat['judul_tugas_akhir'] ?? '-') ?></td>
@@ -173,8 +162,8 @@
                     <th>File Tugas Akhir</th>
                     <td>
                         <?php if (!empty($peserta_diklat['tugas_akhir'])) : ?>
-                            <a href="<?= base_url('uploads/tugas_akhir/' . $peserta_diklat['tugas_akhir']) ?>" class="btn btn-primary" download>
-                                Download Tugas Akhir
+                            <a href="<?= base_url('diklat/lihatTugasAkhir/' . $peserta['id_peserta'] . '/' . $peserta_diklat['id_diklat']) ?>" class="btn btn-primary">
+                                Lihat Tugas Akhir
                             </a>
                         <?php else : ?>
                             -
@@ -185,7 +174,7 @@
             </table>
         </div>
         <div class="mt-4">
-            <a href="<?= base_url('diklat') ?>" class="btn btn-secondary">
+            <a href="<?= base_url('diklatguest') ?>" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
         </div>
