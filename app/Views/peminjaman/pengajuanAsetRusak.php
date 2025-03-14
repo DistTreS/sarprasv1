@@ -30,17 +30,17 @@
                     <?php foreach ($asetRusakList as $aset): ?>
                         <tr>
                             <td>
-                                <span class="badge badge-primary">User#<?= esc($aset['id_user']); ?></span>
+                                <span class="badge badge-primary">User#<?= esc($aset['id']); ?></span>
                             </td>
                             <td><?= esc($aset['nama_kategori']); ?></td>
                             <td><?= esc($aset['tanggal_pengajuan']); ?></td>
                             <td>
-                                <span class="badge-status <?= strtolower(str_replace(' ', '-', $aset['status_rusak'])); ?>">
-                                    <?= esc($aset['status_rusak']); ?>
+                                <span class="badge-status <?= strtolower(str_replace(' ', '-', $aset['status_kerusakan'])); ?>">
+                                    <?= esc($aset['status_kerusakan']); ?>
                                 </span>
                             </td>
                             <td>
-                                <a href="<?= base_url('aset-rusak/detail/' . $aset['id_rusak']); ?>" class="btn btn-info btn-sm">
+                                <a href="<?= base_url('aset-rusak/detail/' . $aset['id']); ?>" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
                             </td>

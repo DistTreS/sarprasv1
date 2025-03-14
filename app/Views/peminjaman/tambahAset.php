@@ -103,13 +103,6 @@
     }
 </style>
 
-<!-- 🔹 Tombol Kembali -->
-<a href="<?= isset($_GET['id_kategori']) && $_GET['id_kategori'] ? base_url('aset/' . $_GET['id_kategori']) : base_url('aset'); ?>" 
-   class="btn-kembali">
-    <i class="fas fa-arrow-left"></i> Kembali
-</a>
-
-
 
 
 <!-- 🔹 Form Tambah Aset -->
@@ -119,51 +112,74 @@
     <form action="<?= base_url('aset/store'); ?>" method="post" enctype="multipart/form-data">
         <?= csrf_field(); ?>
 
-        <label for="kategori">Kategori:</label>
-        <select name="id_kategori" disabled>
+        <!-- 🔹 Tambahkan input hidden agar kode_kategori tetap terkirim -->
+        <input type="hidden" name="kode_kategori" id="kode_kategori_hidden" value="<?= esc($kode_kategori ?? ''); ?>">
+
+        <!-- 🔹 Kategori (Dropdown hanya untuk tampilan) -->
+        <label for="kode_kategori">Kategori:</label>
+        <select name="kode_kategori_display" id="kode_kategori_display" disabled required>
             <?php foreach ($kategori as $kat): ?>
-                <option value="<?= $kat['id_kategori']; ?>" <?= ($kat['id_kategori'] == $id_kategori) ? 'selected' : ''; ?>>
+                <option value="<?= esc($kat['kode_kategori']); ?>" <?= old('kode_kategori', $kode_kategori) == $kat['kode_kategori'] ? 'selected' : ''; ?>>
                     <?= esc($kat['nama_kategori']); ?>
                 </option>
             <?php endforeach; ?>
         </select>
 
-        <!-- 🔹 Tambahkan input hidden agar id_kategori tetap dikirim ke backend -->
-        <input type="hidden" name="id_kategori" value="<?= old('id_kategori', $id_kategori); ?>">
+        <script>
+            // Pastikan input hidden mendapatkan nilai dari dropdown
+            document.addEventListener('DOMContentLoaded', function() {
+                let selectedKategori = document.querySelector('#kode_kategori_display').value;
+                document.querySelector('#kode_kategori_hidden').value = selectedKategori;
+            });
+        </script>
 
 
-        <label for="status">Status:</label>
-        <select name="status">
-            <option value="Tersedia">Tersedia</option>
-            <option value="Terpakai">Terpakai</option>
+
+        <!-- 🔹 Nama Aset -->
+        <label for="nama_aset">Nama Aset:</label>
+        <input type="text" name="nama_aset" value="<?= old('nama_aset'); ?>" required>
+
+        <!-- 🔹 NUP -->
+        <label for="nup">NUP:</label>
+        <input type="text" name="nup" value="<?= old('nup'); ?>" required>
+
+        <label for="status_aset">Status:</label>
+        <select name="status_aset">
+            <option value="Tersedia" <?= old('status_aset') == 'Tersedia' ? 'selected' : ''; ?>>Tersedia</option>
+            <option value="Terpakai" <?= old('status_aset') == 'Terpakai' ? 'selected' : ''; ?>>Terpakai</option>
         </select>
 
         <label for="kondisi">Kondisi:</label>
         <select name="kondisi">
-            <option value="Baik">Baik</option>
-            <option value="Perbaikan">Perbaikan</option>
+            <option value="Baik" <?= old('kondisi') == 'Baik' ? 'selected' : ''; ?>>Baik</option>
+            <option value="Perbaikan" <?= old('kondisi') == 'Perbaikan' ? 'selected' : ''; ?>>Perbaikan</option>
         </select>
 
         <label for="gambar">Gambar:</label>
-        <input type="file" name="gambar">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
+        <input type="file" name="gambar" accept="image/*">
+        
         <button type="submit"><i class="fas fa-save"></i> Simpan</button>
+        
+        </div>
     </form>
-</div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        <?php if (session()->has('error')) : ?>
+document.querySelector('input[name="gambar"]').addEventListener('change', function(e) {
+    let file = e.target.files[0];
+    if (file) {
+        let allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+        if (!allowedTypes.includes(file.type)) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: '<?= session('error'); ?>'
+                text: 'Format gambar tidak valid! Hanya PNG, JPG, dan JPEG diperbolehkan.'
             });
-        <?php endif; ?>
-    });
+            e.target.value = ''; // Hapus file dari input
+        }
+    }
+});
 </script>
+
 
 
 <?= $this->endSection(); ?>

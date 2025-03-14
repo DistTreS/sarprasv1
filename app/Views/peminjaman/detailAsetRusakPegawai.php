@@ -2,14 +2,15 @@
 
 <?= $this->section('content'); ?>
 <div class="container">
-    <h2 class="title">Detail Pengajuan Aset Rusak</h2>
-    
-    <?php if (!$asetRusak): ?>
-        <div class="alert alert-danger">Data tidak ditemukan.</div>
-    <?php else: ?>
-        <div class="card custom-card">
-            <div class="card-body">
-                <table class="table table-bordered custom-table">
+    <div class="card custom-card">
+        <div class="card-header text-center custom-header">
+            <h2 class="title">Detail Pengajuan Aset Rusak</h2>
+        </div>
+        <div class="card-body">
+            <?php if (!$asetRusak): ?>
+                <div class="alert alert-danger">Data tidak ditemukan.</div>
+            <?php else: ?>
+                <table class="table custom-table">
                     <tr>
                         <th>Kategori Aset</th>
                         <td><?= esc($asetRusak['nama_kategori']); ?></td>
@@ -20,7 +21,23 @@
                     </tr>
                     <tr>
                         <th>Status Kerusakan</th>
-                        <td><?= esc($asetRusak['status_rusak']); ?></td>
+                        <td>
+                            <?php 
+                                $status = strtolower($asetRusak['status_kerusakan']);
+                                $statusColor = 'gray';
+
+                                if ($status === 'baik') {
+                                    $statusColor = 'green';
+                                } elseif ($status === 'rusak ringan') {
+                                    $statusColor = 'orange';
+                                } elseif ($status === 'rusak berat') {
+                                    $statusColor = 'red';
+                                }
+                            ?>
+                            <span class="status-badge" style="background: <?= $statusColor ?>;">
+                                <?= esc($asetRusak['status_kerusakan']); ?>
+                            </span>
+                        </td>
                     </tr>
                     <tr>
                         <th>Keterangan</th>
@@ -28,50 +45,84 @@
                     </tr>
                     <tr>
                         <th>Bukti Foto</th>
-                        <td>
-                            <?php if (!empty($asetRusak['bukti_foto'])): ?>
-                                <img src="<?= base_url('uploads/aset_rusak/' . esc($asetRusak['bukti_foto'])); ?>" class="img-fluid proof-img" alt="Bukti Foto">
-                            <?php else: ?>
-                                <p class="text-muted">Tidak ada foto bukti.</p>
-                            <?php endif; ?>
+                        <td class="text-center">
+                            <div class="image-container">
+                                <?php if (!empty($asetRusak['bukti_foto'])): ?>
+                                    <?php foreach (explode(',', $asetRusak['bukti_foto']) as $foto): ?>
+                                        <img src="<?= base_url('uploads/aset_rusak/' . esc($foto)); ?>" class="proof-img" alt="Bukti Foto">
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p class="text-muted">Tidak ada foto bukti.</p>
+                                <?php endif; ?>
+                            </div>
                         </td>
                     </tr>
                 </table>
-                <a href="<?= base_url('aset-rusak/riwayat'); ?>" class="btn btn-secondary custom-btn">Kembali</a>
-            </div>
+                <a href="<?= base_url('aset-rusak/riwayat'); ?>" class="btn custom-btn">Kembali</a>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
+    </div>
 </div>
 
 <style>
     .container {
-        background: #f9f9f9;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
         max-width: 800px;
-    }
-    .title {
-        font-size: 24px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 20px;
+        margin: auto;
+        padding: 20px;
+        background: #f4f4f9;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
     }
     .custom-card {
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+        background: white;
         padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.28);
+    }
+    .custom-header {
+        background:white;
+        color: black;
+        padding: 15px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .custom-table th, .custom-table td {
+        padding: 12px;
+        border: px solid #ddd;
     }
     .custom-table th {
-        background: #007bff;
-        color: #ffffff;
-        padding: 10px;
+        background:white;
+        color: black;
         text-align: left;
     }
-    .custom-table td {
-        padding: 10px;
+    .status-badge {
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        display: inline-block;
+    }
+    .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .proof-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
+    }
+    .proof-img:hover {
+        transform: scale(1.1);
     }
     .custom-btn {
         display: block;
@@ -88,15 +139,6 @@
     }
     .custom-btn:hover {
         background: #0056b3;
-    }
-    .proof-img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        padding: 5px;
-        display: block;
-        margin: 0 auto;
     }
 </style>
 

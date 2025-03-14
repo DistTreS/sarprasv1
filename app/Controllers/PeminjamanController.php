@@ -1,319 +1,250 @@
 <?php
-
 namespace App\Controllers;
 
 use App\Models\PeminjamanModel;
-use App\Models\UsersModel;
 use App\Models\AsetModel;
 use CodeIgniter\Controller;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-
-
 
 class PeminjamanController extends Controller
 {
     protected $peminjamanModel;
+    protected $asetModel;
 
     public function __construct()
     {
         $this->peminjamanModel = new PeminjamanModel();
+        $this->asetModel = new AsetModel();
     }
 
-    // Menampilkan daftar pengajuan peminjaman Admin
+    // ADMIN: Menampilkan daftar peminjaman
     public function index()
-    {   
-        $usersModel = new UsersModel();
-        $data['peminjaman'] = $this->peminjamanModel
-            ->select('peminjaman.*, users.full_name as user_name, aset.id_aset, kategori_aset.nama_kategori as nama_aset')
-            ->join('users', 'users.id = peminjaman.id_user')
-            ->join('aset', 'aset.id_aset = peminjaman.id_aset')
-            ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori') 
-            ->orderBy('peminjaman.tanggal_pengajuan', 'DESC')
-            ->findAll();
-        
+    {
+        $data['peminjaman'] = $this->peminjamanModel->getAllPeminjaman();
         return view('peminjaman/riwayat', $data);
     }
 
+    // ADMIN: Menampilkan detail peminjaman
     public function detail($id_peminjaman)
     {
-        $data['peminjaman'] = $this->peminjamanModel
-            ->select('peminjaman.*, users.full_name as user_name, users.no_telepon, aset.id_aset, kategori_aset.nama_kategori as nama_aset')
-            ->join('users', 'users.id = peminjaman.id_user', 'left')
-            ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
-            ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori', 'left')
-            ->where('peminjaman.id_peminjaman', $id_peminjaman)
-            ->first();
+        $data['peminjaman'] = $this->peminjamanModel->getDetailPeminjaman($id_peminjaman);
+
+        if (!$data['peminjaman']) {
+            return redirect()->to('peminjaman')->with('error', 'Data tidak ditemukan.');
+        }
 
         return view('peminjaman/detailPengajuan', $data);
     }
 
-    // Menampilkan daftar pengajuan peminjaman Pegawai
-    public function indexPegawai()
-    {   
-        $session = session();
-        $user_id = $session->get('user_id'); // ID user login
-        $role = $session->get('role');
-
-        $peminjaman = $this->peminjamanModel
-            ->select('peminjaman.*, users.full_name as user_name, aset.id_aset, kategori_aset.nama_kategori as nama_aset')
-            ->join('users', 'users.id = peminjaman.id_user')
-            ->join('aset', 'aset.id_aset = peminjaman.id_aset')
-            ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori') 
-            ->where('peminjaman.id_user', $user_id) // Hanya data milik user login
-            ->orderBy('peminjaman.tanggal_pengajuan', 'DESC')
-            ->get()
-            ->getResultArray(); // Gunakan getResultArray() untuk mengambil data sesuai filter
-
-        $data = [
-            'peminjaman' => $peminjaman,
-            'role' => $role
-        ];
-
-        return view('peminjaman/riwayatPegawai', $data);
-    }
-
-    //Form pengajuan peminjaman Pegawai
-    public function formPengajuan()
-    {
-        $session = session();
-        $user_id = $session->get('user_id'); // ID user login
-
-        // Ambil daftar aset dengan kategori
-        $asetModel = new AsetModel();
-        $aset = $asetModel->getAsetWithKategori(); // Menggunakan method baru
-
-        $data = [
-            'aset' => $aset,
-            'user_id' => $user_id
-        ];
-
-        return view('peminjaman/formPengajuan', $data);
-    }
-
-    //Simpan Data Pengajuan User
-    public function simpanPengajuan()
-    {
-        $session = session();
-        $user_id = $session->get('user_id');
-
-
-        $data = [
-            'id_user' => $user_id,
-            'id_aset' => $this->request->getPost('id_aset'),
-            'tanggal_pengajuan' => $this->request->getPost('tanggal_pengajuan'),
-            'tanggal_rencana_pengembalian' => $this->request->getPost('tanggal_rencana_pengembalian'),
-            'cc' => $this->request->getPost('cc'),
-            'keterangan' => $this->request->getPost('keterangan'),
-            'status_layanan' => 'Pengajuan'
-        ];
-
-        $this->peminjamanModel->insert($data);
-
-        return redirect()->to('/pegawai/peminjaman')->with('success', 'Peminjaman berhasil diajukan!');
-    }
-
-    public function formPengembalian($id_peminjaman)
-    {
-        $session = session();
-        $user_id = $session->get('user_id'); // 
-    
-        $peminjaman = $this->peminjamanModel
-            ->select('peminjaman.*, users.full_name as user_name, aset.id_aset, kategori_aset.nama_kategori as nama_aset')
-            ->join('users', 'users.id = peminjaman.id_user')
-            ->join('aset', 'aset.id_aset = peminjaman.id_aset')
-            ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori') 
-            ->where('peminjaman.id_peminjaman', $id_peminjaman) // Filter berdasarkan ID peminjaman
-            ->where('peminjaman.id_user', $user_id) // Pastikan peminjaman milik user login
-            ->first(); // Ambil satu baris data
-    
-        // Jika data tidak ditemukan, redirect dengan pesan error
-        if (!$peminjaman) {
-            return redirect()->to('/pegawai/peminjaman')->with('error', 'Data peminjaman tidak ditemukan atau Anda tidak berhak mengaksesnya.');
-        }
-    
-        return view('peminjaman/formPengembalian', ['peminjaman' => $peminjaman]);
-    }
-    
-
-    public function simpanPengembalian()
-    {
-        $session = session();
-        $user_id = $session->get('user_id');
-
-        $id_peminjaman = $this->request->getPost('id_peminjaman');
-        $tanggal_pengembalian = date('Y-m-d H:i:s');
-
-        // Cek apakah peminjaman ada dan milik user
-        $peminjaman = $this->peminjamanModel->where('id_peminjaman', $id_peminjaman)
-            ->where('id_user', $user_id)
-            ->first();
-
-        if (!$peminjaman) {
-            return redirect()->to('/pegawai/peminjaman')->with('error', 'Data peminjaman tidak ditemukan atau Anda tidak berhak mengakses.');
-        }
-
-        // Upload bukti pengembalian
-        $file = $this->request->getFile('bukti_pengembalian');
-
-        if ($file->isValid() && !$file->hasMoved()) {
-            $newName = $file->getRandomName();
-            $file->move('uploads/bukti_pengembalian', $newName);
-        } else {
-            return redirect()->back()->with('error', 'Gagal mengupload bukti pengembalian.');
-        }
-
-        // Update status dan bukti pengembalian
-        $this->peminjamanModel->update($id_peminjaman, [
-            'tanggal_pengembalian' => $tanggal_pengembalian,
-            'bukti_pengembalian' => $newName,
-            'status_layanan' => 'Selesai'
-        ]);
-
-        return redirect()->to('/pegawai/peminjaman')->with('success', 'Peminjaman berhasil dikembalikan.');
-    }
-
-    public function detailPengajuanPegawai($id_peminjaman)
-    {
-        $session = session();
-        $user_id = $session->get('user_id'); // Ambil ID user dari session
-
-        $peminjaman = $this->peminjamanModel
-            ->select('peminjaman.*, aset.id_aset, kategori_aset.nama_kategori as nama_aset')
-            ->join('aset', 'aset.id_aset = peminjaman.id_aset')
-            ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori')
-            ->where('peminjaman.id_peminjaman', $id_peminjaman)
-            ->where('peminjaman.id_user', $user_id)
-            ->first(); // Ambil satu data saja
-
-        // Jika data tidak ditemukan atau bukan milik user
-        if (!$peminjaman) {
-            return redirect()->to('/pegawai/peminjaman')->with('error', 'Data tidak ditemukan atau Anda tidak berhak mengaksesnya.');
-        }
-
-        return view('peminjaman/detailPengajuanPegawai', ['peminjaman' => $peminjaman]);
-    }
-
-
-    //Update Status Admin
+    // ADMIN: Mengubah status peminjaman
     public function update_status($id_peminjaman)
     {
         if ($this->request->getMethod() === 'post') {
             $status_peminjaman = $this->request->getPost('status_peminjaman');
 
-            // Pastikan input valid
-            if (!in_array($status_peminjaman, ['Belum Disetujui', 'Disetujui'])) {
-                return redirect()->back()->with('error', 'Status peminjaman tidak valid!');
-            }
-
             // Tentukan status layanan berdasarkan status peminjaman
-            $status_layanan = 'Pengajuan'; // Default
-            if ($status_peminjaman == 'Disetujui') {
+            if ($status_peminjaman === 'Disetujui') {
                 $status_layanan = 'Proses';
+            } elseif ($status_peminjaman === 'Ditolak') {
+                $status_layanan = 'Selesai';
+            } else {
+                $status_layanan = 'Pengajuan';
             }
 
-            // Update status peminjaman & layanan di database
+            // Update data di database
             $this->peminjamanModel->update($id_peminjaman, [
                 'status_peminjaman' => $status_peminjaman,
                 'status_layanan' => $status_layanan
             ]);
 
-            return redirect()->to(base_url('peminjaman/detail/' . $id_peminjaman))->with('success', 'Status berhasil diperbarui.');
+            // Redirect kembali dengan pesan sukses
+            return redirect()->to('peminjaman')->with('success', 'Status peminjaman berhasil diperbarui.');
         }
 
-        return redirect()->back()->with('error', 'Metode tidak diizinkan.');
+        return redirect()->to('peminjaman')->with('error', 'Metode tidak valid.');
     }
 
-    // Fungsi cetak PDF
-    public function cetak($id_peminjaman)
-        {
-            // Perbaikan query: ambil cc dan keterangan dari peminjaman, bukan aset
-            $data['peminjaman'] = $this->peminjamanModel
-                ->select('peminjaman.*, users.full_name as user_name, users.no_telepon, aset.id_aset, kategori_aset.nama_kategori')
-                ->join('users', 'users.id = peminjaman.id_user', 'left')
-                ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
-                ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori', 'left')
-                ->where('peminjaman.id_peminjaman', $id_peminjaman)
-                ->first();
+    // ADMIN: Melakuan perubahan pada pengembalian
+    public function pengembalianAdmin($id_peminjaman)
+    {
+        $peminjaman = $this->peminjamanModel
+            ->select('peminjaman.*, users.full_name AS nama_pegawai, aset.nama_aset')
+            ->join('users', 'users.id = peminjaman.id_peminjaman', 'left')
+            ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
+            ->where('peminjaman.id_peminjaman', $id_peminjaman)
+            ->first();
 
-            if (!$data['peminjaman']) {
-                return redirect()->to('peminjaman')->with('error', 'Data tidak ditemukan');
-            }
-
-            // Load view ke dalam HTML
-            $html = view('peminjaman/cetakPengajuan', $data);
-
-            // Konfigurasi Dompdf
-            $options = new Options();
-            $options->set('defaultFont', 'Arial');
-            $dompdf = new Dompdf($options);
-            $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'portrait');
-            $dompdf->render();
-
-            // Kirim file ke browser untuk didownload
-            $dompdf->stream('peminjaman_' . $id_peminjaman . '.pdf', ['Attachment' => false]);
+        if (!$peminjaman) {
+            return redirect()->to(base_url('peminjaman'))->with('error', 'Data tidak ditemukan');
         }
 
-        public function pengembalian($id_peminjaman)
-        {
-            $data['peminjaman'] = $this->peminjamanModel
-                ->select('peminjaman.*, users.full_name as user_name, aset.id_aset, kategori_aset.nama_kategori as nama_kategori')
-                ->join('users', 'users.id = peminjaman.id_user', 'left')
-                ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
-                ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori', 'left')
-                ->where('peminjaman.id_peminjaman', $id_peminjaman)
-                ->first();
+        return view('peminjaman/pengembalianAdmin', ['peminjaman' => $peminjaman]);
+    }
 
-            if (!$data['peminjaman']) {
-                return redirect()->to('peminjaman')->with('error', 'Data peminjaman tidak ditemukan.');
-            }
+    // ADMIN: Melakuan persetujuan pada pengembalian
+    public function setujui($id_peminjaman)
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $peminjaman = $peminjamanModel->find($id_peminjaman);
+    
+        if (!$peminjaman) {
+            return redirect()->back()->with('error', 'Data peminjaman tidak ditemukan.');
+        }
+    
+        // Periksa apakah bukti_pengembalian sudah ada
+        if (empty($peminjaman['bukti_pengembalian'])) {
+            return redirect()->back()->with('error', 'Bukti pengembalian belum diunggah.');
+        }
+    
+        // Update status menjadi "Selesai"
+        $peminjamanModel->update($id_peminjaman, ['status_layanan' => 'Selesai']);
+    
+        log_message('info', 'Pengembalian aset dengan ID ' . $id_peminjaman . ' telah disetujui.');
+    
+        return redirect()->back()->with('success', 'Pengembalian telah disetujui.');
+    }
+    
+    // ADMIN: Melakuan penolakan pada pengembalian
+    public function tolak($id_peminjaman)
+    {
+        $peminjamanModel = new PeminjamanModel();
+        $peminjaman = $peminjamanModel->find($id_peminjaman);
 
-            // Tambahkan variabel isAdmin berdasarkan session atau role user
-            $data['isAdmin'] = session()->get('role') === 'admin';
-
-            return view('peminjaman/pengembalian', $data);
+        if (!$peminjaman) {
+            return redirect()->back()->with('error', 'Data peminjaman tidak ditemukan.');
         }
 
-        public function pengembalianpegawai($id_peminjaman)
-        {
-            $session = session();
-            $user_id = $session->get('user_id'); // Ambil ID user login
-
-            // Ambil data peminjaman berdasarkan ID, pastikan hanya user yang bersangkutan dapat melihatnya
-            $data['peminjaman'] = $this->peminjamanModel
-                ->where('id_peminjaman', $id_peminjaman)
-                ->where('id_user', $user_id)
-                ->first();
-
-            // Jika data tidak ditemukan atau bukan milik user, redirect dengan pesan error
-            if (!$data['peminjaman']) {
-                return redirect()->to('/pegawai/peminjaman')->with('error', 'Data peminjaman tidak ditemukan atau Anda tidak berhak mengakses.');
+        // Hapus bukti pengembalian sebelumnya
+        $buktiLama = $peminjaman['bukti_pengembalian'];
+        if (!empty($buktiLama)) {
+            $filePath = WRITEPATH . '../public/uploads/bukti_pengembalian/' . $buktiLama;
+            if (file_exists($filePath)) {
+                unlink($filePath); // Hapus file lama
             }
-
-            return view('peminjaman/formPengembalian', $data);
         }
 
-        public function uploadPengembalian($id_peminjaman)
-        {
-            $data['peminjaman'] = $this->peminjamanModel
-                ->select('peminjaman.*, users.full_name as user_name, users.id as user_id, aset.id_aset, kategori_aset.nama_kategori')
-                ->join('users', 'users.id = peminjaman.id_user', 'left')
-                ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
-                ->join('kategori_aset', 'kategori_aset.id_kategori = aset.id_kategori', 'left')
-                ->where('peminjaman.id_peminjaman', $id_peminjaman)
-                ->first();
+        // Set status tetap "Proses", kosongkan bukti_pengembalian, dan tambahkan pesan penolakan
+        $peminjamanModel->update($id_peminjaman, [
+            'status_layanan' => 'Proses',
+            'bukti_pengembalian' => null,
+            'pesan_penolakan' => 'Bukti pengembalian ditolak. Silakan unggah ulang dengan bukti yang valid.'
+        ]);
 
-            if (!$data['peminjaman']) {
-                return redirect()->to('peminjaman')->with('error', 'Data peminjaman tidak ditemukan.');
-            }
+        return redirect()->back()->with('success', 'Bukti pengembalian berhasil ditolak. Pengguna harus mengunggah ulang.');
+    }
 
-            // Cek apakah pengguna adalah admin
-            $session = session();
-            $data['isAdmin'] = ($session->get('role') == 'admin'); // Sesuaikan dengan sistem autentikasi Anda
+    // PEGAWAI: Menampilkan daftar peminjaman
+    public function indexPegawai()
+    {
+        $userId = session()->get('user_id'); // Ambil user_id dari session
 
-            return view('peminjaman/pengembalian', $data);
+        // Mengambil data peminjaman beserta nama aset
+        $data['peminjaman'] = $this->peminjamanModel
+            ->select('peminjaman.*, aset.nama_aset, aset.nup') // Pilih semua kolom dari peminjaman + nama_aset
+            ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left') // Gabungkan dengan tabel aset
+            ->where('peminjaman.id', $userId) // Filter hanya data user yang sedang login
+            ->orderBy('peminjaman.tanggal_peminjaman', 'DESC')
+            ->findAll();
+
+        return view('peminjaman/riwayatPegawai', $data);
+    }
+
+    // PEGAWAI: Detail Pengajuan Peminjaman
+    public function detailPengajuanPegawai($id_peminjaman)
+    {
+        $userId = session()->get('user_id'); // Ambil ID user dari session
+
+        // Ambil data peminjaman berdasarkan ID peminjaman dan ID user untuk keamanan
+        $data['peminjaman'] = $this->peminjamanModel
+        ->select('peminjaman.*, aset.nama_aset, aset.nup, users.no_telepon, peminjaman.bukti_pengembalian') // Tambahkan bukti_pengembalian
+        ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
+        ->join('users', 'users.id = peminjaman.id', 'left')
+        ->where('peminjaman.id_peminjaman', $id_peminjaman)
+        ->where('peminjaman.id', $userId)
+        ->first();
+
+
+        // Jika tidak ditemukan, tampilkan error 404
+        if (!$data['peminjaman']) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Data peminjaman tidak ditemukan.');
         }
+
+        // Tampilkan view dengan data
+        return view('peminjaman/detailPengajuanPegawai', $data);
+    }
+
+
+    // PEGAWAI: Form pengajuan peminjaman
+    public function formPengajuan()
+    {
+        $data = [
+            'title' => "Form Pengajuan Peminjaman",
+            'asetList' => $this->asetModel->where('status_aset', 'Tersedia')->findAll() // 🔥 Hanya ambil yang "Tersedia"
+        ];
+
+        return view('peminjaman/formPengajuan', $data);
+    }
+
+
+    // PEGAWAI: Simpan data pengajuan peminjaman
+    public function simpanPengajuan()
+    {
+        $data = [
+            'id' => session()->get('user_id'), // Ambil ID user dari session
+            'id_aset' => $this->request->getPost('id_aset'),
+            'tanggal_rencana_pengembalian' => $this->request->getPost('tanggal_rencana_pengembalian'),
+            'CC' => $this->request->getPost('CC'), // Tambahkan CC
+            'keterangan' => $this->request->getPost('keterangan'), // Tambahkan Keterangan
+            'status_peminjaman' => 'Belum Disetujui', // Status default sebelum disetujui admin
+            'status_layanan' => 'Pengajuan', // Sistem akan menangani perubahan status ini
+            'tanggal_peminjaman' => date('Y-m-d')
+        ];
+
+        // Simpan data ke database
+        $this->peminjamanModel->save($data);
+
+        // Update status aset menjadi "Terpakai" setelah diajukan
+        $this->asetModel->update($this->request->getPost('aset'), ['status_aset' => 'Terpakai']);
+
+
+        // Redirect kembali ke halaman riwayat peminjaman pegawai
+        return redirect()->to('/pegawai/peminjaman')->with('success', 'Pengajuan peminjaman berhasil diajukan.');
+    }
+
+    
+    // PEGAWAI: Form pengembalian aset
+    public function pengembalianpegawai($id)
+    {
+        $data['peminjaman'] = $this->peminjamanModel->find($id);
+        return view('peminjaman/formPengembalian', $data);
+    }
+
+    public function uploadPengembalian($id)
+    {
+        // Ambil data peminjaman
+        $peminjaman = $this->peminjamanModel->find($id);
         
+        if (!$peminjaman) {
+            return redirect()->to('/pegawai/peminjaman')->with('error', 'Data peminjaman tidak ditemukan');
+        }
+
+        // Ambil file yang diunggah
+        $file = $this->request->getFile('bukti_pengembalian');
+
+        if ($file->isValid() && !$file->hasMoved()) {
+            // Simpan file ke folder uploads/pengembalian/
+            $newName = $file->getRandomName();
+            $file->move('uploads/bukti_pengembalian/', $newName);
+
+            // Update data peminjaman
+            $this->peminjamanModel->update($id, [
+                'bukti_pengembalian' => $newName,
+                'tanggal_pengembalian' => date('Y-m-d'), // Isi tanggal pengembalian otomatis
+            ]);
+
+            return redirect()->to('/pegawai/peminjaman')->with('success', 'Bukti pengembalian berhasil diunggah, menunggu persetujuan admin.');
+        }
+
+        return redirect()->to('/pegawai/peminjaman')->with('error', 'Gagal mengunggah bukti pengembalian.');
+    }
 
 }

@@ -7,7 +7,7 @@
     <table>
         <tr>
             <th>User</th>
-            <th>ID Aset</th>
+            <th>NUP</th>
             <th>Nama Aset</th>
             <th>Tanggal Pengajuan</th>
             <th>Tanggal Rencana Pengembalian</th>
@@ -16,10 +16,10 @@
         </tr>
         <?php foreach ($peminjaman as $item) : ?>
         <tr>
-            <td><?= esc($item['user_name']); ?></td>
-            <td><?= esc($item['id_aset']); ?></td>
+            <td><?= esc($item['id']); ?></td>
+            <td><?= esc($item['nup']); ?></td>
             <td><?= esc($item['nama_aset']); ?></td>
-            <td><?= esc($item['tanggal_pengajuan']); ?></td>
+            <td><?= esc($item['tanggal_peminjaman']); ?></td>
             <td><?= esc($item['tanggal_rencana_pengembalian']); ?></td>
             <td><span class="status <?= strtolower($item['status_layanan']); ?>"><?= esc($item['status_layanan']); ?></span></td>
             <td>

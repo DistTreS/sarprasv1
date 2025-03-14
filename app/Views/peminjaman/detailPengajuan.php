@@ -11,7 +11,7 @@
 
     <!-- Informasi User -->
     <div class="user-info">
-        <span class="badge-user">User#<?= esc($peminjaman['id_user']); ?></span>
+        <span class="badge-user">User#<?= esc($peminjaman['id']); ?></span>
         <a href="<?= base_url('peminjaman/cetak/' . $peminjaman['id_peminjaman']); ?>" class="btn-print">Print</a>
     </div>
 
@@ -19,7 +19,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th>ID Aset</th>
+                <th>NUP</th>
                 <th>Nama Aset</th>
                 <th>CC</th>
                 <th>Keterangan</th>
@@ -29,9 +29,9 @@
         </thead>
         <tbody>
             <tr>
-                <td><?= esc($peminjaman['id_aset']); ?></td>
+                <td><?= esc($peminjaman['nup']); ?></td>
                 <td><?= esc($peminjaman['nama_aset']); ?></td>
-                <td><?= esc($peminjaman['cc']); ?></td>
+                <td><?= esc($peminjaman['CC']); ?></td>
                 <td><?= esc($peminjaman['keterangan']); ?></td>
                 <td><?= esc($peminjaman['jumlah'] ?? '1 Unit'); ?></td>
                 <td><?= !empty($peminjaman['no_telepon']) ? esc($peminjaman['no_telepon']) : 'Tidak tersedia'; ?></td>
@@ -42,25 +42,30 @@
     <!-- Informasi Tanggal dan Status -->
     <div class="info-status-container">
         <div class="info-tanggal">
-            <p><strong>Tanggal Peminjaman:</strong> <?= esc($peminjaman['tanggal_pengajuan']); ?></p>
+            <p><strong>Tanggal Peminjaman:</strong> <?= esc($peminjaman['tanggal_peminjaman']); ?></p>
             <p><strong>Tanggal Rencana Pengembalian:</strong> <?= esc($peminjaman['tanggal_rencana_pengembalian']); ?></p>
             <p><strong>Tanggal Pengembalian:</strong> <?= !empty($peminjaman['tanggal_pengembalian']) ? esc($peminjaman['tanggal_pengembalian']) : '-'; ?></p>
         </div>
         <div class="status-container">
-            <form action="<?= base_url('peminjaman/update_status/' . $peminjaman['id_peminjaman']); ?>" method="post" class="status-form">
-                <label><strong>Status Peminjaman:</strong></label>
-                <select name="status_peminjaman" class="status-dropdown">
-                    <option value="Belum Disetujui" <?= ($peminjaman['status_peminjaman'] == 'Belum Disetujui') ? 'selected' : ''; ?>>Belum Disetujui</option>
-                    <option value="Disetujui" <?= ($peminjaman['status_peminjaman'] == 'Disetujui') ? 'selected' : ''; ?>>Disetujui</option>
-                </select>
-                <button type="submit" class="btn-save">Simpan</button>
-            </form>
-            <p><strong>Status Pelayanan:</strong> 
-                <span class="status-pelayanan <?= esc($peminjaman['status_layanan']); ?>">
-                    <?= esc($peminjaman['status_layanan']); ?>
-                </span>
-            </p>
-        </div>
+    <form action="<?= base_url('peminjaman/update_status/' . $peminjaman['id_peminjaman']); ?>" method="post" class="status-form">
+        <label><strong>Status Peminjaman:</strong></label>
+        <select name="status_peminjaman" class="status-dropdown" <?= ($peminjaman['status_layanan'] == 'Selesai') ? 'disabled' : ''; ?>>
+            <option value="Belum Disetujui" <?= ($peminjaman['status_peminjaman'] == 'Belum Disetujui') ? 'selected' : ''; ?>>Belum Disetujui</option>
+            <option value="Disetujui" <?= ($peminjaman['status_peminjaman'] == 'Disetujui') ? 'selected' : ''; ?>>Disetujui</option>
+            <option value="Ditolak" <?= ($peminjaman['status_peminjaman'] == 'Ditolak') ? 'selected' : ''; ?>>Ditolak</option>
+        </select>
+        <?php if ($peminjaman['status_layanan'] != 'Selesai'): ?>
+            <button type="submit" class="btn-save">Simpan</button>
+        <?php endif; ?>
+    </form>
+    
+    <p><strong>Status Layanan:</strong> 
+        <span class="status-pelayanan <?= esc($peminjaman['status_layanan']); ?>">
+            <?= esc($peminjaman['status_layanan']); ?>
+        </span>
+    </p>
+</div>
+
     </div>
 
     <!-- Tombol Kembali -->

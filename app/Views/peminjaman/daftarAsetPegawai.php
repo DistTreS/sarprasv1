@@ -2,15 +2,21 @@
 
 <?= $this->section('content'); ?>
 
-<h2><?= esc($title); ?></h2>
+<h2><?= esc($title); ?></h2><form action="<?= base_url('peminjaman/cariAsetPegawai/' . esc($kode_kategori ?? '')); ?>" method="get" class="form-inline">
+    <input type="text" name="search" value="<?= esc($search ?? ''); ?>" placeholder="Cari Nama Aset atau NUP" class="form-control" required>
+    <button type="submit" class="btn btn-primary">Cari</button>
+</form>
+
+
 
 <!-- 🔹 Tabel Daftar Aset -->
 <table class="table">
     <thead>
         <tr>
-            <th class="header-id">ID Aset</th>
+            <th class="header-id">Nama Aset</th>
+            <th class="header-id">NUP</th>
             <th class="header-kondisi">Kondisi</th>
-            <th class="header-status">Status</th>
+            <th class="header-status_aset">Status Aset</th>
             <th class="header-gambar">Gambar</th>
         </tr>
     </thead>
@@ -18,9 +24,10 @@
     <tbody>
         <?php foreach ($asetList as $aset): ?>
         <tr>
-            <td><?= esc($aset['id_aset']); ?></td> <!-- Menampilkan ID Aset -->
+            <td><?= esc($aset['nama_aset']); ?></td>
+            <td><?= esc($aset['nup']); ?></td> <!-- Menampilkan ID Aset -->
             <td><?= esc($aset['kondisi']); ?></td>
-            <td><?= esc($aset['status']); ?></td>
+            <td><?= esc($aset['status_aset']); ?></td>
             <td>
                 <img src="<?= base_url('uploads/aset/' . esc($aset['gambar'])); ?>" class="gambar-aset" alt="Gambar Aset">
             </td>
@@ -28,46 +35,6 @@
         <?php endforeach; ?>
     </tbody>
 </table>
-
-<!-- 🔹 JavaScript -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const editModal = document.getElementById('editModal');
-        const editGambarInput = document.getElementById('edit_gambar');
-        const editGambarPreview = document.getElementById('edit_gambar_preview');
-
-        document.querySelectorAll('.btn-edit').forEach(button => {
-            button.addEventListener('click', function () {
-                document.getElementById('edit_id_aset').value = this.dataset.id;
-                document.getElementById('edit_id_aset_display').value = this.dataset.id;
-
-                document.getElementById('edit_status').value = this.dataset.status;
-                document.getElementById('edit_kondisi').value = this.dataset.kondisi;
-
-                // Set gambar awal dari dataset
-                editGambarPreview.src = this.dataset.gambar;
-
-                editModal.style.display = 'block';
-            });
-        });
-
-        document.querySelectorAll('.close-edit').forEach(button => {
-            button.addEventListener('click', () => editModal.style.display = 'none');
-        });
-
-        // Preview gambar baru sebelum diupload
-        editGambarInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    editGambarPreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    });
-</script>
 
 <!-- 🔹 Tombol Kembali -->
 <a href="<?= base_url('pegawai/kategoriAset'); ?>" class="btn btn-secondary kembali">Kembali</a>
@@ -182,12 +149,12 @@
 
     .header-id {background-color: #34495E; color: white;}
     .header-kondisi { background-color: #2C3E50; color: white; }
-    .header-status  { background-color: #1B4F72; color: white; }
+    .header-status_aset  { background-color: #1B4F72; color: white; }
     .header-gambar  { background-color: #154360; color: white; }
     .header-action  { background-color: #0E6251; color: white; }
 
     .gambar-aset {
-        width: 60px; /
+        width: 60px; 
         height: 60px; 
         object-fit: contain; 
         border-radius: 5px;
