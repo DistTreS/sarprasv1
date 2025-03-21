@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\PeminjamanModel;
@@ -85,24 +86,24 @@ class PeminjamanController extends Controller
     {
         $peminjamanModel = new PeminjamanModel();
         $peminjaman = $peminjamanModel->find($id_peminjaman);
-    
+
         if (!$peminjaman) {
             return redirect()->back()->with('error', 'Data peminjaman tidak ditemukan.');
         }
-    
+
         // Periksa apakah bukti_pengembalian sudah ada
         if (empty($peminjaman['bukti_pengembalian'])) {
             return redirect()->back()->with('error', 'Bukti pengembalian belum diunggah.');
         }
-    
+
         // Update status menjadi "Selesai"
         $peminjamanModel->update($id_peminjaman, ['status_layanan' => 'Selesai']);
-    
+
         log_message('info', 'Pengembalian aset dengan ID ' . $id_peminjaman . ' telah disetujui.');
-    
+
         return redirect()->back()->with('success', 'Pengembalian telah disetujui.');
     }
-    
+
     // ADMIN: Melakuan penolakan pada pengembalian
     public function tolak($id_peminjaman)
     {
@@ -155,12 +156,12 @@ class PeminjamanController extends Controller
 
         // Ambil data peminjaman berdasarkan ID peminjaman dan ID user untuk keamanan
         $data['peminjaman'] = $this->peminjamanModel
-        ->select('peminjaman.*, aset.nama_aset, aset.nup, users.no_telepon, peminjaman.bukti_pengembalian') // Tambahkan bukti_pengembalian
-        ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
-        ->join('users', 'users.id = peminjaman.id', 'left')
-        ->where('peminjaman.id_peminjaman', $id_peminjaman)
-        ->where('peminjaman.id', $userId)
-        ->first();
+            ->select('peminjaman.*, aset.nama_aset, aset.nup, users.no_telepon, peminjaman.bukti_pengembalian') // Tambahkan bukti_pengembalian
+            ->join('aset', 'aset.id_aset = peminjaman.id_aset', 'left')
+            ->join('users', 'users.id = peminjaman.id', 'left')
+            ->where('peminjaman.id_peminjaman', $id_peminjaman)
+            ->where('peminjaman.id', $userId)
+            ->first();
 
 
         // Jika tidak ditemukan, tampilkan error 404
@@ -188,29 +189,40 @@ class PeminjamanController extends Controller
     // PEGAWAI: Simpan data pengajuan peminjaman
     public function simpanPengajuan()
     {
-        $data = [
-            'id' => session()->get('user_id'), // Ambil ID user dari session
-            'id_aset' => $this->request->getPost('id_aset'),
-            'tanggal_rencana_pengembalian' => $this->request->getPost('tanggal_rencana_pengembalian'),
-            'CC' => $this->request->getPost('CC'), // Tambahkan CC
-            'keterangan' => $this->request->getPost('keterangan'), // Tambahkan Keterangan
-            'status_peminjaman' => 'Belum Disetujui', // Status default sebelum disetujui admin
-            'status_layanan' => 'Pengajuan', // Sistem akan menangani perubahan status ini
-            'tanggal_peminjaman' => date('Y-m-d')
-        ];
+        $id_user = session()->get('user_id'); // ID user
+        $id_pengajuan = uniqid('PNJ-');
+        $id_aset_list = $this->request->getPost('id_aset'); // Ambil daftar aset (array)
+        $tanggal_rencana_pengembalian = $this->request->getPost('tanggal_rencana_pengembalian');
+        $CC = $this->request->getPost('CC');
+        $keterangan = $this->request->getPost('keterangan');
 
-        // Simpan data ke database
-        $this->peminjamanModel->save($data);
+        if (!empty($id_aset_list)) {
+            foreach ($id_aset_list as $id_aset) {
+                $data = [
+                    'id' => $id_user,
+                    'id_aset' => $id_aset,
+                    'tanggal_rencana_pengembalian' => $tanggal_rencana_pengembalian,
+                    'CC' => $CC,
+                    'keterangan' => $keterangan,
+                    'status_peminjaman' => 'Belum Disetujui',
+                    'status_layanan' => 'Pengajuan',
+                    'tanggal_peminjaman' => date('Y-m-d'),
+                    'id_pengajuan' => $id_pengajuan
+                ];
 
-        // Update status aset menjadi "Terpakai" setelah diajukan
-        $this->asetModel->update($this->request->getPost('aset'), ['status_aset' => 'Terpakai']);
+                // Simpan ke database
+                $this->peminjamanModel->save($data);
 
+                // Update status aset menjadi "Terpakai"
+                $this->asetModel->update($id_aset, ['status_aset' => 'Terpakai']);
+            }
+        }
 
-        // Redirect kembali ke halaman riwayat peminjaman pegawai
         return redirect()->to('/pegawai/peminjaman')->with('success', 'Pengajuan peminjaman berhasil diajukan.');
     }
 
-    
+
+
     // PEGAWAI: Form pengembalian aset
     public function pengembalianpegawai($id)
     {
@@ -222,7 +234,7 @@ class PeminjamanController extends Controller
     {
         // Ambil data peminjaman
         $peminjaman = $this->peminjamanModel->find($id);
-        
+
         if (!$peminjaman) {
             return redirect()->to('/pegawai/peminjaman')->with('error', 'Data peminjaman tidak ditemukan');
         }
@@ -246,5 +258,4 @@ class PeminjamanController extends Controller
 
         return redirect()->to('/pegawai/peminjaman')->with('error', 'Gagal mengunggah bukti pengembalian.');
     }
-
 }

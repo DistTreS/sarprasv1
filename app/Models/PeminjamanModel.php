@@ -9,7 +9,7 @@ class PeminjamanModel extends Model
     protected $primaryKey = 'id_peminjaman';
     protected $allowedFields = [
         'id', 'id_aset', 'tanggal_peminjaman', 'tanggal_rencana_pengembalian', 'tanggal_pengembalian',
-        'status_peminjaman', 'status_layanan', 'CC', 'keterangan', 'bukti_pengembalian'
+        'status_peminjaman', 'status_layanan', 'CC', 'keterangan', 'bukti_pengembalian','id_pengajuan' 
     ];
     
     public function getPeminjamanWithAdmin($id_peminjaman)

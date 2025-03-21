@@ -26,18 +26,17 @@
             </ul>
         </li>
 
-        <li><a href="<?= base_url('#'); ?>">Inventaris</a></li>
-        <li><a href="<?= base_url('#'); ?>">Insert Inventaris</a></li>
+        <li><a href="<?= base_url('profil/pegawai'); ?>">Profil</a></li>
         <li><a href="<?= base_url('logout'); ?>">Logout</a></li>
     </ul>
 </div>
 
 <script>
-  function toggleDropdown(id) {
-    var menu = document.getElementById(id);
-    var parent = menu.parentElement;
-    
-    // Toggle class "active" untuk menampilkan atau menyembunyikan submenu
-    parent.classList.toggle("active");
-  }
+    function toggleDropdown(id) {
+        var menu = document.getElementById(id);
+        var parent = menu.parentElement;
+
+        // Toggle class "active" untuk menampilkan atau menyembunyikan submenu
+        parent.classList.toggle("active");
+    }
 </script>

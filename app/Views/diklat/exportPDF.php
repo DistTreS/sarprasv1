@@ -47,17 +47,23 @@
         }
 
         .kop-text {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
         }
 
         .kop-info {
-            font-size: 13px;
+            font-size: 8px;
             font-weight: normal;
             text-align: center;
             margin-top: 3px;
+        }
+
+        .kop-info2 {
+            font-size: 14px;
+            font-weight: normal;
+            text-align: center;
         }
 
         /* Styling tabel peserta */
@@ -98,7 +104,16 @@
                 <img src="<?= $imageBase64 ?>" alt="Logo PPSDM" class="kop-logo">
             </td>
             <td class="kop-text">
-                PPSDM KEMENDAGRI Regional Bukittinggi
+                <div class="kop-info2">
+                    KEMENTERIAN DALAM NEGERI
+                </div>
+                <div class="kop-info2">
+                    REPUBLIK INDONESIA
+                </div>
+                <div class="kop-info2">
+                    BADAN PENGEMBANGAN SUMBER DAYA INDONESIA
+                </div>
+                PUSAT PENGAMBANGAN SUMBER DAYA MANUSIA REGIONAL BUKITTINGGI
                 <div class="kop-info">
                     Jl. Raya Bukittinggi - Payakumbuh Jl. Sungai Sariak No.Km. 14, Tabek Panjang, Kec. Baso, Kabupaten Agam, Sumatera Barat 26192<br>
                     Telp (0752) 28241 | Website: ppsdmbukittinggi.kemendagri.go.id

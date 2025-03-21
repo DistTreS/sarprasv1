@@ -11,15 +11,29 @@
         <label for="tanggal_rencana_pengembalian">Tanggal Rencana Pengembalian:</label>
         <input type="date" name="tanggal_rencana_pengembalian" id="tanggal_rencana_pengembalian" required>
 
-        <label for="aset">Pilih Aset:</label>
-        <select name="aset" id="aset" required>
-            <option value="">-- Pilih Aset --</option>
-            <?php foreach ($asetList as $aset): ?>
-                <option value="<?= esc($aset['id_aset']); ?>">
-                    <?= esc($aset['nama_aset'] . ' (NUP: ' . $aset['nup'] . ')'); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <label>Pilih Aset:</label>
+        <table id="tabel-aset" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Pilih</th>
+                    <th>Nama Aset</th>
+                    <th>NUP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($asetList as $aset): ?>
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="id_aset[]" value="<?= esc($aset['id_aset']); ?>">
+                        </td>
+                        <td><?= esc($aset['nama_aset']); ?></td>
+                        <td><?= esc($aset['nup']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+
 
         <label for="CC">CC (Carbon Copy):</label>
         <input type="text" name="CC" id="CC" placeholder="Masukkan email CC (opsional)">
@@ -33,6 +47,22 @@
         </div>
     </form>
 </div>
+
+<!-- Tambahkan jQuery dan DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#tabel-aset').DataTable({
+            "paging": true, // Aktifkan paginasi
+            "searching": true, // Aktifkan pencarian
+            "ordering": false, // Matikan fitur sorting agar tetap sesuai urutan database
+            "pageLength": 10 // Tampilkan 10 data per halaman
+        });
+    });
+</script>
 
 <style>
     /* Container Styling */
@@ -169,7 +199,8 @@
         input[type="text"],
         select,
         textarea {
-            font-size: 16px; /* Better for mobile */
+            font-size: 16px;
+            /* Better for mobile */
         }
     }
 
@@ -179,6 +210,7 @@
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);

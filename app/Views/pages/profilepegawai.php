@@ -1,4 +1,4 @@
-<?= $this->extend('layout/main') ?>
+<?= $this->extend('layout/mainpegawai') ?>
 
 <?= $this->section('content') ?>
 <style>
@@ -91,9 +91,8 @@
 
     /* Action Buttons */
     .action-buttons {
-        display: flex;
-        gap: 10px;
         margin-top: 20px;
+        align-items: center;
     }
 
     .btn {
@@ -106,6 +105,8 @@
         text-decoration: none;
         display: inline-block;
         text-align: center;
+        align-items: center;
+        
     }
 
     .btn-back {
@@ -120,6 +121,7 @@
     .btn-edit {
         background-color: #ffc107;
         color: #212529;
+        align-items: center;
     }
 
     .btn-edit:hover {
@@ -150,7 +152,7 @@
         }
 
         .action-buttons {
-            flex-direction: column;
+            align-items: center;
         }
 
         .btn {
@@ -218,9 +220,7 @@
             </div>
 
             <div class="action-buttons">
-                <a href="/users" class="btn btn-back">Kembali ke daftar user</a>
-                <a href="/users/edit/<?= esc($user['id']) ?>" class="btn btn-edit">Edit User</a>
-                <a href="/users/delete/<?= esc($user['id']) ?>" onclick="return confirm('Yakin ingin menghapus?')" class="btn btn-delete">Hapus</a>
+                <a href="<?= base_url('/profilepegawai/edit') ?>" class="btn btn-edit">Edit Profil</a>
             </div>
         </div>
     </div>

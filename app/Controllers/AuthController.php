@@ -42,16 +42,16 @@ class AuthController extends Controller
                 $session->set([
                     'user_id' => $user['id'],
                     'username' => $user['username'],
-                    'jabatan' => $user['jabatan'],
+                    'role' => $user['role'],
                     'isLoggedIn' => true
                 ]);
 
                 // Redirect berdasarkan role
-                $role = $this->authModel->getRole($user['jabatan']);
-                if ($role === 'admin') {
-                    return redirect()->to('/dashboard');
-                } else {
+                $role = $this->authModel->getRole($user['role']);
+                if ($role === 'Pegawai') {
                     return redirect()->to('/dashboard/pegawai');
+                } else {
+                    return redirect()->to('/dashboard');
                 }
             } else {
                 $session->setFlashdata('error', 'Password salah.');

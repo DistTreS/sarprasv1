@@ -27,17 +27,58 @@
         margin: 0;
     }
 
+    /* Form Search Styles */
+    .mb-3 {
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .form-control {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
     /* Button Styles */
-    .btn-primary {
+    .btn {
         padding: 10px 20px;
         font-size: 14px;
         font-weight: 500;
-        background-color: #007bff;
         border: none;
         border-radius: 6px;
         transition: all 0.3s ease;
-        display: inline-block;
+        cursor: pointer;
+        text-align: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
         text-decoration: none;
+        min-width: 100px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        margin-top: 10px;
+    }
+
+    .btn-secondary {
+        background-color: rgb(165, 19, 22);
         color: white;
     }
 
@@ -45,6 +86,12 @@
         background-color: #0056b3;
         transform: translateY(-1px);
         box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+        background-color: rgb(179, 0, 0);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(252, 6, 6, 0.3);
     }
 
     /* Table Styles */
@@ -71,8 +118,8 @@
         font-weight: 600;
         text-align: center;
         border: 1px solid #dee2e6;
-        color: rgb(0, 0, 0);
-        /* Memastikan teks header tabel terlihat jelas */
+        color: black;
+        background-color: rgb(168, 198, 36);
     }
 
     .table td {
@@ -86,12 +133,10 @@
 
     /* Action Button Styles */
     .action-buttons {
-        padding: 20px;
         display: flex;
         flex-direction: column;
-        gap: 5px;
-        margin-right: 18px;
-        /* Memberikan jarak antar tombol */
+        gap: 8px;
+        padding: 5px;
     }
 
     .action-btn {
@@ -102,7 +147,7 @@
         color: white;
         display: inline-block;
         text-align: center;
-        width: 100%;
+        transition: all 0.2s ease;
     }
 
     .view-btn {
@@ -130,6 +175,37 @@
         background-color: #c82333;
     }
 
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        list-style: none;
+    }
+
+    .pagination a,
+    .pagination strong {
+        padding: 8px 12px;
+        margin: 2px;
+        text-decoration: none;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        color: #007bff;
+        background-color: #fff;
+        font-weight: bold;
+    }
+
+    .pagination a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .pagination strong {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+
     /* Responsive Styles */
     @media (max-width: 768px) {
         .container {
@@ -145,25 +221,29 @@
             margin-bottom: 15px;
         }
 
-        .btn-primary {
+        .input-group {
+            flex-direction: column;
+        }
+
+        .form-control,
+        .btn {
             width: 100%;
-            text-align: center;
-            margin-bottom: 15px;
         }
     }
 </style>
 
 <div class="container">
+
+
     <div class="header">
         <h2>Daftar User</h2>
-        <a href="/users/create" class="btn-primary">Tambah User</a>
+        <a href="/users/create" class="btn btn-primary">Tambah User</a>
     </div>
 
     <form action="" method="GET" class="mb-3">
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Cari Nama, NIP, Jabatan, Peran..." value="<?= esc($_GET['search'] ?? '') ?>">
             <button type="submit" class="btn btn-primary">Cari</button>
-            <a href="<?= base_url('/users') ?>" class="btn btn-secondary">Reset</a>
         </div>
     </form>
 
@@ -196,6 +276,9 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <div class="pagination">
+            <?= $pager->links() ?>
+        </div>
     </div>
 </div>
 
