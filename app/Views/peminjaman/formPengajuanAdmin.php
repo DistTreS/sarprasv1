@@ -1,10 +1,10 @@
-<?= $this->extend('layout/mainpegawai') ?>
+<?= $this->extend('layout/main') ?>
 
 <?= $this->section('content') ?>
 <div class="container">
     <h2>Ajukan Peminjaman</h2>
 
-    <form action="<?= base_url('pegawai/peminjaman/simpan') ?>" method="post">
+    <form action="<?= base_url('/peminjaman/simpan') ?>" method="post">
         <label for="tanggal_peminjaman">Tanggal Pengajuan:</label>
         <input type="date" name="tanggal_peminjaman" id="tanggal_peminjaman" required>
 

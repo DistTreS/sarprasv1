@@ -12,78 +12,87 @@
     <table class="table">
         <thead>
             <tr>
+                <th>No</th>
                 <th>NUP</th>
                 <th>Nama Aset</th>
                 <th>CC</th>
                 <th>Keterangan</th>
                 <th>Jumlah</th>
-                <th>Telepon</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><?= esc($peminjaman['nup']); ?></td>
-                <td><?= esc($peminjaman['nama_aset']); ?></td>
-                <td><?= esc($peminjaman['CC']); ?></td>
-                <td><?= esc($peminjaman['keterangan']); ?></td>
-                <td><?= esc($peminjaman['jumlah'] ?? '1 Unit'); ?></td>
-                <td><?= !empty($peminjaman['no_telepon']) ? esc($peminjaman['no_telepon']) : 'Tidak tersedia'; ?></td>
-            </tr>
+            <?php $no = 1;
+            foreach ($peminjaman as $item) : ?>
+                <tr>
+                    <td><?= $no++; ?></td>
+                    <td><?= esc($item['nup']); ?></td>
+                    <td><?= esc($item['nama_aset']); ?></td>
+                    <td><?= esc($item['CC'] ?? '-'); ?></td>
+                    <td><?= esc($item['keterangan'] ?? '-'); ?></td>
+                    <td><?= esc($item['jumlah'] ?? '1 Unit'); ?></td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 
     <!-- Informasi Tanggal dan Status -->
     <div class="info-status-container">
         <div class="info-tanggal">
-            <p><strong>Tanggal Peminjaman:</strong> <?= esc($peminjaman['tanggal_peminjaman']); ?></p>
-            <p><strong>Tanggal Rencana Pengembalian:</strong> <?= esc($peminjaman['tanggal_rencana_pengembalian']); ?></p>
-            <p><strong>Tanggal Pengembalian:</strong> <?= !empty($peminjaman['tanggal_pengembalian']) ? esc($peminjaman['tanggal_pengembalian']) : '-'; ?></p>
+            <p><strong>Tanggal Peminjaman:</strong> <?= esc($detail_pengajuan['tanggal_peminjaman']); ?></p>
+            <p><strong>Tanggal Rencana Pengembalian:</strong> <?= esc($detail_pengajuan['tanggal_rencana_pengembalian']); ?></p>
+            <p><strong>Tanggal Pengembalian:</strong> <?= !empty($detail_pengajuan['tanggal_pengembalian']) ? esc($detail_pengajuan['tanggal_pengembalian']) : '-'; ?></p>
+
         </div>
+
+
         <div class="status-container">
-            <p><strong>Status Peminjaman:</strong> 
-                <span class="status-pelayanan <?= esc($peminjaman['status_peminjaman']); ?>">
-                    <?= esc($peminjaman['status_peminjaman']); ?>
+            <p><strong>Status Peminjaman:</strong>
+                <span class="status-pelayanan <?= esc($detail_pengajuan['status_peminjaman']); ?>">
+                    <?= esc($detail_pengajuan['status_peminjaman']); ?>
                 </span>
             </p>
-            <p><strong>Status Layanan:</strong> 
-                <span class="status-pelayanan <?= esc($peminjaman['status_layanan']); ?>">
-                    <?= esc($peminjaman['status_layanan']); ?>
+            <p><strong>Status Layanan:</strong>
+                <span class="status_layanan <?= esc($detail_pengajuan['status_layanan']); ?>">
+                    <?= esc($detail_pengajuan['status_layanan']); ?>
                 </span>
             </p>
+            <?php if (!empty($detail_pengajuan['acc_by'])): ?>
+                <p><strong>
+                        <?= ($detail_pengajuan['status_peminjaman'] == 'Ditolak') ? 'Ditolak oleh:' : 'Disetujui oleh:' ?>
+                    </strong> <?= esc($detail_pengajuan['acc_by']); ?>
+                </p>
+            <?php endif; ?>
         </div>
     </div>
 
     <!-- Informasi Bukti Pengembalian -->
     <div class="bukti-container">
-    <h3>Bukti Pengembalian</h3>
+        <h3>Bukti Pengembalian</h3>
 
-    <?php if (empty($peminjaman['bukti_pengembalian'])) : ?>
-        <div class="alert alert-warning">
-            <strong>Bukti pengembalian ditolak, silakan upload ulang bukti pengembalian.</strong>
-        </div>
+        <?php if (empty($detail_pengajuan['bukti_pengembalian'])) : ?>
+            <div class="alert alert-warning">
+                <strong>Bukti pengembalian belum ada atau ditolak, silakan upload ulang bukti pengembalian.</strong>
+            </div>
 
-    <?php elseif (!empty($peminjaman['bukti_pengembalian']) && $peminjaman['status_layanan'] !== 'Selesai') : ?>
-        <div class="alert alert-info">
-            <strong>Bukti pengembalian telah diupload, silakan tunggu persetujuan.</strong>
-        </div>
+        <?php elseif (!empty($detail_pengajuan['bukti_pengembalian']) && $detail_pengajuan['status_layanan'] !== 'Selesai') : ?>
+            <div class="alert alert-info">
+                <strong>Bukti pengembalian telah diupload, silakan tunggu persetujuan.</strong>
+            </div>
 
-    <?php elseif (!empty($peminjaman['bukti_pengembalian']) && $peminjaman['status_layanan'] === 'Selesai') : ?>
-        <img src="<?= base_url('uploads/bukti_pengembalian/' . esc($peminjaman['bukti_pengembalian'])) ?>" 
-             alt="Bukti Pengembalian" 
-             style="max-width:300px; display:block;">
-        <div class="alert alert-success">
-            <strong>Pengembalian telah disetujui.</strong>
-        </div>
-    <?php endif; ?>
-</div>
-
-
-
-
+        <?php elseif (!empty($detail_pengajuan['bukti_pengembalian']) && $detail_pengajuan['status_layanan'] === 'Selesai') : ?>
+            <img src="<?= base_url('uploads/bukti_pengembalian/' . esc($detail_pengajuan['bukti_pengembalian'])) ?>"
+                alt="Bukti Pengembalian"
+                style="max-width:300px; display:block;">
+            <div class="alert alert-success">
+                <strong>Pengembalian telah disetujui.</strong>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <!-- Tombol Kembali -->
     <a href="<?= base_url('pegawai/peminjaman'); ?>" class="btn-back">Kembali</a>
 </div>
+
 
 <!-- CSS Styling -->
 <style>
@@ -121,7 +130,8 @@
         margin: 20px 0;
     }
 
-    .table th, .table td {
+    .table th,
+    .table td {
         border: 1px solid #ddd;
         padding: 10px;
         text-align: center;

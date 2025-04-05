@@ -6,13 +6,13 @@ use CodeIgniter\Model;
 
 class AuthModel extends Model
 {
-    protected $table = 'users'; // Sesuaikan dengan nama tabel Anda
-    protected $primaryKey = 'id';
-    protected $allowedFields = ['username', 'password', 'jabatan'];
+    protected $table = 'users';
+    protected $allowedFields = ['username', 'password', 'role'];
 
     /**
      * Fungsi untuk mendapatkan user berdasarkan username
      */
+
     public function getUserByUsername($username)
     {
         return $this->where('username', $username)->first();
@@ -30,8 +30,8 @@ class AuthModel extends Model
     /**
      * Fungsi untuk mendapatkan role user berdasarkan jabatan
      */
-    public function getRole($jabatan)
+    public function getRole($role)
     {
-        return ($jabatan === 'Admin') ? 'admin' : 'pegawai';
+        return ($role);
     }
 }

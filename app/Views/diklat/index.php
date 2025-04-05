@@ -257,8 +257,6 @@
 <div class="container">
     <h2>Data Peserta Diklat</h2>
     <div class="mb-3 d-flex justify-content-between">
-        <a href="<?= base_url('diklat/tambahPeserta'); ?>" class="btn btn-primary">Tambah Peserta</a>
-        <a href="<?= base_url('diklat/jenisDiklat') ?>" class="btn btn-secondary">Kelola Jenis Diklat</a>
         <a href="<?= site_url('diklat/exportToPdf') ?>?keyword=<?= esc($keyword) ?>&jenis_diklat=<?= esc($filterDiklat) ?>&instansi=<?= esc($instansi) ?>&angkatan=<?= esc($angkatan) ?>&tahun=<?= esc($tahun) ?>" class="btn btn-danger">Export ke PDF</a>
     </div>
 

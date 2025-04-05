@@ -155,6 +155,34 @@
         opacity: 1;
     }
 
+    .btn-info {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        margin-left: 445px;
+    }
+
+    .btn-info {
+        background-color: rgb(0, 234, 255);
+        border: none;
+    }
+
+    .btn-info:hover {
+        background-color: rgb(0, 173, 247);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(23, 162, 184, 0.3);
+    }
+
+    /* Atur jarak antara tombol */
+    .d-flex.gap-2 {
+        margin-bottom: 20px;
+    }
+
     /* Responsive Adjustments */
     @media (max-width: 768px) {
         .container.mt-4 {
@@ -176,9 +204,15 @@
     <h2 class="mb-4">Tambah Peserta Diklat</h2>
 
     <!-- Tombol Import Excel -->
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importModal">
-        Import Excel
-    </button>
+    <div class="d-flex gap-2">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importModal">
+            <i class="fas fa-file-import"></i> Import Excel
+        </button>
+
+        <a href="<?= base_url('contoh.xlsx') ?>" class="btn btn-info" download>
+            <i class="fas fa-download"></i> Download Contoh Excel
+        </a>
+    </div>
 
     <!-- Modal Upload Excel -->
     <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">

@@ -27,12 +27,12 @@ class AsetRusakController extends Controller
     // ===============================
     // ADMIN FUNCTIONS
     // ===============================
-    
+
     // Menampilkan daftar aset rusak untuk admin
     public function index()
     {
         $data['asetRusakList'] = $this->asetRusakModel
-            ->select('aset_rusak.*, kategori_aset.nama_kategori, users.full_name AS nama_pelapor')
+            ->select('aset_rusak.*, kategori_aset.nama_kategori, users.full_name')
             ->join('aset', 'aset.id_aset = aset_rusak.id_aset')
             ->join('kategori_aset', 'kategori_aset.kode_kategori = aset.kode_kategori')
             ->join('users', 'users.id = aset_rusak.id', 'left')
@@ -42,14 +42,15 @@ class AsetRusakController extends Controller
     }
 
     // Melihat detail aset rusak
-    public function detail($id_rusak)
+    public function detail($id_user, $id_aset)
     {
         $data['asetRusak'] = $this->asetRusakModel
             ->select('aset_rusak.*, kategori_aset.nama_kategori, users.full_name AS nama_pelapor')
             ->join('aset', 'aset.id_aset = aset_rusak.id_aset')
             ->join('kategori_aset', 'kategori_aset.kode_kategori = aset.kode_kategori')
             ->join('users', 'users.id = aset_rusak.id')
-            ->where('aset_rusak.id', $id_rusak)
+            ->where('aset_rusak.id', $id_user)
+            ->where('aset_rusak.id_aset', $id_aset)
             ->first();
 
         if (!$data['asetRusak']) {
@@ -58,6 +59,7 @@ class AsetRusakController extends Controller
 
         return view('peminjaman/detailAsetRusak', $data);
     }
+
 
     // Cetak laporan aset rusak dalam bentuk PDF
     public function cetak($id_rusak)
@@ -68,7 +70,7 @@ class AsetRusakController extends Controller
     // ===============================
     // USER PEGAWAI FUNCTIONS
     // ===============================
-    
+
     // Menampilkan riwayat pengajuan aset rusak untuk pegawai
     public function riwayat()
     {
@@ -88,7 +90,7 @@ class AsetRusakController extends Controller
             ->where('aset_rusak.id', $id_user)
             ->orderBy('aset_rusak.tanggal_pengajuan', 'DESC')
             ->findAll();
-        
+
         return view('peminjaman/asetRusakPegawai', $data);
     }
 
@@ -121,11 +123,26 @@ class AsetRusakController extends Controller
         }
 
         $data['asetList'] = $this->asetModel
-            ->select('aset.id_aset, kategori_aset.nama_kategori')
+            ->select('aset.id_aset, aset.nup, aset.nama_aset, kategori_aset.nama_kategori')
             ->join('kategori_aset', 'kategori_aset.kode_kategori = aset.kode_kategori', 'left')
             ->findAll();
 
         return view('peminjaman/pengajuanAsetRusakPegawai', $data);
+    }
+
+    public function pengajuanAdmin()
+    {
+        $id = session()->get('user_id');
+        if (!$id) {
+            return redirect()->to('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $data['asetList'] = $this->asetModel
+            ->select('aset.id_aset, aset.nup, aset.nama_aset, kategori_aset.nama_kategori')
+            ->join('kategori_aset', 'kategori_aset.kode_kategori = aset.kode_kategori', 'left')
+            ->findAll();
+
+        return view('peminjaman/pengajuanAsetRusakAdmin', $data);
     }
 
     // Menyimpan pengajuan aset rusak oleh pegawai
@@ -136,36 +153,77 @@ class AsetRusakController extends Controller
         $validation = \Config\Services::validation();
         $validation->setRules([
             'id_aset' => 'required|integer',
-            'tanggal_pengajuan' => 'required|valid_date',
             'status_kerusakan' => 'required|in_list[Rusak Ringan,Rusak Sedang,Rusak Berat]',
             'keterangan' => 'required',
             'bukti_foto' => 'uploaded[bukti_foto]|max_size[bukti_foto,2048]|is_image[bukti_foto]|mime_in[bukti_foto,image/png,image/jpeg,image/jpg]'
         ]);
-    
+
         if (!$validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('error', implode(", ", $validation->getErrors()));
         }
-    
+
         // Upload Foto
         $buktiFoto = $this->request->getFile('bukti_foto');
         $namaFoto = $buktiFoto->getRandomName();
         $buktiFoto->move('uploads/aset_rusak/', $namaFoto);
-    
+
         // Ambil ID user yang sedang login
         $id_user = session()->get('user_id');
-    
+
+        // Gunakan tanggal saat ini sebagai tanggal pengajuan
+        $tanggal_pengajuan = date('Y-m-d');
+
         // Simpan Data ke Database
         $this->asetRusakModel->insert([
             'id_aset' => $this->request->getPost('id_aset'),
             'id' => $id_user,
-            'tanggal_pengajuan' => $this->request->getPost('tanggal_pengajuan'),
-            'status_kerusakan' => $this->request->getPost('status_kerusakan'), // Tetap gunakan nilai dari input form
+            'tanggal_pengajuan' => $tanggal_pengajuan,
+            'status_kerusakan' => $this->request->getPost('status_kerusakan'),
             'keterangan' => $this->request->getPost('keterangan'),
             'bukti_foto' => $namaFoto,
-            'status_pengajuan' => 'Diajukan' // Buat kolom baru jika ingin menyimpan status pengajuan
+            'status_pengajuan' => 'Diajukan'
         ]);
-    
-        return redirect()->to(base_url('aset-rusak/riwayat'));
+
+        return redirect()->to(base_url('aset-rusak/riwayat'))->with('success', 'Pengajuan berhasil disimpan.');
     }
-    
+
+    public function simpanPengajuanAdmin()
+    {
+        // Validasi input
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'id_aset' => 'required|integer',
+            'status_kerusakan' => 'required|in_list[Rusak Ringan,Rusak Sedang,Rusak Berat]',
+            'keterangan' => 'required',
+            'bukti_foto' => 'uploaded[bukti_foto]|max_size[bukti_foto,2048]|is_image[bukti_foto]|mime_in[bukti_foto,image/png,image/jpeg,image/jpg]'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('error', implode(", ", $validation->getErrors()));
+        }
+
+        // Upload Foto
+        $buktiFoto = $this->request->getFile('bukti_foto');
+        $namaFoto = $buktiFoto->getRandomName();
+        $buktiFoto->move('uploads/aset_rusak/', $namaFoto);
+
+        // Ambil ID user yang sedang login
+        $id_user = session()->get('user_id');
+
+        // Gunakan tanggal saat ini sebagai tanggal pengajuan
+        $tanggal_pengajuan = date('Y-m-d');
+
+        // Simpan Data ke Database
+        $this->asetRusakModel->insert([
+            'id_aset' => $this->request->getPost('id_aset'),
+            'id' => $id_user,
+            'tanggal_pengajuan' => $tanggal_pengajuan,
+            'status_kerusakan' => $this->request->getPost('status_kerusakan'),
+            'keterangan' => $this->request->getPost('keterangan'),
+            'bukti_foto' => $namaFoto,
+            'status_pengajuan' => 'Diajukan'
+        ]);
+
+        return redirect()->to(base_url('aset_rusak'))->with('success', 'Pengajuan berhasil disimpan.');
+    }
 }
