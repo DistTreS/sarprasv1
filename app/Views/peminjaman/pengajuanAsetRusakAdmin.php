@@ -1,4 +1,4 @@
-<?= $this->extend('layout/mainpegawai'); ?>
+<?= $this->extend('layout/main'); ?>
 
 <?= $this->section('content'); ?>
 <div class="container">
@@ -13,7 +13,7 @@
         <div class="alert alert-success fade-in"> <?= session()->getFlashdata('success'); ?> </div>
     <?php endif; ?>
 
-    <form action="<?= base_url('aset-rusak/simpan'); ?>" method="post" enctype="multipart/form-data" class="form-container">
+    <form action="<?= base_url('aset-rusak/simpanadmin'); ?>" method="post" enctype="multipart/form-data" class="form-container">
         <?= csrf_field(); ?>
 
         <div class="mb-3">
@@ -58,7 +58,7 @@
     </form>
 
     <!-- 🔹 Tombol Kembali -->
-    <a href="<?= base_url('aset-rusak/riwayat'); ?>" class="btn btn-secondary kembali">Kembali</a>
+    <a href="<?= base_url('aset_rusak'); ?>" class="btn btn-secondary kembali">Kembali</a>
 </div>
 
 <style>

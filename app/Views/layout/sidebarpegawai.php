@@ -3,7 +3,7 @@
     <img src="<?= base_url('assets/images/logo_ppsdm.png'); ?>" alt="Logo Kantor" class="logo">
 
     <ul>
-        <li><a href="<?= base_url('/dashboard'); ?>">Dashboard</a></li>
+        <li><a href="<?= base_url('/dashboard/pegawai'); ?>">Dashboard</a></li>
 
         <li class="dropdown">
             <a href="javascript:void(0);" onclick="toggleDropdown('inventaris')">

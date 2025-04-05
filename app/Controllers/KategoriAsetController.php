@@ -17,15 +17,35 @@ class KategoriAsetController extends Controller
     // Menampilkan daftar kategori aset
     public function index()
     {
-        $data['kategoriList'] = $this->kategoriAsetModel->getKategoriWithCount();
-        return view('peminjaman/daftarKategoriAset', $data);
+        $keyword = $this->request->getGet('keyword');
+
+        if ($keyword) {
+            $kategoriList = $this->kategoriAsetModel->searchKategori($keyword);
+        } else {
+            $kategoriList = $this->kategoriAsetModel->getKategoriWithCount();
+        }
+
+        return view('peminjaman/daftarKategoriAset', [
+            'kategoriList' => $kategoriList
+        ]);
     }
 
     public function indexPegawai()
     {
-        $data['kategoriList'] = $this->kategoriAsetModel->getKategoriWithCount();
-        return view('peminjaman/daftarKategoriAsetPegawai', $data);
+        $keyword = $this->request->getGet('keyword');
+
+        if ($keyword) {
+            $kategoriList = $this->kategoriAsetModel->searchKategori($keyword);
+        } else {
+            $kategoriList = $this->kategoriAsetModel->getKategoriWithCount();
+        }
+
+        return view('peminjaman/daftarKategoriAsetPegawai', [
+            'kategoriList' => $kategoriList
+        ]);
     }
+
+
 
     // Menampilkan halaman tambah kategori aset
     public function tambah()
@@ -71,7 +91,7 @@ class KategoriAsetController extends Controller
         $kategori = $this->kategoriAsetModel->find($kode_kategori);
         if (!$kode_kategori) {
             $kode_kategori = $this->request->getPost('kode_kategori');
-        }        
+        }
 
         if (!$this->validate([
             'nama_kategori' => 'required',
@@ -93,9 +113,17 @@ class KategoriAsetController extends Controller
     {
         $kategori = $this->kategoriAsetModel->find($kode_kategori);
         if (!$kategori) {
-            return redirect()->to('/kategoriAset')->with('error', 'Kategori tkodeak ditemukan!');
+            return redirect()->to('/kategoriAset')->with('error', 'Kategori tidak ditemukan!');
         }
 
+        // Panggil fungsi dari model untuk hitung jumlah aset
+        $jumlahAset = $this->kategoriAsetModel->countAsetByKategori($kode_kategori);
+
+        if ($jumlahAset > 0) {
+            return redirect()->to('/kategoriAset')->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh ' . $jumlahAset . ' aset.');
+        }
+
+        // Hapus kategori jika tidak digunakan
         $this->kategoriAsetModel->delete($kode_kategori);
         return redirect()->to('/kategoriAset')->with('success', 'Kategori aset berhasil dihapus!');
     }

@@ -191,7 +191,7 @@
 
     <div class="struktur-container">
         <h3>Struktur Organisasi</h3>
-        <img src="assets/images/strukturorganisasi.png" alt="Struktur Organisasi">
+        <img src="/assets/images/strukturorganisasi.png" alt="Struktur Organisasi">
     </div>
 
 
