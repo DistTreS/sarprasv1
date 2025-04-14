@@ -4,68 +4,80 @@
 <div class="container">
     <!-- Header Formulir -->
     <div class="form-header">
-    <img src="<?= base_url('assets/images/logo_ppsdm.png'); ?>" alt="Logo PPSDM" class="logo-ppsdm">
-
+        <img src="<?= base_url('assets/images/logo_ppsdm.png'); ?>" alt="Logo PPSDM" class="logo-ppsdm">
         <h2>Formulir Peminjaman Aset PPSDM Regional Bukittinggi</h2>
     </div>
 
     <!-- Informasi User -->
     <div class="user-info">
-        <span class="badge-user">User#<?= esc($peminjaman['id_user']); ?></span>
-        <a href="<?= base_url('peminjaman/cetak/' . $peminjaman['id_peminjaman']); ?>" class="btn-print">Print</a>
+        <span class="badge-user">Peminjam : <?= esc($peminjaman['full_name']); ?></span>
+        <a href="<?= base_url('peminjaman/cetak/' . $peminjaman['id_pengajuan']); ?>" class="btn-print">Cetak PDF</a>
     </div>
 
     <!-- Tabel Informasi Peminjaman -->
     <table class="table">
         <thead>
             <tr>
-                <th>ID Aset</th>
+                <th>NUP</th>
                 <th>Nama Aset</th>
-                <th>CC</th>
-                <th>Keterangan</th>
-                <th>Jumlah</th>
-                <th>Telepon</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><?= esc($peminjaman['id_aset']); ?></td>
-                <td><?= esc($peminjaman['nama_aset']); ?></td>
-                <td><?= esc($peminjaman['cc']); ?></td>
-                <td><?= esc($peminjaman['keterangan']); ?></td>
-                <td><?= esc($peminjaman['jumlah'] ?? '1 Unit'); ?></td>
-                <td><?= !empty($peminjaman['no_telepon']) ? esc($peminjaman['no_telepon']) : 'Tidak tersedia'; ?></td>
-            </tr>
+            <?php foreach ($peminjaman['aset'] as $aset): ?>
+                <tr>
+                    <td><?= esc($aset['nup']); ?></td>
+                    <td><?= esc($aset['nama_aset']); ?></td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
+
+    <!-- Informasi Tambahan -->
+    <div class="info-container">
+        <p><strong>CC:</strong> <?= esc($peminjaman['CC']); ?></p>
+        <p><strong>Keterangan:</strong> <?= esc($peminjaman['keterangan']); ?></p>
+        <p><strong>Jumlah Aset:</strong> <?= count($peminjaman['aset']); ?> Unit</p>
+    </div>
 
     <!-- Informasi Tanggal dan Status -->
     <div class="info-status-container">
         <div class="info-tanggal">
-            <p><strong>Tanggal Peminjaman:</strong> <?= esc($peminjaman['tanggal_pengajuan']); ?></p>
+            <p><strong>Tanggal Peminjaman:</strong> <?= esc($peminjaman['tanggal_peminjaman']); ?></p>
             <p><strong>Tanggal Rencana Pengembalian:</strong> <?= esc($peminjaman['tanggal_rencana_pengembalian']); ?></p>
             <p><strong>Tanggal Pengembalian:</strong> <?= !empty($peminjaman['tanggal_pengembalian']) ? esc($peminjaman['tanggal_pengembalian']) : '-'; ?></p>
         </div>
         <div class="status-container">
-            <form action="<?= base_url('peminjaman/update_status/' . $peminjaman['id_peminjaman']); ?>" method="post" class="status-form">
+            <form action="<?= base_url('peminjaman/update_status/' . $peminjaman['id_pengajuan']); ?>" method="post" class="status-form">
                 <label><strong>Status Peminjaman:</strong></label>
-                <select name="status_peminjaman" class="status-dropdown">
+                <select name="status_peminjaman" class="status-dropdown" <?= ($peminjaman['status_layanan'] == 'Selesai') ? 'disabled' : ''; ?>>
                     <option value="Belum Disetujui" <?= ($peminjaman['status_peminjaman'] == 'Belum Disetujui') ? 'selected' : ''; ?>>Belum Disetujui</option>
                     <option value="Disetujui" <?= ($peminjaman['status_peminjaman'] == 'Disetujui') ? 'selected' : ''; ?>>Disetujui</option>
+                    <option value="Ditolak" <?= ($peminjaman['status_peminjaman'] == 'Ditolak') ? 'selected' : ''; ?>>Ditolak</option>
                 </select>
-                <button type="submit" class="btn-save">Simpan</button>
+                <?php if ($peminjaman['status_layanan'] != 'Selesai'): ?>
+                    <button type="submit" class="btn-save">Simpan</button>
+                <?php endif; ?>
             </form>
-            <p><strong>Status Pelayanan:</strong> 
+
+            <p><strong>Status Layanan:</strong>
                 <span class="status-pelayanan <?= esc($peminjaman['status_layanan']); ?>">
                     <?= esc($peminjaman['status_layanan']); ?>
                 </span>
             </p>
+            <?php if (!empty($peminjaman['acc_by'])): ?>
+                <p><strong>
+                        <?= ($peminjaman['status_peminjaman'] == 'Ditolak') ? 'Ditolak oleh:' : 'Disetujui oleh:' ?>
+                    </strong> <?= esc($peminjaman['acc_by']); ?>
+                </p>
+            <?php endif; ?>
         </div>
     </div>
 
     <!-- Tombol Kembali -->
     <a href="<?= base_url('peminjaman'); ?>" class="btn-back">Kembali</a>
 </div>
+
+
 
 <!-- CSS Styling -->
 <style>
@@ -86,7 +98,7 @@
     }
 
     .badge-user {
-        background: blue;
+        background: #28a745;
         color: white;
         padding: 5px 10px;
         border-radius: 5px;
@@ -115,11 +127,19 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin: 20px 0;
+        margin-bottom: 5px;
     }
 
-    .table th, .table td {
-        border: 1px solid #ddd;
+    .table th {
+        background: #007bff;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .table td {
+        border: 1px solid #ccc;
         padding: 10px;
         text-align: center;
     }
@@ -147,11 +167,11 @@
     }
 
     .status-container {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
 
     .btn-save {
         margin-top: 10px;
@@ -177,7 +197,7 @@
         text-decoration: none;
         margin-top: 10px;
     }
-    
+
     .btn-back {
         display: inline-block;
         padding: 10px 15px;
@@ -187,15 +207,13 @@
         text-decoration: none;
         margin-top: 10px;
         background: #6c757d;
+        box-sizing: border-box;
     }
 
-     .btn-print {
+    .btn-print {
         background: #007bff;
     }
 
-    .btn-back {
-        background: #6c757d;
-    }
 
     .status-pelayanan {
         font-weight: bold;
@@ -217,6 +235,8 @@
         background: #28a745;
         color: white;
     }
+
+    
 </style>
 
 <?= $this->endSection() ?>

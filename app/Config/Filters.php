@@ -24,8 +24,12 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'admin'         => \App\Filters\AdminFilter::class,
+        'admin_utama'         => \App\Filters\AdminUtamaFilter::class,
         'pegawai'       => \App\Filters\PegawaiFilter::class,
+        'multi_admin' => \App\Filters\MultiAdminFilter::class,
+        'admin_peminjaman' => \App\Filters\MultiAdminPeminjamanFilter::class,
+        'admin_barang' => \App\Filters\MultiAdminBarangFilter::class,
+        'admin_diklat' => \App\Filters\MultiAdminDiklatFilter::class,
     ];
 
     /**

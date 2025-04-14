@@ -20,8 +20,9 @@ class PesertaModel extends Model
 
     public function filterData($params)
     {
-        $this->select('peserta.*, peserta_diklat.*')
-            ->join('peserta', 'peserta.id_peserta = peserta_diklat.id_peserta');
+        $this->select('peserta.*, peserta_diklat.*, diklat.nama_diklat')
+            ->join('peserta_diklat', 'peserta.id_peserta = peserta_diklat.id_peserta', 'left')
+            ->join('diklat', 'peserta_diklat.id_diklat = diklat.id_diklat', 'left');
 
         if (!empty($params['keyword'])) {
             $this->groupStart()

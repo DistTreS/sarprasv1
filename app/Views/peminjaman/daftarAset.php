@@ -4,177 +4,134 @@
 
 <h2><?= esc($title); ?></h2>
 
-<!-- 🔹 Tombol Tambah Aset -->
-<a href="<?= base_url('aset/create?id_kategori=' . ($id_kategori ?? '')); ?>" class="btn-tambah">Tambah Aset</a>
+
+
+<!-- 🔹 Baris Atas: Form Pencarian + Tombol Tambah -->
+<div class="aset-bar">
+    <a href="<?= base_url('aset/create?kode_kategori=' . ($kode_kategori ?? '')); ?>" class="btn-tambah">Tambah Aset</a>
+    <form action="<?= base_url('peminjaman/cariAset/' . esc($kode_kategori ?? '')); ?>" method="get" class="form-aset">
+        <input type="text" name="search" value="<?= esc($search ?? ''); ?>" placeholder="Cari Nama Aset atau NUP" class="form-control" required>
+        <button type="submit" class="btn btn-primary">Cari</button>
+    </form>
+</div>
 
 
 <!-- 🔹 Tabel Daftar Aset -->
 <table class="table">
     <thead>
         <tr>
-            <th class="header-id">ID Aset</th>
+            <th class="header-id">Nama Aset</th>
+            <th class="header-id">NUP</th>
             <th class="header-kondisi">Kondisi</th>
-            <th class="header-status">Status</th>
+            <th class="header-status_aset">Status Aset</th>
             <th class="header-gambar">Gambar</th>
-            <th class="header-action">Action</th>
+            <th class="header-action">Aksi</th>
         </tr>
     </thead>
 
     <tbody>
         <?php foreach ($asetList as $aset): ?>
         <tr>
-            <td><?= esc($aset['id_aset']); ?></td> <!-- Menampilkan ID Aset -->
+            <td><?= esc($aset['nama_aset']); ?></td>
+            <td><?= esc($aset['nup']); ?></td> <!-- Menampilkan ID Aset -->
             <td><?= esc($aset['kondisi']); ?></td>
-            <td><?= esc($aset['status']); ?></td>
+            <td><?= esc($aset['status_aset']); ?></td>
             <td>
-                <img src="<?= base_url('uploads/aset/' . esc($aset['gambar'])); ?>" class="gambar-aset" alt="Gambar Aset">
+                <img src="<?= base_url('uploads/aset/' . esc($aset['gambar'])); ?>" class="gambar-aset" alt="Tidak Ada Gambar">
             </td>
             <td>
-                <button class="btn btn-warning btn-edit"
-                   data-id="<?= esc($aset['id_aset']); ?>"
-                   data-status="<?= esc($aset['status']); ?>"
-                   data-kondisi="<?= esc($aset['kondisi']); ?>"
-                   data-gambar="<?= base_url('uploads/aset/' . esc($aset['gambar'])); ?>">
+                <!-- Tombol Edit -->
+                <a href="<?= base_url('aset/edit/' . esc($aset['id_aset'])); ?>" class="btn-edit btn-action">
                     <i class="fas fa-edit"></i> Edit
-                </button>
+                </a>
 
-                <button class="btn btn-danger btn-delete" data-id="<?= esc($aset['id_aset']); ?>">
+                <!-- Tombol Hapus -->
+                <button class="btn-delete btn-action btn-delete" data-delete-url="<?= base_url('aset/delete/' . esc($aset['id_aset'])); ?>">
                     <i class="fas fa-trash"></i> Hapus
                 </button>
             </td>
+
         </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
 
 
-<!-- 🔹 Modal Edit -->
-<div id="editModal" class="modal">
-    <div class="modal-content edit">
-        <span class="close close-edit">&times;</span>
-        <h3>Edit Aset</h3>
-        <form action="<?= base_url('aset/update'); ?>" method="post" enctype="multipart/form-data">
-            <?= csrf_field(); ?>
-            <input type="hidden" id="edit_id_aset" name="id_aset">
-            
-            <label>ID Aset:</label>
-            <input type="text" id="edit_id_aset_display" disabled>
-
-            <label for="status">Status:</label>
-            <select id="edit_status" name="status">
-                <option value="Tersedia">Tersedia</option>
-                <option value="Terpakai">Terpakai</option>
-            </select>
-
-            <label for="kondisi">Kondisi:</label>
-            <select id="edit_kondisi" name="kondisi">
-                <option value="Baik">Baik</option>
-                <option value="Perbaikan">Perbaikan</option>
-            </select>
-
-            <label>Gambar:</label>
-            <img id="edit_gambar_preview" src="" alt="Preview Gambar" class="gambar-preview" width="150">
-
-            <input type="file" id="edit_gambar" name="gambar" accept="image/*">
-
-            <button type="submit" class="btn btn-success">Simpan</button>
-            <button type="button" class="btn btn-secondary close-edit">Batal</button>
-        </form>
-    </div>
-</div>
-
-
-<!-- 🔹 Modal Hapus -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content delete">
-        <span class="close close-delete">&times;</span>
-        <h3>Konfirmasi Hapus</h3>
-        <p>Apakah Anda yakin ingin menghapus aset ini?</p>
-        <form id="deleteForm" action="" method="post">
-            <?= csrf_field(); ?>
-            <button type="submit" class="btn btn-danger">Hapus</button>
-            <button type="button" class="btn btn-secondary close-delete">Batal</button>
-        </form>
-    </div>
-</div>
-
-<!-- 🔹 JavaScript -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const editModal = document.getElementById('editModal');
-        const editGambarInput = document.getElementById('edit_gambar');
-        const editGambarPreview = document.getElementById('edit_gambar_preview');
-
-        document.querySelectorAll('.btn-edit').forEach(button => {
-            button.addEventListener('click', function () {
-                document.getElementById('edit_id_aset').value = this.dataset.id;
-                document.getElementById('edit_id_aset_display').value = this.dataset.id;
-
-                document.getElementById('edit_status').value = this.dataset.status;
-                document.getElementById('edit_kondisi').value = this.dataset.kondisi;
-
-                // Set gambar awal dari dataset
-                editGambarPreview.src = this.dataset.gambar;
-
-                editModal.style.display = 'block';
-            });
-        });
-
-        document.querySelectorAll('.close-edit').forEach(button => {
-            button.addEventListener('click', () => editModal.style.display = 'none');
-        });
-
-        // Preview gambar baru sebelum diupload
-        editGambarInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    editGambarPreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Modal Hapus
-        const deleteModal = document.getElementById('deleteModal');
-        const deleteForm = document.getElementById('deleteForm');
-
-        document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function () {
-                deleteForm.action = "<?= base_url('aset/delete/'); ?>" + this.dataset.id;
-                deleteModal.style.display = 'block';
-                });
-            });
-
-        document.querySelectorAll('.close-delete').forEach(button => {
-                button.addEventListener('click', () => deleteModal.style.display = 'none');
-            });
-
-        // Tutup modal saat klik di luar modal
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-            };
-    });
-</script>
 
 <!-- 🔹 Tombol Kembali -->
 <a href="<?= base_url('kategoriAset'); ?>" class="btn btn-secondary kembali">Kembali</a>
 
 <!-- 🔹 CSS -->
 <style>
-    /* Styling Tombol Tambah Aset */
-    .btn-tambah {
+    /* Semua tombol aksi */
+    .btn-action {
+        padding: 10px 15px;
+        margin: 5px 2px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        color: white;
+        transition: background-color 0.3s ease;
+        text-decoration: none; /* untuk <a> */
         display: inline-block;
+    }
+
+    .btn-action i {
+        color: white;
+    }
+
+    /* Tombol Edit */
+    .btn-edit {
+        background-color: #f1c40f; /* Kuning */
+        color: #ddd;
+    }
+
+    .btn-edit:hover {
+        background-color: #d4ac0d;
+    }
+
+    /* Tombol Hapus */
+    .btn-delete {
+        background-color: #e74c3c; /* Merah */
+        color: #ddd;
+    }
+
+    .btn-delete:hover {
+        background-color: #c0392b;
+    }
+
+    /* Styling Tombol Tambah Aset */
+    .aset-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .form-aset {
+        align-items: center;
+    }
+
+    .form-aset input[type="text"] {
+        padding: 8px;
+        width: 300px;
+        margin-right: 10px;
+    }
+
+    .btn-tambah {
         padding: 10px 15px;
         background-color: #007bff;
         color: white;
         border-radius: 5px;
         text-decoration: none;
         font-size: 16px;
-        margin-bottom: 15px;
+        white-space: nowrap;
+    }
+
+    h2 {
+        margin-bottom: 10px;
+        font-size: x-large; 
     }
 
     /* Styling Pop-up Modal Sesuai Gambar */
@@ -262,7 +219,7 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 5px;
     }
 
     .table th, .table td {
@@ -271,14 +228,14 @@
         text-align: center;
     }
 
-    .header-id {background-color: #34495E; color: white;}
-    .header-kondisi { background-color: #2C3E50; color: white; }
-    .header-status  { background-color: #1B4F72; color: white; }
-    .header-gambar  { background-color: #154360; color: white; }
-    .header-action  { background-color: #0E6251; color: white; }
+    .header-id {background-color: #343a40; color: white;}
+    .header-kondisi { background-color: #343a40; color: white; }
+    .header-status_aset  { background-color: #343a40; color: white; }
+    .header-gambar  { background-color: #343a40; color: white; }
+    .header-action  { background-color: #343a40; color: white; }
 
     .gambar-aset {
-        width: 60px; /
+        width: 60px; 
         height: 60px; 
         object-fit: contain; 
         border-radius: 5px;
@@ -312,5 +269,51 @@
         margin: 10px auto;
     }
 </style>
+
+<!-- 🔹 Modal Hapus -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content delete">
+        <span class="close close-delete">&times;</span>
+        <h3>Konfirmasi Hapus</h3>
+        <p>Apakah Anda yakin ingin menghapus aset ini?</p>
+        <form id="deleteForm" action="" method="post">
+            <?= csrf_field(); ?>
+            <button type="submit" class="btn btn-danger">Hapus</button>
+            <button type="button" class="btn btn-secondary close-delete">Batal</button>
+        </form>
+    </div>
+</div>
+
+<!-- 🔹 JavaScript Modal Delete -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+        const closeButtons = document.querySelectorAll('.close-delete');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-delete-url');
+                deleteForm.setAttribute('action', url);
+                deleteModal.style.display = 'block';
+            });
+        });
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                deleteModal.style.display = 'none';
+            });
+        });
+
+        window.onclick = function (event) {
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        }
+    });
+</script>
+
 
 <?= $this->endSection(); ?>
