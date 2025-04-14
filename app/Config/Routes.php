@@ -79,7 +79,6 @@ $routes->get('aset', 'AsetController::index', ['filter' => 'admin_peminjaman']);
 $routes->get('aset/create', 'AsetController::create', ['filter' => 'admin_peminjaman']);
 $routes->post('aset/store', 'AsetController::store', ['filter' => 'admin_peminjaman']);
 $routes->post('aset/update', 'AsetController::update', ['filter' => 'admin_peminjaman']);
-
 $routes->get('aset/edit/(:num)', 'AsetController::edit/$1', ['filter' => 'admin_peminjaman']);
 $routes->post('aset/delete/(:num)', 'AsetController::delete/$1', ['filter' => 'admin_peminjaman']);
 $routes->get('aset/(:num)', 'AsetController::index/$1', ['filter' => 'admin_peminjaman']);
@@ -91,11 +90,10 @@ $routes->post('peminjaman/update_status/(:segment)', 'PeminjamanController::upda
 $routes->get('peminjaman/cetak/(:segment)', 'PeminjamanController::cetak/$1', ['filter' => 'admin_peminjaman']); // Mencetak detail peminjaman
 $routes->get('peminjaman/pengembalian/(:segment)', 'PeminjamanController::pengembalianAdmin/$1', ['filter' => 'admin_peminjaman']); // Form pengembalian aset
 $routes->post('peminjaman/uploadPengembalian/(:num)', 'PeminjamanController::uploadPengembalian/$1', ['filter' => 'admin_peminjaman']); // Upload bukti pengembalian aset
-$routes->post('peminjaman/setujui/(:segment)', 'PeminjamanController::setujui/$1');
-$routes->post('peminjaman/tolak/(:segment)', 'PeminjamanController::tolak/$1');
+$routes->post('peminjaman/setujui/(:segment)', 'PeminjamanController::setujui/$1', ['filter' => 'admin_peminjaman']);
+$routes->post('peminjaman/tolak/(:segment)', 'PeminjamanController::tolak/$1', ['filter' => 'admin_peminjaman']);
 $routes->get('peminjaman/ajukan', 'PeminjamanController::formPengajuanAdmin', ['filter' => 'admin_peminjaman']); // Form pengajuan peminjaman
 $routes->post('peminjaman/simpan', 'PeminjamanController::simpanPengajuanAdmin', ['filter' => 'admin_peminjaman']); // Simpan pengajuan peminjaman
-
 
 $routes->get('aset_rusak', 'AsetRusakController::index', ['filter' => 'admin_peminjaman']); // Menampilkan daftar aset rusak
 $routes->get('aset_rusak/create/(:num)', 'AsetRusakController::create/$1', ['filter' => 'admin_peminjaman']); // Form tambah aset rusak berdasarkan ID aset
@@ -120,11 +118,8 @@ $routes->post('/pegawai/peminjaman/simpan', 'PeminjamanController::simpanPengaju
 $routes->post('/pegawai/peminjaman/pengembalian/simpan/(:num)', 'PeminjamanController::uploadPengembalian/$1', ['filter' => 'pegawai']); // Simpan pengembalian
 $routes->get('/pegawai/peminjaman/detail/(:segment)', 'PeminjamanController::detailPengajuanPegawai/$1', ['filter' => 'pegawai']);
 
-
-// ✅ Route untuk pegawai (melihat aset berdasarkan kategori)
 $routes->get('pegawai/kategoriAset/detail/(:num)', 'AsetController::indexpegawai/$1', ['filter' => 'pegawai']);
 $routes->get('pegawai/kategoriAset', 'KategoriAsetController::indexPegawai', ['filter' => 'pegawai']); // Menampilkan daftar kategori aset
-
 $routes->get('peminjaman/cariAset/(:num)', 'AsetController::cariAset/$1', ['filter' => 'admin_peminjaman']);
 $routes->get('peminjaman/cariAsetPegawai/(:num)', 'AsetController::cariAsetPegawai/$1', ['filter' => 'pegawai']);
 
