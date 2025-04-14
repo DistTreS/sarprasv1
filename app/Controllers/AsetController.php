@@ -148,87 +148,79 @@ class AsetController extends BaseController
 
     public function store()
     {
-        // Debug: Periksa apakah data dari form terkirim
-        
-
-        // Validasi input
+        // Validasi input tanpa wajib upload gambar
         if (!$this->validate([
             'nama_aset' => 'required',
             'nup' => 'required|numeric',
             'status_aset' => 'required',
             'kondisi' => 'required',
-            'gambar' => 'uploaded[gambar]|max_size[gambar,2048]|is_image[gambar]|mime_in[gambar,image/png,image/jpg,image/jpeg]',
+            'gambar' => 'if_exist|max_size[gambar,2048]|is_image[gambar]|mime_in[gambar,image/png,image/jpg,image/jpeg]',
         ])) {
             return redirect()->back()->withInput()->with('error', 'Harap isi semua field dengan benar.');
         }
 
         // Ambil data dari form
-        $kode_kategori = $this->request->getPost('kode_kategori'); // 🔥 Data dari input hidden
+        $kode_kategori = $this->request->getPost('kode_kategori');
         $nama_aset = $this->request->getPost('nama_aset');
         $nup = $this->request->getPost('nup');
         $status_aset = $this->request->getPost('status_aset');
         $kondisi = $this->request->getPost('kondisi');
 
-        // Proses upload gambar
+        // Cek apakah ada gambar yang diupload
         $gambar = $this->request->getFile('gambar');
-        if ($gambar->isValid() && !$gambar->hasMoved()) {
+        $namaGambar = null;
+
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
             $namaGambar = $gambar->getRandomName();
             $gambar->move('uploads/aset', $namaGambar);
-        } else {
-            return redirect()->back()->withInput()->with('error', 'Gagal mengupload gambar.');
         }
-
-        // Debug: Pastikan gambar terupload
-        
 
         // Simpan data ke database
         $this->asetModel->insert([
             'kode_kategori' => $kode_kategori,
-            'nama_aset' => $nama_aset,
-            'nup' => $nup,
-            'status_aset' => $status_aset,
-            'kondisi' => $kondisi,
-            'gambar' => $namaGambar
+            'nama_aset'     => $nama_aset,
+            'nup'           => $nup,
+            'status_aset'   => $status_aset,
+            'kondisi'       => $kondisi,
+            'gambar'        => $namaGambar // ini bisa null
         ]);
 
         return redirect()->to('kategoriAset/detail/' . $kode_kategori)->with('success', 'Aset berhasil ditambahkan!');
     }
-
-
     
 
-    public function update($id_aset)
+    public function update()
     {
+        $id_aset = $this->request->getPost('id_aset'); // ambil dari input form
         $asetModel = new AsetModel();
         $aset = $asetModel->find($id_aset);
+        $kode_kategori = $aset['kode_kategori']?? null;
 
         if (!$aset) {
-            return redirect()->to(base_url('peminjaman/daftarAset'))->with('error', 'Data aset tidak ditemukan!');
+            return redirect()->to(base_url('aset'))->with('error', 'Data aset tidak ditemukan!');
         }
 
         $data = [
-            'nama_aset' => $this->request->getPost('nama_aset'),
-            'nup' => $this->request->getPost('nup'),
-            'kondisi' => $this->request->getPost('kondisi'),
+            'nup' => $this-> request->getPost('nup'),
             'status_aset' => $this->request->getPost('status_aset'),
+            'kondisi' => $this->request->getPost('kondisi'),
         ];
 
-        // Jika ada gambar baru diunggah
         $gambar = $this->request->getFile('gambar');
         if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
             $gambarName = $gambar->getRandomName();
             $gambar->move('uploads/aset', $gambarName);
             $data['gambar'] = $gambarName;
 
-            // Hapus gambar lama jika ada
             if (!empty($aset['gambar']) && file_exists('uploads/aset/' . $aset['gambar'])) {
                 unlink('uploads/aset/' . $aset['gambar']);
             }
         }
 
         $asetModel->update($id_aset, $data);
-        return redirect()->to(base_url('aset'))->with('success', 'Aset berhasil diperbarui');
+        return redirect()->to(base_url('kategoriAset/detail/' . $kode_kategori))->with('success', 'Aset berhasil diperbarui');
     }
+
 
     
 
@@ -249,7 +241,6 @@ class AsetController extends BaseController
     public function edit($id_aset)
     {
         $aset = $this->asetModel->find($id_aset);
-
         if (!$aset) {
             return redirect()->to(base_url('peminjaman/daftarAset'))->with('error', 'Aset tidak ditemukan');
         }

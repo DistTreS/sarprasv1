@@ -24,7 +24,7 @@
         <?php endif; ?>
 
         <button type="submit">Submit</button>
-        <a href="<?= base_url('pegawai/peminjaman') ?>" class="btn btn-secondary">Kembali</a>
+        <a href="<?= base_url('pegawai/peminjaman') ?>" class="btn-secondary">Kembali</a>
     </form>
 </div>
 
@@ -48,7 +48,7 @@
 
     p {
         font-size: 14px;
-        color: red;
+        color:#0B3D91;
     }
 
     label {
@@ -85,7 +85,30 @@
         border-radius: 5px;
         cursor: pointer;
         transition: 0.3s;
+        margin-top: 10px;
     }
+
+    .btn-secondary {
+    width: 100%;
+    margin-top: 5px;
+    padding: 12px;
+    background: #6c757d; /* Warna abu-abu */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    transition: 0.3s;
+    box-sizing: border-box;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
 
     button:hover {
         background: #218838;

@@ -1,7 +1,4 @@
 <?= $this->extend('layout/main'); ?>
-
-
-
 <?= $this->section('content'); ?>
 <div class="edit-aset-container">
     <div class="container py-4">
@@ -13,9 +10,6 @@
                         <p class="mb-0 mt-2 opacity-75">Perbarui informasi aset dengan ID: <?= esc($aset['id_aset']); ?></p>
                     </div>
                     <div class="card-body p-4">
-                        <a href="<?= base_url('peminjaman/daftarAset'); ?>" class="btn btn-back mb-4">
-                            <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar
-                        </a>
                         
                         <?php if(session()->getFlashdata('error')): ?>
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -87,9 +81,9 @@
                                                 <div class="input-group">
                                                     <select id="status_aset" name="status_aset" class="form-select">
                                                         <option value="Tersedia" <?= $aset['status_aset'] == 'Tersedia' ? 'selected' : ''; ?>>Tersedia</option>
-                                                        <option value="Terpakai" <?= $aset['status_aset'] == 'Terpakai' ? 'selected' : ''; ?>>Terpakai</option>
+                                                        <option value="Tidak Tersedia" <?= $aset['status_aset'] == 'Tidak Tersedia"i' ? 'selected' : ''; ?>>Tidak Tersedia"</option>
                                                     </select>
-                                                    <span class="input-group-text <?= $aset['status_aset'] == 'Tersedia' ? 'status-tersedia' : 'status-terpakai'; ?>">
+                                                    <span class="input-group-text <?= $aset['status_aset'] == 'Tersedia' ? 'status-tersedia' : 'status-tidak-tersedia"'; ?>">
                                                         <i class="fas <?= $aset['status_aset'] == 'Tersedia' ? 'fa-check' : 'fa-clock'; ?>"></i>
                                                     </span>
                                                 </div>
@@ -126,11 +120,12 @@
                             <hr class="my-4">
                             
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="<?= base_url('peminjaman/daftarAset'); ?>" class="btn btn-cancel">
-                                    <i class="fas fa-times me-2"></i> Batal
+                                <a href="<?= base_url('kategoriAset/detail/' . $aset['kode_kategori']); ?>" class="btn btn-back">
+                                     Kembali
                                 </a>
+                                
                                 <button type="submit" class="btn btn-save">
-                                    <i class="fas fa-save me-2"></i> Simpan Perubahan
+                                     Simpan Perubahan
                                 </button>
                             </div>
                         </form>
@@ -145,248 +140,205 @@
     </div>
 </div>
 
-<script>
-// Script validasi form dan preview gambar
-(function() {
-    'use strict';
-    window.addEventListener('load', function() {
-        // Validasi form
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-                if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-
-        // Preview gambar yang diupload
-        document.getElementById('gambar').addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    document.querySelector('.img-preview').setAttribute('src', e.target.result);
-                    
-                    // Animasi preview
-                    const preview = document.querySelector('.img-preview');
-                    preview.style.opacity = '0';
-                    setTimeout(() => {
-                        preview.style.transition = 'all 0.5s ease';
-                        preview.style.opacity = '1';
-                    }, 100);
-                }
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-        
-        // Efek hover pada form elements
-        const formElements = document.querySelectorAll('.form-control, .form-select');
-        formElements.forEach(element => {
-            element.addEventListener('focus', function() {
-                this.parentElement.classList.add('element-focus');
-            });
-            
-            element.addEventListener('blur', function() {
-                this.parentElement.classList.remove('element-focus');
-            });
-        });
-        
-        // Animasi untuk card pada load
-        const card = document.querySelector('.aset-card');
-        setTimeout(() => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'all 0.5s ease-out';
-            
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 100);
-        }, 100);
-    }, false);
-})();
-</script>
-
 <style>
-    /* Custom styling untuk halaman edit aset */
-    .edit-aset-container {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 2rem 0;
-        min-height: calc(100vh - 120px);
+   /* Global Reset & Font Scaling */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Container utama halaman edit aset */
+.edit-aset-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem 0;
+    min-height: calc(100vh - 120px);
+}
+
+/* Card aset */
+.aset-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding: 2rem;
+    margin: 1rem;
+}
+
+.aset-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+/* Header Card */
+.card-header-custom {
+    background: linear-gradient(90deg, #1a75ff 0%, #00ccff 100%);
+    color: white;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.card-header-custom::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(25deg);
+}
+
+/* Form Elements */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #495057;
+    display: block;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+    border-color: #86b7fe;
+}
+
+/* Tombol Aksi */
+.btn-save,
+.btn-cancel,
+.btn-back {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s;
+    margin-right: 0.5rem;
+}
+
+/* Tombol Save */
+.btn-save {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+}
+
+.btn-save:hover {
+    background: linear-gradient(90deg, #218838 0%, #1aa179 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Tombol Kembali */
+.btn-back {
+    background-color: #6c757d;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Preview Gambar */
+.image-preview-container {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+}
+
+.image-preview-container:hover {
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.img-preview {
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    width: 100%;
+    object-fit: cover;
+}
+
+.img-preview:hover {
+    transform: scale(1.02);
+}
+
+/* File Upload */
+.file-upload-wrapper {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.file-upload-input {
+    padding-right: 95px;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 50rem;
+    margin-left: 0.5rem;
+}
+
+.status-tidak-tersedia {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-terpakai {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.kondisi-baik {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.kondisi-perbaikan {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    
-    .aset-card {
-        border: none;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    
-    .aset-card:hover {
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        transform: translateY(-5px);
-    }
-    
-    .card-header-custom {
-        background: linear-gradient(90deg, #1a75ff 0%, #00ccff 100%);
-        color: white;
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .card-header-custom::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 200%;
-        background: rgba(255, 255, 255, 0.1);
-        transform: rotate(25deg);
-    }
-    
-    .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.7rem 1rem;
-        border: 1px solid #dee2e6;
-        transition: all 0.3s;
-    }
-    
-    .form-control:focus, .form-select:focus {
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
-        border-color: #86b7fe;
-    }
-    
-    .form-label {
-        color: #495057;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
-    }
-    
-    .btn-back {
-        background-color: #6c757d;
-        color: white;
-        border-radius: 8px;
-        padding: 0.6rem 1.2rem;
-        transition: all 0.3s;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .btn-back:hover {
-        background-color: #5a6268;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-save {
-        background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.7rem 1.5rem;
-        font-weight: 500;
-        transition: all 0.3s;
-        box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
-    }
-    
-    .btn-save:hover {
-        background: linear-gradient(90deg, #218838 0%, #1aa179 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);
-    }
-    
-    .btn-cancel {
-        background-color: #f8f9fa;
-        color: #495057;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 0.7rem 1.5rem;
-        transition: all 0.3s;
-    }
-    
-    .btn-cancel:hover {
-        background-color: #e9ecef;
-    }
-    
-    .image-preview-container {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 1rem;
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s;
-    }
-    
-    .image-preview-container:hover {
-        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .img-preview {
-        max-height: 200px;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
-    }
-    
-    .img-preview:hover {
-        transform: scale(1.02);
-    }
-    
-    .file-upload-wrapper {
-        position: relative;
-        margin-top: 1rem;
-    }
-    
-    .file-upload-input {
-        padding-right: 95px;
-    }
-    
-    .status-badge {
-        display: inline-block;
-        padding: 0.35rem 0.65rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        border-radius: 50rem;
-        margin-left: 0.5rem;
-    }
-    
-    .status-tersedia {
-        background-color: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-    }
-    
-    .status-terpakai {
-        background-color: rgba(255, 193, 7, 0.1);
-        color: #ffc107;
-    }
-    
-    .kondisi-baik {
-        background-color: rgba(13, 110, 253, 0.1);
-        color: #0d6efd;
-    }
-    
-    .kondisi-perbaikan {
-        background-color: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
-    }
-    
-    .form-floating-section {
-        animation: fadeInUp 0.5s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+}
 </style>
 <?= $this->endSection(); ?>

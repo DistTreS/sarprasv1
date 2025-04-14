@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 <div class="container">
-    <h2>Riwayat Peminjaman</h2>
+    <h2>Riwayat Peminjaman Aset</h2>
 
     <a href="<?= base_url('/peminjaman/ajukan'); ?>" class="btn btn-ajukan">Ajukan Peminjaman</a>
 
@@ -43,10 +43,15 @@
         margin: auto;
     }
 
+    h2 {
+        margin-bottom: 10px; 
+        text-align: center;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 5px;
         background: white;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -56,12 +61,12 @@
     th,
     td {
         padding: 12px;
-        text-align: left;
+        text-align: center;
         border-bottom: 1px solid #ddd;
     }
 
     th {
-        background-color: #007bff;
+        background-color: #343a40;
         color: white;
         text-transform: uppercase;
     }
@@ -92,6 +97,17 @@
     .btn:hover {
         opacity: 0.8;
     }
+
+     .btn-ajukan {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
 
     .status {
         padding: 5px 10px;

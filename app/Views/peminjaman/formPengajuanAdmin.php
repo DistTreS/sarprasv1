@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 <div class="container">
-    <h2>Ajukan Peminjaman</h2>
+    <h2>Ajukan Peminjaman Aset</h2>
 
     <form action="<?= base_url('/peminjaman/simpan') ?>" method="post">
         <label for="tanggal_peminjaman">Tanggal Pengajuan:</label>
@@ -156,28 +156,51 @@
     }
 
     /* Button Styling */
-    button {
-        background: #007bff;
-        color: white;
-        padding: 14px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        width: 100%;
-        font-size: 16px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    .button-group {
+        display: flex;
+        gap: 15px;
         margin-top: 10px;
     }
 
-    button:hover {
-        background: #0056b3;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+    .button-group button {
+        flex: 1;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
+
+    /* Tombol Kembali */
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+    }
+
+    .btn-back:hover {
+        background-color: #5a6268;
+        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Tombol Ajukan (submit) */
+    .button-group button[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    }
+
+    .button-group button[type="submit"]:hover {
+        background-color: #0056b3;
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
 
     /* Placeholder Styling */
     ::placeholder {

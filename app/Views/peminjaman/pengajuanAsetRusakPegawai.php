@@ -153,9 +153,10 @@
     }
 
     .btn-primary {
+        display: block;
         width: 100%;
         padding: 14px;
-        border-radius: 10px;
+        border-radius: 5px;
         font-size: 16px;
         background: #007bff;
         color: white;
@@ -169,18 +170,17 @@
     }
 
     .btn-secondary {
-        display: block;
-        width: 100%;
-        padding: 14px;
-        text-align: center;
-        border-radius: 10px;
-        font-size: 16px;
-        margin-top: 15px;
-        background: #6c757d;
-        color: white;
-        text-decoration: none;
-        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
-    }
+            display: block;
+            text-align: center;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s ease;
+            margin-top: 10px;
+        }
 
     .btn-secondary:hover {
         background: #545b62;

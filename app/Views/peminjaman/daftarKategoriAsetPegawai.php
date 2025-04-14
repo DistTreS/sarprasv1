@@ -4,8 +4,8 @@
 
 <h2>Daftar Kategori Aset</h2>
 
-<form method="get" action="<?= base_url('pegawai/kategoriAset'); ?>" style="margin-bottom: 20px;">
-    <input type="text" name="keyword" placeholder="Cari kode atau nama kategori..." value="<?= esc($_GET['keyword'] ?? '') ?>" style="padding: 8px; width: 300px;">
+<form method="get" action="<?= base_url('pegawai/kategoriAset'); ?>" style="margin-bottom: 5px;">
+    <input type="text" name="keyword" placeholder="Cari kode atau nama kategori" value="<?= esc($_GET['keyword'] ?? '') ?>" style="padding: 8px; width: 300px;">
     <button type="submit" class="btn btn-primary">Cari</button>
 </form>
 <!-- Tabel Daftar Kategori -->
@@ -31,7 +31,7 @@
                 <td><?= esc($kategori['jumlah_aset'] ?? 0); ?></td>
                 <td>
                     <a href="<?= base_url('pegawai/kategoriAset/detail/' . $kategori['kode_kategori']); ?>" class="btn btn-info">
-                        <i class="fas fa-eye"></i> Lihat Aset
+                        Lihat Aset
                     </a>
                 </td>
             </tr>
@@ -44,7 +44,13 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 5px;
+    }
+
+    h2 {
+        margin-bottom: 10px;
+        text-align: center; 
+        font-size: x-large;
     }
 
     .table th,
@@ -55,43 +61,45 @@
     }
 
     .header-No {
-        background-color: #34495E;
+        background-color: #343a40;
         color: white;
     }
 
     .header-Kode {
-        background-color: #2C3E50;
+        background-color: #343a40;
         color: white;
     }
 
     .header-Nama {
-        background-color: #2C3E50;
+        background-color: #343a40;
         color: white;
     }
 
     .header-Deskripsi {
-        background-color: #1B4F72;
+        background-color: #343a40;
         color: white;
     }
 
     .header-Jumlah {
-        background-color: #154360;
+        background-color: #343a40;
         color: white;
     }
 
     .header-action {
-        background-color: #0E6251;
+        background-color: #343a40;
         color: white;
     }
 
-    .btn-success {
-        background-color: #28a745;
+    
+    .btn-info {
+        display: inline-block;
+        padding: 10px 10px;
+        background-color: #007bff;
         color: white;
-    }
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
 
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
     }
 
     .close {

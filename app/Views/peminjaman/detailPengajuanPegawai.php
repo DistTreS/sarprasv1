@@ -5,7 +5,7 @@
     <!-- Header Formulir -->
     <div class="form-header">
         <img src="<?= base_url('assets/images/logo_ppsdm.png'); ?>" alt="Logo PPSDM" class="logo-ppsdm">
-        <h2>Detail Peminjaman Aset</h2>
+        <h2>Formulir Peminjaman Aset PPSDM Regional Bukittinggi</h2>
     </div>
 
     <!-- Tabel Informasi Peminjaman -->
@@ -52,7 +52,7 @@
                 </span>
             </p>
             <p><strong>Status Layanan:</strong>
-                <span class="status_layanan <?= esc($detail_pengajuan['status_layanan']); ?>">
+                <span class="status-pelayanan <?= esc($detail_pengajuan['status_layanan']); ?>">
                     <?= esc($detail_pengajuan['status_layanan']); ?>
                 </span>
             </p>
@@ -130,7 +130,14 @@
         margin: 20px 0;
     }
 
-    .table th,
+    .table th {
+        background: #007bff;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
     .table td {
         border: 1px solid #ddd;
         padding: 10px;
@@ -146,6 +153,7 @@
     .status-container {
         text-align: right;
     }
+    
 
     .status-pelayanan {
         font-weight: bold;
@@ -177,6 +185,49 @@
         background: #dc3545;
         color: white;
     }
+
+    .bukti-container {
+        margin-top: 10px;
+        text-align: left;
+    }
+
+    /* Alert styles */
+    .bukti-container .alert {
+        padding: 16px;
+        border-radius: 10px;
+        margin-top: 10px;
+        display: inline-block;
+        text-align: center;
+        max-width: 100%;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    /* Alert warning */
+    .bukti-container .alert-warning {
+        background-color: #fff3cd;
+        color:#dc3545;
+    }
+
+    /* Alert info */
+    .bukti-container .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    /* Alert success */
+    .bukti-container .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    /* Optional: Style for the image */
+    .bukti-container img {
+        margin: 15px auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
 
     .btn-back {
         display: inline-block;

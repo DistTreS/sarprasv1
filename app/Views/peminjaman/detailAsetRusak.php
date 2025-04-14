@@ -51,22 +51,11 @@
             </div>
         </div>
         <div class="button-group">
-            <a href="javascript:void(0);" class="btn btn-primary btn-print" onclick="printContent()">Cetak</a>
-            <a href="javascript:history.back()" class="btn btn-secondary btn-back">Kembali</a>
+            <a href="javascript:history.back()" class="btn btn-back">Kembali</a>
         </div>
     </div>
 </div>
 
-<script>
-function printContent() {
-    var printArea = document.getElementById('printArea').innerHTML;
-    var originalBody = document.body.innerHTML;
-
-    document.body.innerHTML = printArea;
-    window.print();
-    document.body.innerHTML = originalBody;
-}
-</script>
 
 <style>
     .container {
@@ -82,8 +71,8 @@ function printContent() {
         margin-bottom: 20px;
         font-size: 24px;
         font-weight: bold;
-        color: #007bff;
     }
+    
     .form-container {
         background: white;
         padding: 30px;
@@ -137,31 +126,26 @@ function printContent() {
         transition: 0.3s;
         text-align: center;
     }
-    .btn-print {
-        background: #007bff;
-        color: white;
-    }
-    .btn-print:hover {
-        background: #0056b3;
-    }
+
+    /* Tombol Kembali */
     .btn-back {
-        background: #6c757d;
+        display: inline-block;
+        width: 100%;
+        padding: 14px;
+        font-size: 18px;
+        background-color: #6c757d;
         color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: background-color 0.3s ease;
     }
+
     .btn-back:hover {
-        background: #5a6268;
+        background-color: #5a6268;
     }
-    @media print {
-        body * {
-            visibility: hidden;
-        }
-        #printArea, #printArea * {
-            visibility: visible;
-        }
-        .btn-print, .btn-back {
-            display: none;
-        }
-    }
+
 </style>
 
 <?= $this->endSection(); ?>

@@ -7,7 +7,7 @@
     <!-- Tombol Pengajuan Aset Rusak -->
     <div class="mb-3">
         <a href="<?= base_url('aset-rusak/pengajuan'); ?>" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Pengajuan Aset Rusak
+             Pengajuan Aset Rusak
         </a>
     </div>
 
@@ -40,7 +40,7 @@
                             <td><?= esc($aset['status_kerusakan']); ?></td>
                             <td>
                                 <a href="<?= base_url('aset-rusak/detailpegawai/' . $aset['id'] . '/' .$aset['id_aset']); ?>" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Detail
+                                    Lihat Detail
                                 </a>
                             </td>
                         </tr>
@@ -56,9 +56,14 @@
 </div>
 
 <style>
+    h2 {
+        margin-bottom: 10px; 
+        text-align: center;
+    }
+
     /* General Table Styles */
     .table {
-        margin-top: 20px;
+        margin-top: 15px;
         background: #fff;
         border-radius: 10px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -97,6 +102,7 @@
         border-radius: 5px;
         font-size: 16px;
         border: none;
+        text-decoration: none;
         transition: all 0.3s ease;
     }
 
@@ -106,12 +112,13 @@
     }
 
     .btn-info {
-        background-color: #17a2b8;
+        display: inline-block;
+        padding: 10px 10px;
+        background-color: #007bff;
         color: white;
-        padding: 5px 10px;
         border-radius: 5px;
-        border: none;
-        transition: all 0.3s ease;
+        text-decoration: none;
+        font-size: 14px;
     }
 
     .btn-info:hover {
