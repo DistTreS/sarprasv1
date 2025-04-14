@@ -11,7 +11,7 @@
 
 <body>
     <div class="wrapper">
-        <?= $this->include('layout/sidebarpegawai'); ?>
+        <?= $this->include('layout/sidebar'); ?>
 
         <!-- 🔹 Bungkus Konten & Footer dalam div -->
         <div class="content-wrapper">

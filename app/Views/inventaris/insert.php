@@ -76,23 +76,30 @@
     }
 </style>
 
-<div class="container">
-    <form action="<?= site_url('inventaris/insert_items') ?>" method="post">
-        <div id="items">
-            <div class="item">
-                <select name="items[0][id_barang]">
+    <div class="container">
+        <form action="<?= site_url('inventaris/insert_items') ?>" method="post">
+            <div id="items">
+                <div class="item">
+                <select name="items[0][id_barang]" class="form-control select2-barang" onchange="updateInfo(this, 0)" required>
+                    <option value="">Pilih Barang</option>
                     <?php foreach ($items as $item): ?>
-                        <option value="<?= $item['id_barang']; ?>"><?= $item['nama_barang']; ?></option>
+                        <option value="<?= $item['id_barang']; ?>"
+                            data-jumlah="<?= $item['sisa']; ?>"
+                            data-satuan="<?= $item['satuan']; ?>">
+                            <?= $item['nama_barang']; ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="number" name="items[0][jumlah]" placeholder="Jumlah" required>
-                <button type="button" class="add-btn" onclick="addItem()">+</button>
+                    <input type="number" name="items[0][jumlah]" placeholder="Jumlah" required>
+                    <button type="button" class="add-btn" onclick="addItem()">+</button>
+                </div>
             </div>
-        </div>
+            <!-- Tempat menampilkan info -->
+<span id="info-0" class="item-info" style="margin-left: 10px; font-weight: bold;"></span>
 
-        <button type="submit" class="submit-btn">Submit</button>
-    </form>
-</div>
+            <button type="submit" class="submit-btn">Simpan</button>
+        </form>
+    </div>
 
 <script>
     let itemOptions = `<?php foreach ($items as $item): ?>
@@ -116,7 +123,28 @@
     }
 </script>
 
+<script>
+    $(document).ready(function() {
+        $('.select2-barang').select2({
+            placeholder: "Cari barang...",
+            allowClear: true
+        });
+    });
+</script>
+<script>
+function updateInfo(selectElem, index) {
+    const selectedOption = selectElem.options[selectElem.selectedIndex];
+    const jumlah = selectedOption.getAttribute('data-jumlah');
+    const satuan = selectedOption.getAttribute('data-satuan');
+    const infoElem = document.getElementById('info-' + index);
 
+    if (jumlah && satuan) {
+        infoElem.textContent = `Stok: ${jumlah} ${satuan}`;
+    } else {
+        infoElem.textContent = '';
+    }
+}
+</script>
 <?= $this->endSection() ?>
 
 

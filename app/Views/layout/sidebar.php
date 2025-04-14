@@ -5,7 +5,24 @@
     <ul>
         <li><a href="<?= base_url('/dashboard'); ?>">Dashboard</a></li>
 
+<<<<<<< HEAD
+        <li class="dropdown">
+            <a href="javascript:void(0);" onclick="toggleDropdown('inventaris')">
+                Inventaris <i class="fas fa-chevron-down"></i>
+            </a>
+            <ul id="inventaris" class="submenu">
+                <li><a href="<?= base_url('inventaris/index'); ?>">Daftar Inventaris</a></li>
+                <li><a href="<?= base_url('inventaris/insert'); ?>">Masukkan Inventaris</a></li>
+                <li><a href="<?= base_url('inventaris/transaction_history'); ?>">Riwayat Transaksi</a></li>
+                <li><a href="<?= base_url('inventaris/manage_request'); ?>">Daftar Permintaan</a></li>
+                <li><a href="<?= base_url('inventaris/user_request_item'); ?>">Form Permintaan</a></li>
+                <li><a href="<?= base_url('pembelian/daftar'); ?>">Daftar Permintaan Pembelian</a></li>
+                <li><a href="<?= base_url('pembelian/create'); ?>">Form Permintaan</a></li>
+            </ul>
+        </li>
+=======
         <?php $role = session()->get('role'); ?>
+>>>>>>> 5063b98eebe424c2a68201b97f651226b3ee5f0d
 
         <?php if ($role == 'Admin Utama'): ?>
             <li class="dropdown">

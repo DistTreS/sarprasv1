@@ -109,21 +109,40 @@
         background: #0056b3;
     }
 </style>
-
 <div class="container">
-    <form method="GET">
+    <!-- <form method="GET">
         <label>Tanggal mulai: <input type="date" name="date_from" value="<?= $_GET['date_from'] ?? ''; ?>"></label>
         <label>Tanggal Selesai: <input type="date" name="date_to" value="<?= $_GET['date_to'] ?? ''; ?>"></label>
-        <!-- <label>Tipe Transaksi:
+        <label>Tipe Transaksi:
             <select name="type">
                 <option value="">All</option>
                 <option value="in" <?= ($_GET['type'] ?? '') === 'in' ? 'selected' : ''; ?>>Masuk</option>
                 <option value="out" <?= ($_GET['type'] ?? '') === 'out' ? 'selected' : ''; ?>>Keluar</option>
             </select>
-        </label> -->
-        <!-- <label>User: <input type="text" name="user" value="<?= $_GET['user'] ?? ''; ?>"></label> -->
+        </label>
+        <label>User: <input type="text" name="user" value="<?= $_GET['user'] ?? ''; ?>"></label>
         <button type="submit">Filter</button>
-    </form>
+    </form> -->
+
+    <form method="GET" action="<?= base_url('laporan/cetak'); ?>" target="_blank">
+    <div class="form-group">
+        <label for="type">Pilih Tipe Laporan:</label>
+        <select name="type" id="type" class="form-control">
+            <option value="">Semua</option>
+            <option value="masuk" <?= ($_GET['type'] ?? '') == 'masuk' ? 'selected' : '' ?>>Barang Masuk</option>
+            <option value="keluar" <?= ($_GET['type'] ?? '') == 'keluar' ? 'selected' : '' ?>>Barang Keluar</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="date_from">Tanggal Mulai:</label>
+        <input type="date" name="date_from" class="form-control" value="<?= $_GET['date_from'] ?? ''; ?>">
+    </div>
+    <div class="form-group">
+        <label for="date_to">Tanggal Selesai:</label>
+        <input type="date" name="date_to" class="form-control" value="<?= $_GET['date_to'] ?? ''; ?>">
+    </div>
+    <button type="submit" class="btn btn-primary">Cetak Laporan</button>
+</form>
 
     <table>
         <tr>
