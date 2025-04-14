@@ -11,9 +11,12 @@
             </a>
             <ul id="inventaris" class="submenu">
                 <li><a href="<?= base_url('inventaris/index'); ?>">Daftar Inventaris</a></li>
-                <li><a href="<?= base_url('inventaris/insert'); ?>">Insert Inventaris</a></li>
+                <li><a href="<?= base_url('inventaris/insert'); ?>">Masukkan Inventaris</a></li>
                 <li><a href="<?= base_url('inventaris/transaction_history'); ?>">Riwayat Transaksi</a></li>
                 <li><a href="<?= base_url('inventaris/manage_request'); ?>">Daftar Permintaan</a></li>
+                <li><a href="<?= base_url('inventaris/user_request_item'); ?>">Form Permintaan</a></li>
+                <li><a href="<?= base_url('pembelian/daftar'); ?>">Daftar Permintaan Pembelian</a></li>
+                <li><a href="<?= base_url('pembelian/create'); ?>">Form Permintaan</a></li>
             </ul>
         </li>
 

@@ -85,6 +85,7 @@ $routes->get('aset_rusak/cetak/(:num)', 'AsetRusakController::cetak/$1', ['filte
 
 
 //modul Inventaris
+$routes->get('inventaris/cetak', 'inventaris::cetak');
 $routes->get('/inventaris/index', 'inventaris::index');
 $routes->get('/inventaris/index_pegawai', 'inventaris::index_pegawai');
 $routes->get('/inventaris/create', 'Inventaris::create');
@@ -96,6 +97,7 @@ $routes->get('/inventaris/insert', 'inventaris::insert');
 $routes->post('inventaris/insert_items', 'Inventaris::insert_items');
 $routes->get('inventaris/transaction_history', 'Inventaris::transaction_history');
 $routes->get('inventaris/item_history/(:num)', 'Inventaris::item_history/$1');
+$routes->get('inventaris/submit_request', 'Inventaris::submit_request');
 $routes->post('inventaris/submit_request', 'Inventaris::submit_request'); // Submit request
 $routes->post('inventaris/update_request_status/(:num)', 'Inventaris::updateRequestStatus/$1'); // Update request status
 $routes->get('inventaris/request_history/(:num)', 'Inventaris::viewRequestHistory/$1'); // View request history
@@ -129,3 +131,14 @@ $routes->post('aset/store', 'AsetController::store');
 $routes->get('aset/edit/(:num)', 'AsetController::edit/$1');
 $routes->post('aset/update/(:num)', 'AsetController::update/$1');
 $routes->get('aset/delete/(:num)', 'AsetController::delete/$1');
+
+
+
+$routes->get('laporan/cetak', 'LaporanController::cetak');
+
+$routes->group('pembelian', function($routes) {
+    $routes->get('create', 'PembelianController::create');
+    $routes->post('store', 'PembelianController::store');
+    $routes->get('daftar', 'PembelianController::daftar');
+    $routes->post('update_status/(:num)', 'PembelianController::update_status/$1');
+});

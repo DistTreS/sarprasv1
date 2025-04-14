@@ -45,30 +45,11 @@ class UsersModel extends Model
     protected $createdField     = 'created_at';
     protected $updatedField     = 'updated_at';
 
-    // // By default, timestamps are enabled in CodeIgniter 4
-    // protected $useTimestamps = false;
-
-    // // Define the default values for certain fields
-    // protected $allowCallbacks = true;
-    // protected $beforeInsert   = ['setDefaults'];
-
-    // // Helper method to set default values before insert
-    // protected function setDefaults(array $data)
-    // {
-    //     if (!isset($data['data']['is_deleted'])) {
-    //         $data['data']['is_deleted'] = 0;
-    //     }
-    //     if (!isset($data['data']['active'])) {
-    //         $data['data']['active'] = 1;
-    //     }
-    //     return $data;
-    // }
-
-    // // Example method to get active users
-    // public function getActiveUsers()
-    // {
-    //     return $this->where('active', 1)
-    //                 ->where('is_deleted', 0)
-    //                 ->findAll();
-    // }
+    
+    public function getAvailableUsers()
+    {
+        // Query untuk mengambil data pengguna yang tersedia (misalnya, status = 'active')
+        return $this->select('id, full_name')
+                    ->findAll();
+    }
 }

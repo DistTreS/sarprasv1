@@ -9,7 +9,7 @@ class PersediaanInventarisModel extends Model
     protected $table      = 'persediaan';
     protected $primaryKey = 'id_barang';
     protected $allowedFields = [
-        'nama_barang', 'deskripsi', 'jumlah', 'satuan', 'nilai'
+        'nama_barang', 'deskripsi', 'jumlah', 'satuan', 'nilai', 'sisa', 'pakai'
     ];
 
     public function getAvailableItems()

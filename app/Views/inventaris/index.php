@@ -104,7 +104,7 @@
     }
 </style>
 
-<div class="container">
+<!-- <div class="container">
     <h2>Daftar Inventaris</h2> 
     <a href="<?= base_url('inventaris/create'); ?>" class="btn-primary">Tambah Item</a>
 
@@ -114,7 +114,8 @@
             <th>Nama Barang</th>
             <th>Satuan</th>
             <th>Jumlah</th>
-
+            <th>Terpakai</th>
+            <th>Sisa</th>
             <th>Nilai</th>
             <th>Keterangan</th>
             <th>Aksi</th>
@@ -125,17 +126,68 @@
                 <td><?= htmlspecialchars($p['nama_barang']); ?></td>
                 <td><?= htmlspecialchars($p['satuan']); ?></td>
                 <td><?= htmlspecialchars($p['jumlah']); ?></td>
-
+                <td>Terpakai</td>
+                <td>Sisa</td>
                 <td><?= htmlspecialchars($p['nilai']); ?></td>
                 <td><?= htmlspecialchars($p['deskripsi']); ?></td>
                 <td class="action-buttons">
                     <a href="<?= base_url('inventaris/edit/'.$p['id_barang']); ?>" class="btn-action btn-edit">Edit</a>
-                    <a href="<?= base_url('inventaris/delete/'.$p['id_barang']); ?>" class="btn-action btn-delete" onclick="return confirm('Yakin ingin menghapus?')">Delete</a>
-                    <a href="<?= base_url('inventaris/item_history/' . $p['id_barang']); ?>" class="btn-action btn-history">View History</a>
+                    <a href="<?= base_url('inventaris/delete/'.$p['id_barang']); ?>" class="btn-action btn-delete" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
+                    <a href="<?= base_url('inventaris/item_history/' . $p['id_barang']); ?>" class="btn-action btn-history">Riwayat</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div> -->
+
+
+<div class="container">
+    <h2>Daftar Inventaris</h2> 
+
+
+    <form method="GET" action="<?= base_url('inventaris/cetak'); ?>" target="_blank" style="margin-bottom: 20px;">
+    <label for="jenis">Jenis Barang:</label>
+    <select name="jenis" id="jenis">
+        <option value="">Semua</option>
+        <option value="Persediaan" <?= ($_GET['jenis'] ?? '') == 'Persediaan' ? 'selected' : '' ?>>Persediaan</option>
+        <option value="Habis Pakai" <?= ($_GET['jenis'] ?? '') == 'Habis Pakai' ? 'selected' : '' ?>>Habis Pakai</option>
+    </select>
+    <button type="submit">Cetak</button>
+</form>
+
+    <a href="<?= base_url('inventaris/create'); ?>" class="btn-primary">Tambah Item</a>
+
+    <table>
+        <tr>
+            <th>No</th>
+            <th>Nama Barang</th>
+            <th>Satuan</th>
+            <th>Jumlah</th>
+            <th>Terpakai</th>
+            <th>Sisa</th>
+            <th>Nilai</th>
+            <th>Jenis Barang</th>
+            <th>Aksi</th>
+        </tr>
+        <?php foreach ($persediaan as $index => $p): ?>
+            <tr>
+                <td><?= $index + 1; ?></td>
+                <td><?= htmlspecialchars($p['nama_barang']); ?></td>
+                <td><?= htmlspecialchars($p['satuan']); ?></td>
+                <td><?= htmlspecialchars($p['jumlah'] ?? 0); ?></td> <!-- Total Inward Items -->
+                <td><?= htmlspecialchars($p['pakai'] ?? 0); ?></td> <!-- Total Outward Items -->
+                <td><?= htmlspecialchars($p['sisa'] ?? 0); ?></td> <!-- Remaining Items -->
+                <td><?= htmlspecialchars($p['nilai'] ?? 0); ?></td>
+                <td><?= htmlspecialchars($p['deskripsi'] ?? ''); ?></td>
+                <td class="action-buttons">
+                    <a href="<?= base_url('inventaris/edit/'.$p['id_barang']); ?>" class="btn-action btn-edit">Edit</a>
+                    <a href="<?= base_url('inventaris/delete/'.$p['id_barang']); ?>" class="btn-action btn-delete" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
+                    <a href="<?= base_url('inventaris/item_history/' . $p['id_barang']); ?>" class="btn-action btn-history">Riwayat</a>
                 </td>
             </tr>
         <?php endforeach; ?>
     </table>
 </div>
+
 
 <?= $this->endSection() ?>

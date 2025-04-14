@@ -93,9 +93,13 @@
         </div>
 
         <div class="form-group">
-            <label>Keterangan:</label>
-            <input type="text" name="keterangan" required>
-        </div>
+    <label for="keterangan">Jenis Barang:</label>
+    <select name="deskripsi" id="keterangan" class="form-control" required>
+        <option value="">-- Pilih Jenis Barang --</option>
+        <option value="Persediaan">Persediaan</option>
+        <option value="Habis Pakai">Habis Pakai</option>
+    </select>
+</div>
 
         <div class="form-footer">
             <button type="submit">Simpan</button>

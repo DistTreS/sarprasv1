@@ -61,7 +61,7 @@
             <th>No</th>
             <th>Tanggal Request</th>
             <th>Nama Peminta</th>
-            <th>Items</th>
+            <th>Barang</th>
             <th>Status</th>
             <th>Aksi</th>
         </tr>
@@ -84,13 +84,13 @@
                     <?php 
                         $statusClass = '';
                         switch ($request['status']) {
-                            case 'Sent': 
+                            case 'diproses': 
                                 $statusClass = 'status-sent'; 
                                 break;
-                            case 'Accepted': 
+                            case 'diterima': 
                                 $statusClass = 'status-accepted'; 
                                 break;
-                            case 'Rejected': 
+                            case 'ditolak': 
                                 $statusClass = 'status-rejected'; 
                                 break;
                         }
@@ -98,15 +98,13 @@
                     <span class="<?= $statusClass; ?>"> <?= htmlspecialchars($request['status']); ?> </span>
                 </td>
                 <td>
-                    <?php if ($request['status'] === 'Sent'): ?>
-                        <select onchange="updateStatus(<?= $request['id_request']; ?>, this.value)">
-                            <option value="Sent" <?= $request['status'] === 'Sent' ? 'selected' : ''; ?>>Sent</option>
-                            <option value="Accepted">Accept</option>
-                            <option value="Rejected">Reject</option>
-                        </select>
-                    <?php else: ?>
-                        <?= htmlspecialchars($request['status']); ?>
-                    <?php endif; ?>
+ 
+                <?php if ($statusClass === 'status-sent'): ?>
+                    <button onclick="updateStatus(<?= $request['id_request']; ?>, 'diterima')" class="btn-accept">Terima</button>
+                    <button onclick="updateStatus(<?= $request['id_request']; ?>, 'ditolak')" class="btn-reject">Tolak</button>
+                <?php else: ?>
+                    <span><?= htmlspecialchars($request['status']); ?></span>
+                <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
