@@ -91,7 +91,7 @@
 
 <div class="container mt-4">
     <h2>Edit Peserta Diklat</h2>
-    <form action="<?= base_url('diklat/updatePeserta/' . esc($peserta['id_peserta_diklat'])) ?>" method="post">
+    <form action="<?= base_url('diklat/updatePeserta/' . esc($peserta['id_peserta']) . '/' . esc($id_diklat)) ?>" method="post" enctype="multipart/form-data">
         <input type="hidden" name="id_peserta" value="<?= esc($peserta['id_peserta']) ?>">
 
         <div class="form-group">
@@ -141,12 +141,24 @@
 
         <div class="form-group">
             <label>Sertifikat</label>
-            <input type="text" class="form-control" name="sertifikat" value="<?= esc($peserta['sertifikat']) ?>">
+            <?php if (!empty($peserta['sertifikat'])) : ?>
+                <p>File saat ini: <a href="<?= base_url('uploads/sertifikat/' . $peserta['sertifikat']) ?>" download><?= esc($peserta['sertifikat']) ?></a></p>
+            <?php endif; ?>
+            <input type="file" class="form-control" name="sertifikat">
         </div>
+
 
         <div class="form-group">
             <label>Judul Tugas Akhir</label>
             <input type="text" class="form-control" name="judul_tugas_akhir" value="<?= esc($peserta['judul_tugas_akhir']) ?>">
+        </div>
+
+        <div class="form-group">
+            <label>File Tugas Akhir</label>
+            <?php if (!empty($peserta['tugas_akhir'])) : ?>
+                <p>File saat ini: <a href="<?= base_url('uploads/tugas_akhir/' . $peserta['tugas_akhir']) ?>" download><?= esc($peserta['tugas_akhir']) ?></a></p>
+            <?php endif; ?>
+            <input type="file" class="form-control" name="tugas_akhir">
         </div>
 
         <button type="submit" class="btn btn-success">Update</button>

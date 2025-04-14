@@ -7,6 +7,7 @@
     <title><?= $title ?? 'My Website'; ?></title>
     <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<<<<<<< HEAD
     <!-- Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
@@ -15,6 +16,10 @@
 
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+=======
+
+  
+>>>>>>> 5063b98eebe424c2a68201b97f651226b3ee5f0d
 </head>
 
 <body>

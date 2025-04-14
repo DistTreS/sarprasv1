@@ -1,6 +1,7 @@
 <?= $this->extend('layout/main') ?>
 
 <?= $this->section('content') ?>
+
 <style>
     /* Reset and base styles */
     body {
@@ -23,7 +24,7 @@
     }
 
     /* Header styles */
-    h2 {
+    h1 {
         font-size: 28px;
         color: #1a1a1a;
         margin-bottom: 30px;
@@ -33,7 +34,7 @@
         padding-bottom: 15px;
     }
 
-    h2:after {
+    h1:after {
         content: '';
         position: absolute;
         bottom: 0;
@@ -254,51 +255,50 @@
 </style>
 
 <div class="container">
-    <h2>Data Peserta Diklat</h2>
+    <h1>Data Peserta Diklat</h1>
     <div class="mb-3 d-flex justify-content-between">
-        <a href="<?= base_url('diklat/tambahPeserta'); ?>" class="btn btn-primary">Tambah Peserta</a>
-        <a href="<?= base_url('diklat/jenisDiklat') ?>" class="btn btn-secondary">Kelola Jenis Diklat</a>
-        <a href="<?= site_url('diklat/exportToPdf') ?>?keyword=<?= $keyword ?>&jenis_diklat=<?= $filterDiklat ?>&instansi=<?= $instansi ?>&angkatan=<?= $angkatan ?>&tahun=<?= $tahun ?>" class="btn btn-danger">Export ke PDF</a>
+        <a href="<?= site_url('diklat/exportToPdf') ?>?keyword=<?= esc($keyword) ?>&jenis_diklat=<?= esc($filterDiklat) ?>&instansi=<?= esc($instansi) ?>&angkatan=<?= esc($angkatan) ?>&tahun=<?= esc($tahun) ?>" class="btn btn-danger">Export ke PDF</a>
     </div>
 
-    <!-- Form Pencarian -->
-    <form action="<?= site_url('diklat') ?>" method="GET">
-        <input type="text" name="keyword" placeholder="Cari Nama atau NIP" value="<?= esc($keyword ?? '') ?>">
+    <!-- Form Pencarian dan Filter -->
+    <form action="<?= site_url('diklat') ?>" method="GET" class="d-flex mb-3">
+        <input type="text" name="keyword" placeholder="Cari Nama atau NIP" value="<?= esc($keyword) ?>" class="form-control me-2">
         <button type="submit" class="btn btn-primary">Cari</button>
     </form>
 
-    <!-- Form Filter -->
-    <form action="<?= site_url('diklat') ?>" method="GET">
-        <select name="id_diklat">
+    <form action="<?= site_url('diklat') ?>" method="GET" class="d-flex flex-wrap gap-2 mb-3">
+        <select name="jenis_diklat" class="form-select">
             <option value="">Pilih Jenis Diklat</option>
             <?php foreach ($jenisDiklat as $jd) : ?>
-                <option value="<?= $jd['id_diklat'] ?>" <?= isset($_GET['jenis_diklat']) && $_GET['jenis_diklat'] == $jd['id_diklat'] ? 'selected' : '' ?>>
-                    <?= $jd['nama_diklat'] ?>
+                <option value="<?= $jd['id_diklat'] ?>" <?= $filterDiklat == $jd['id_diklat'] ? 'selected' : '' ?>>
+                    <?= esc($jd['nama_diklat']) ?>
                 </option>
             <?php endforeach; ?>
         </select>
 
-        <select name="instansi">
+        <select name="instansi" class="form-select">
             <option value="">Semua Instansi</option>
             <?php foreach ($instansi_list as $instansi) : ?>
-                <option value="<?= esc($instansi['instansi']) ?>"><?= esc($instansi['instansi']) ?></option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="angkatan">
-            <option value="">Pilih Angkatan</option>
-            <?php foreach ($angkatan_list as $row) : ?>
-                <option value="<?= $row['angkatan'] ?>" <?= isset($_GET['angkatan']) && $_GET['angkatan'] == $row['angkatan'] ? 'selected' : '' ?>>
-                    <?= $row['angkatan'] ?>
+                <option value="<?= esc($instansi['instansi']) ?>" <?= $instansi == $instansi['instansi'] ? 'selected' : '' ?>>
+                    <?= esc($instansi['instansi']) ?>
                 </option>
             <?php endforeach; ?>
         </select>
 
-        <select name="tahun">
+        <select name="angkatan" class="form-select">
+            <option value="">Pilih Angkatan</option>
+            <?php foreach ($angkatan_list as $row) : ?>
+                <option value="<?= esc($row['angkatan']) ?>" <?= $angkatan == $row['angkatan'] ? 'selected' : '' ?>>
+                    <?= esc($row['angkatan']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <select name="tahun" class="form-select">
             <option value="">Pilih Tahun</option>
             <?php foreach ($tahun_list as $row) : ?>
-                <option value="<?= $row['tahun'] ?>" <?= isset($_GET['tahun']) && $_GET['tahun'] == $row['tahun'] ? 'selected' : '' ?>>
-                    <?= $row['tahun'] ?>
+                <option value="<?= esc($row['tahun']) ?>" <?= $tahun == $row['tahun'] ? 'selected' : '' ?>>
+                    <?= esc($row['tahun']) ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -321,7 +321,12 @@
         </thead>
         <tbody>
             <?php if (!empty($peserta_diklat)) : ?>
-                <?php $no = 1; ?>
+                <?php
+                // Hitung nomor urut berdasarkan halaman saat ini
+                $currentPage = $pager->getCurrentPage(); // Halaman saat ini
+                $perPage = $pager->getPerPage(); // Jumlah data per halaman
+                $no = ($currentPage - 1) * $perPage + 1; // Nomor awal untuk halaman ini
+                ?>
                 <?php foreach ($peserta_diklat as $peserta) : ?>
                     <tr>
                         <td><?= $no++; ?></td>
@@ -331,10 +336,11 @@
                         <td><?= esc($peserta['angkatan']); ?></td>
                         <td><?= esc($peserta['tahun']); ?></td>
                         <td>
-                            <a href="<?= base_url('diklat/viewPeserta/' . $peserta['id_peserta']); ?>" class="btn btn-info">View</a>
-                            <a href="<?= base_url('diklat/editPeserta/' . $peserta['id_peserta_diklat']); ?>" class="btn btn-warning">Edit</a>
-                            <a href="<?= base_url('diklat/hapusPeserta/' . $peserta['id_peserta_diklat']); ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?');">Delete</a>
+                            <a href="<?= base_url('diklat/viewPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-info">View</a>
+                            <a href="<?= base_url('diklat/editPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-warning">Edit</a>
+                            <a href="<?= base_url('diklat/hapusPeserta/' . $peserta['id_peserta'] . '/' . $peserta['id_diklat']); ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?');">Delete</a>
                         </td>
+
                     </tr>
                 <?php endforeach; ?>
             <?php else : ?>
