@@ -5,8 +5,7 @@
     <h2>Riwayat Pengajuan Aset Rusak</h2>
 
     <div class="mb-3">
-        <a href="<?= base_url('aset-rusak/pengajuanadmin'); ?>" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Pengajuan Aset Rusak
+        <a href="<?= base_url('aset-rusak/pengajuanadmin'); ?>" class="btn btn-primary"> Pengajuan Aset Rusak
         </a>
     </div>
 
@@ -47,7 +46,7 @@
                             </td>
                             <td>
                                 <a href="<?= base_url('aset-rusak/detail/' . $aset['id'] . '/' . $aset['id_aset']); ?>" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Detail
+                                    Lihat Detail
                                 </a>
                             </td>
                         </tr>
@@ -63,6 +62,11 @@
 </div>
 
 <style>
+    h2 {
+        margin-bottom: 10px; 
+        text-align: center;
+    }
+
     .badge-status {
         padding: 5px 10px;
         border-radius: 5px;
@@ -70,7 +74,7 @@
         font-weight: bold;
     }
 
-    .rusak-kecil {
+    .rusak-ringan {
         background-color: #f1c40f;
     }
 
@@ -80,7 +84,7 @@
     }
 
     /* Oranye */
-    .rusak-besar {
+    .rusak-berat {
         background-color: #e74c3c;
     }
 
@@ -99,11 +103,23 @@
     }
 
     .btn-info {
-        background-color: rgb(248, 248, 248);
-        border: none;
-        padding: 5px 10px;
+        display: inline-block;
+        padding: 10px 10px;
+        background-color: #007bff;
+        color: white;
         border-radius: 5px;
-        transition: 0.3s;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    
+    .btn-primary {
+        background-color:  #007bff;
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
     }
 
     .btn-info:hover {

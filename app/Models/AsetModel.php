@@ -8,7 +8,7 @@ class AsetModel extends Model
 {
     protected $table = 'aset';
     protected $primaryKey = 'id_aset';
-    protected $allowedFields = ['id_aset', 'kode_kategori', 'nama_aset', 'nup', 'kondisi', 'status_aset', 'gambar'];
+    protected $allowedFields = ['kode_kategori', 'nama_aset', 'nup', 'kondisi', 'status_aset', 'gambar'];
 
     public function getAsetWithKategori()
     {

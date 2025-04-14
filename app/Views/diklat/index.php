@@ -24,7 +24,7 @@
     }
 
     /* Header styles */
-    h2 {
+    h1 {
         font-size: 28px;
         color: #1a1a1a;
         margin-bottom: 30px;
@@ -34,7 +34,7 @@
         padding-bottom: 15px;
     }
 
-    h2:after {
+    h1:after {
         content: '';
         position: absolute;
         bottom: 0;
@@ -255,7 +255,7 @@
 </style>
 
 <div class="container">
-    <h2>Data Peserta Diklat</h2>
+    <h1>Data Peserta Diklat</h1>
     <div class="mb-3 d-flex justify-content-between">
         <a href="<?= site_url('diklat/exportToPdf') ?>?keyword=<?= esc($keyword) ?>&jenis_diklat=<?= esc($filterDiklat) ?>&instansi=<?= esc($instansi) ?>&angkatan=<?= esc($angkatan) ?>&tahun=<?= esc($tahun) ?>" class="btn btn-danger">Export ke PDF</a>
     </div>

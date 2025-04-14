@@ -73,6 +73,12 @@
         border-radius: 12px;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
     }
+
+h2{
+    text-align: center;
+    margin-bottom: auto;
+}
+
     .custom-card {
         background: white;
         padding: 20px;
@@ -92,7 +98,7 @@
     }
     .custom-table th, .custom-table td {
         padding: 12px;
-        border: px solid #ddd;
+        border: 2px solid #ddd;
     }
     .custom-table th {
         background:white;
@@ -132,10 +138,11 @@
         border-radius: 8px;
         font-size: 16px;
         margin-top: 15px;
-        background: #007bff;
+        background: #6c757d;
         color: white;
         text-decoration: none;
         transition: 0.3s;
+        box-sizing: border-box;
     }
     .custom-btn:hover {
         background: #0056b3;

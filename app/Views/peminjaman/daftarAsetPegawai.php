@@ -3,7 +3,7 @@
 <?= $this->section('content'); ?>
 
 <h2><?= esc($title); ?></h2><form action="<?= base_url('peminjaman/cariAsetPegawai/' . esc($kode_kategori ?? '')); ?>" method="get" class="form-inline">
-    <input type="text" name="search" value="<?= esc($search ?? ''); ?>" placeholder="Cari Nama Aset atau NUP" class="form-control" required>
+    <input type="text" name="search" value="<?= esc($search ?? ''); ?>" placeholder="Cari Nama Aset atau NUP" class="form-control" required style="padding: 8px; width: 300px;">
     <button type="submit" class="btn btn-primary">Cari</button>
 </form>
 
@@ -64,6 +64,11 @@
         height: 100%;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+        margin-bottom: 10px; 
+        font-size: x-large;
     }
 
     .modal-content {
@@ -138,7 +143,7 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 5px;
     }
 
     .table th, .table td {
@@ -147,11 +152,11 @@
         text-align: center;
     }
 
-    .header-id {background-color: #34495E; color: white;}
-    .header-kondisi { background-color: #2C3E50; color: white; }
-    .header-status_aset  { background-color: #1B4F72; color: white; }
-    .header-gambar  { background-color: #154360; color: white; }
-    .header-action  { background-color: #0E6251; color: white; }
+    .header-id {background-color: #343a40; color: white;}
+    .header-kondisi { background-color: #343a40; color: white; }
+    .header-status_aset  { background-color: #343a40; color: white; }
+    .header-gambar  { background-color: #343a40; color: white; }
+    .header-action  { background-color: #343a40; color: white; }
 
     .gambar-aset {
         width: 60px; 
@@ -164,14 +169,19 @@
     /* Tombol Kembali */
     .kembali {
         display: block;
-        width: fit-content;
-        padding: 10px 15px;
-        margin: 20px auto;
-        background-color: #6c757d;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        text-align: center;
+    width: 100%; /* Biar selebar kontainer */
+    max-width: 400px; /* Batas maksimal lebarnya */
+    padding: 12px 20px;
+    margin: 30px auto; /* Tengah horizontal */
+    background-color: #6c757d;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease;
     }
 
     .kembali:hover {

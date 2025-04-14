@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Models\PeminjamanModel;
 use App\Models\AsetModel;
 use CodeIgniter\Controller;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class PeminjamanController extends Controller
 {
@@ -428,5 +430,45 @@ class PeminjamanController extends Controller
         }
 
         return redirect()->to('pegawai/peminjaman')->with('error', 'Gagal mengunggah bukti pengembalian.');
+    }
+
+    public function cetak($id_pengajuan)
+    {
+        $model = new \App\Models\PeminjamanModel();
+        $detailPeminjaman = $model->getDetailPeminjaman($id_pengajuan);
+
+        if (empty($detailPeminjaman)) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data peminjaman tidak ditemukan.');
+        }
+
+        // Ambil logo sebagai base64
+        $imagePath = FCPATH . 'assets/images/logo_ppsdm.png';
+        $imageData = base64_encode(file_get_contents($imagePath));
+        $imageBase64 = 'data:image/png;base64,' . $imageData;
+
+        // Ambil data umum dari baris pertama
+        $peminjaman = $detailPeminjaman[0];
+
+        // Kirim data ke view
+        $data = [
+            'imageBase64' => $imageBase64,
+            'peminjaman' => $peminjaman,
+            'detail_aset' => $detailPeminjaman
+        ];
+
+        $html = view('peminjaman/cetakPengajuan', $data);
+
+        // Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $dompdf->stream('formulir_peminjaman_' . $id_pengajuan . '.pdf', ['Attachment' => false]);
+        exit();
     }
 }

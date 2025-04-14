@@ -11,7 +11,7 @@
     <!-- Informasi User -->
     <div class="user-info">
         <span class="badge-user">Peminjam : <?= esc($peminjaman['full_name']); ?></span>
-        <a href="<?= base_url('peminjaman/cetak/' . $peminjaman['id_pengajuan']); ?>" class="btn-print">Print</a>
+        <a href="<?= base_url('peminjaman/cetak/' . $peminjaman['id_pengajuan']); ?>" class="btn-print">Cetak PDF</a>
     </div>
 
     <!-- Tabel Informasi Peminjaman -->
@@ -98,7 +98,7 @@
     }
 
     .badge-user {
-        background: blue;
+        background: #28a745;
         color: white;
         padding: 5px 10px;
         border-radius: 5px;
@@ -127,12 +127,19 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin: 20px 0;
+        margin-bottom: 5px;
     }
 
-    .table th,
+    .table th {
+        background: #007bff;
+        color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
     .table td {
-        border: 1px solid #ddd;
+        border: 1px solid #ccc;
         padding: 10px;
         text-align: center;
     }
@@ -200,15 +207,13 @@
         text-decoration: none;
         margin-top: 10px;
         background: #6c757d;
+        box-sizing: border-box;
     }
 
     .btn-print {
         background: #007bff;
     }
 
-    .btn-back {
-        background: #6c757d;
-    }
 
     .status-pelayanan {
         font-weight: bold;
@@ -230,6 +235,8 @@
         background: #28a745;
         color: white;
     }
+
+    
 </style>
 
 <?= $this->endSection() ?>

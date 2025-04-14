@@ -146,7 +146,7 @@
         <label for="status_aset">Status:</label>
         <select name="status_aset">
             <option value="Tersedia" <?= old('status_aset') == 'Tersedia' ? 'selected' : ''; ?>>Tersedia</option>
-            <option value="Terpakai" <?= old('status_aset') == 'Terpakai' ? 'selected' : ''; ?>>Terpakai</option>
+            <option value="Tidak Tersedia" <?= old('status_aset') == 'Tidak Tersedia' ? 'selected' : ''; ?>>Tidak Tersedia</option>
         </select>
 
         <label for="kondisi">Kondisi:</label>
@@ -159,7 +159,6 @@
         <input type="file" name="gambar" accept="image/*">
         
         <button type="submit"><i class="fas fa-save"></i> Simpan</button>
-        
         </div>
     </form>
 
