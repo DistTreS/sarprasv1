@@ -13,7 +13,7 @@ class UsersModel extends Model
         'full_name', 'no_telepon', 'email', 'alamat', 'jabatan',
         'nip', 'username', 'password', 'profile_img', 'role'
     ];
-<<<<<<< HEAD
+
     
     protected $useTimestamps    = true;
     protected $createdField     = 'created_at';
@@ -26,6 +26,5 @@ class UsersModel extends Model
         return $this->select('id, full_name')
                     ->findAll();
     }
-=======
->>>>>>> 5063b98eebe424c2a68201b97f651226b3ee5f0d
+
 }

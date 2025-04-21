@@ -2,6 +2,92 @@
 
 <?= $this->section('content') ?>
 
+<style>
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .requester-info select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    select, input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .item-info {
+        flex: 1;
+        font-weight: bold;
+        color: #666;
+    }
+
+    button {
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .add-btn {
+        background: #28a745;
+        color: white;
+        font-weight: bold;
+    }
+
+    .add-btn:hover {
+        background: #218838;
+    }
+
+    .remove-btn {
+        background: #dc3545;
+        color: white;
+        font-weight: bold;
+    }
+
+    .remove-btn:hover {
+        background: #c82333;
+    }
+
+    .submit-btn {
+        width: 100%;
+        background: #007bff;
+        color: white;
+        font-size: 16px;
+        padding: 12px;
+        margin-top: 15px;
+    }
+
+    .submit-btn:hover {
+        background: #0056b3;
+    }
+</style>
+
 <div class="container">
     <h2>Form Permintaan Pembelian Barang</h2>
 
