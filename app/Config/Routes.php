@@ -131,27 +131,27 @@ $routes->get('peminjaman/cariAsetPegawai/(:num)', 'AsetController::cariAsetPegaw
 
 
 //modul Inventaris
-$routes->get('inventaris/cetak', 'inventaris::cetak');
-$routes->get('/inventaris/index', 'inventaris::index');
-$routes->get('/inventaris/index_pegawai', 'inventaris::index_pegawai');
-$routes->get('/inventaris/create', 'Inventaris::create');
-$routes->post('/inventaris/store', 'Inventaris::store');
-$routes->get('/inventaris/edit/(:num)', 'Inventaris::edit/$1');
-$routes->post('/inventaris/update/(:num)', 'Inventaris::update/$1');
-$routes->get('/inventaris/delete/(:num)', 'Inventaris::delete/$1');
-$routes->get('/inventaris/insert', 'inventaris::insert');
-$routes->post('inventaris/insert_items', 'Inventaris::insert_items');
-$routes->get('inventaris/transaction_history', 'Inventaris::transaction_history');
-$routes->get('inventaris/item_history/(:num)', 'Inventaris::item_history/$1');
+$routes->get('inventaris/cetak', 'inventaris::cetak',['filter' => 'admin_barang']);
+$routes->get('/inventaris/index', 'inventaris::index',['filter' => 'admin_barang']);
+$routes->get('/inventaris/index_pegawai', 'inventaris::index_pegawai',['filter' => 'pegawai']);
+$routes->get('/inventaris/create', 'Inventaris::create',['filter' => 'admin_barang']);
+$routes->post('/inventaris/store', 'Inventaris::store',['filter' => 'admin_barang']);
+$routes->get('/inventaris/edit/(:num)', 'Inventaris::edit/$1',['filter' => 'admin_barang']);
+$routes->post('/inventaris/update/(:num)', 'Inventaris::update/$1',['filter' => 'admin_barang']);
+$routes->get('/inventaris/delete/(:num)', 'Inventaris::delete/$1',['filter' => 'admin_barang']);
+$routes->get('/inventaris/insert', 'inventaris::insert',['filter' => 'admin_barang']);
+$routes->post('inventaris/insert_items', 'Inventaris::insert_items',['filter' => 'admin_barang']);
+$routes->get('inventaris/transaction_history', 'Inventaris::transaction_history',['filter' => 'admin_barang']);
+$routes->get('inventaris/item_history/(:num)', 'Inventaris::item_history/$1',['filter' => 'admin_barang']);
 $routes->get('inventaris/submit_request', 'Inventaris::submit_request');
 $routes->post('inventaris/submit_request', 'Inventaris::submit_request'); // Submit request
-$routes->post('inventaris/update_request_status/(:num)', 'Inventaris::updateRequestStatus/$1'); // Update request status
-$routes->get('inventaris/request_history/(:num)', 'Inventaris::viewRequestHistory/$1'); // View request history
+$routes->post('inventaris/update_request_status/(:num)', 'Inventaris::updateRequestStatus/$1',['filter' => 'admin_barang']); // Update request status
+$routes->get('inventaris/request_history/(:num)', 'Inventaris::viewRequestHistory/$1',['filter' => 'admin_barang']); // View request history
 $routes->get('inventaris/user_request_item', 'Inventaris::user_request_item'); // User request form
-$routes->post('inventaris/store_request', 'Inventaris::store_request'); // Handle request submission
-$routes->get('inventaris/manage_request', 'Inventaris::manage_request'); // Admin_utama view
-$routes->get('inventaris/process_request/(:num)/(:alpha)', 'Inventaris::process_request/$1/$2'); // Accept/Reject request
-$routes->post('inventaris/update_status/(:num)', 'Inventaris::update_status/$1');
+$routes->post('inventaris/store_request', 'Inventaris::store_request',['filter' => 'admin_barang']); // Handle request submission
+$routes->get('inventaris/manage_request', 'Inventaris::manage_request',['filter' => 'admin_barang']); // Admin_utama view
+$routes->get('inventaris/process_request/(:num)/(:alpha)', 'Inventaris::process_request/$1/$2',['filter' => 'admin_barang']); // Accept/Reject request
+$routes->post('inventaris/update_status/(:num)', 'Inventaris::update_status/$1',['filter' => 'admin_barang']);
 
 
 
