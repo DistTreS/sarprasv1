@@ -1,10 +1,10 @@
 <div class="sidebar">
-    <h2>SARANA DAN PRASARANA</h2>
+<h2 style="color:#ffffff;">SARANA DAN PRASARANA</h2>
     <img src="<?= base_url('assets/images/logo_ppsdm.png'); ?>" alt="Logo Kantor" class="logo">
 
     <ul>
         <li><a href="<?= base_url('diklatguest'); ?>">Alumni Diklat</a></li>
-        <li><a href="<?= base_url('/dashboard/guest'); ?>">e-Jurnal</a></li>
+        <li><a href="<?= base_url('/dashboard/guest'); ?>">E-Jurnal</a></li>
         <li><a href="<?= base_url('login'); ?>">Login</a></li>
     </ul>
 </div>
