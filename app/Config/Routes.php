@@ -68,17 +68,17 @@ $routes->group('diklat', ['filter' => 'admin_diklat'], function ($routes) {
 
 
 // Modul Peminjaman
-$routes->get('kategoriAset', 'KategoriAsetController::index', ['filter' => 'admin_utama']); // Menampilkan daftar kategori aset
-$routes->get('kategoriAset/tambah', 'KategoriAsetController::tambah', ['filter' => 'admin_utama']); // Form tambah kategori aset
-$routes->post('kategoriAset/store', 'KategoriAsetController::store', ['filter' => 'admin_utama']); // Proses simpan kategori aset
-$routes->get('kategoriAset/detail/', 'AsetController::index/$1', ['filter' => 'admin_utama']); // Menampilkan daftar aset berdasarkan kategori
-$routes->post('kategoriAset/update/(:num)', 'KategoriAsetController::update/$1', ['filter' => 'admin_utama']); // Proses update kategori aset
-$routes->post('kategoriAset/delete/(:num)', 'KategoriAsetController::delete/$1', ['filter' => 'admin_utama']); // Hapus kategori aset
+$routes->get('kategoriAset', 'KategoriAsetController::index', ['filter' => 'admin_peminjaman']); // Menampilkan daftar kategori aset
+$routes->get('kategoriAset/tambah', 'KategoriAsetController::tambah', ['filter' => 'admin_peminjaman']); // Form tambah kategori aset
+$routes->post('kategoriAset/store', 'KategoriAsetController::store', ['filter' => 'admin_peminjaman']); // Proses simpan kategori aset
+$routes->get('kategoriAset/detail/(:num)', 'AsetController::index/$1', ['filter' => 'admin_peminjaman']); // Menampilkan daftar aset berdasarkan kategori
+$routes->post('kategoriAset/update', 'KategoriAsetController::update', ['filter' => 'admin_peminjaman']); // Proses update kategori aset
+$routes->post('kategoriAset/delete/(:num)', 'KategoriAsetController::delete/$1', ['filter' => 'admin_peminjaman']); // Hapus kategori aset
 
 $routes->get('aset', 'AsetController::index', ['filter' => 'admin_peminjaman']);
 $routes->get('aset/create', 'AsetController::create', ['filter' => 'admin_peminjaman']);
 $routes->post('aset/store', 'AsetController::store', ['filter' => 'admin_peminjaman']);
-$routes->post('aset/update', 'AsetController::update', ['filter' => 'admin_peminjaman']);
+$routes->post('aset/update/(:num)', 'AsetController::update/$1', ['filter' => 'admin_peminjaman']);
 $routes->get('aset/edit/(:num)', 'AsetController::edit/$1', ['filter' => 'admin_peminjaman']);
 $routes->post('aset/delete/(:num)', 'AsetController::delete/$1', ['filter' => 'admin_peminjaman']);
 $routes->get('aset/(:num)', 'AsetController::index/$1', ['filter' => 'admin_peminjaman']);
@@ -147,31 +147,6 @@ $routes->post('inventaris/store_request', 'Inventaris::store_request',['filter' 
 $routes->get('inventaris/manage_request', 'Inventaris::manage_request',['filter' => 'admin_barang']); // Admin_utama view
 $routes->get('inventaris/process_request/(:num)/(:alpha)', 'Inventaris::process_request/$1/$2',['filter' => 'admin_barang']); // Accept/Reject request
 $routes->post('inventaris/update_status/(:num)', 'Inventaris::update_status/$1',['filter' => 'admin_barang']);
-
-
-
-
-
-
-
-
-
-
-//modul pinjam barang
-$routes->get('kategoriAset', 'KategoriAsetController::index'); // Menampilkan daftar kategori aset
-$routes->get('kategoriAset/tambah', 'KategoriAsetController::tambah'); // Form tambah kategori aset
-$routes->post('kategoriAset/store', 'KategoriAsetController::store'); // Proses simpan kategori aset
-$routes->get('kategoriAset/detail/(:num)', 'AsetController::index/$1'); // Menampilkan daftar aset berdasarkan kategori
-$routes->post('kategoriAset/update', 'KategoriAsetController::update');
-$routes->get('kategoriAset/delete/(:segment)', 'KategoriAsetController::delete/$1');
-
-
-$routes->get('aset', 'AsetController::index');
-$routes->get('aset/create', 'AsetController::create');
-$routes->post('aset/store', 'AsetController::store');
-$routes->get('aset/edit/(:num)', 'AsetController::edit/$1');
-$routes->post('aset/update/(:num)', 'AsetController::update/$1');
-$routes->get('aset/delete/(:num)', 'AsetController::delete/$1');
 
 
 
