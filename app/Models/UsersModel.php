@@ -14,10 +14,6 @@ class UsersModel extends Model
         'nip', 'username', 'password', 'profile_img', 'role'
     ];
 
-    
-    protected $useTimestamps    = true;
-    protected $createdField     = 'created_at';
-    protected $updatedField     = 'updated_at';
 
     
     public function getAvailableUsers()
