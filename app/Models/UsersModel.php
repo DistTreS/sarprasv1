@@ -14,7 +14,6 @@ class UsersModel extends Model
         'nip', 'username', 'password', 'profile_img', 'role'
     ];
 
-
     
     public function getAvailableUsers()
     {

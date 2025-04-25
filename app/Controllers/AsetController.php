@@ -211,6 +211,7 @@ class AsetController extends BaseController
         }
 
         $data = [
+
             'nama_aset' => $this->request->getPost('nama_aset'),
             'nup' => $this->request->getPost('nup'),
             'status_aset' => $this->request->getPost('status_aset'),
