@@ -9,7 +9,8 @@
         background-color: white;
         padding: 30px;
         margin: 30px auto;
-        width: 60%; /* Diperbesar */
+        width: 60%;
+        /* Diperbesar */
         border-radius: 10px;
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
     }
@@ -19,7 +20,8 @@
         font-weight: bold;
         margin-bottom: 25px;
         color: #2C3E50;
-        font-size: 24px; /* Diperbesar */
+        font-size: 24px;
+        /* Diperbesar */
     }
 
     /* Styling Form */
@@ -32,7 +34,8 @@
     .form-container label {
         font-weight: bold;
         color: #34495E;
-        font-size: 16px; /* Diperbesar */
+        font-size: 16px;
+        /* Diperbesar */
     }
 
     .form-container select,
@@ -41,7 +44,8 @@
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
-        font-size: 16px; /* Diperbesar */
+        font-size: 16px;
+        /* Diperbesar */
     }
 
     /* Styling Tombol */
@@ -50,10 +54,12 @@
         padding: 12px;
         border: none;
         border-radius: 5px;
-        font-size: 18px; /* Diperbesar */
+        font-size: 18px;
+        /* Diperbesar */
         cursor: pointer;
         color: white;
-        background-color: #28a745; /* Hijau */
+        background-color: #28a745;
+        /* Hijau */
         transition: 0.3s ease;
     }
 
@@ -118,11 +124,9 @@
         <!-- 🔹 Kategori (Dropdown hanya untuk tampilan) -->
         <label for="kode_kategori">Kategori:</label>
         <select name="kode_kategori_display" id="kode_kategori_display" disabled required>
-            <?php foreach ($kategori as $kat): ?>
-                <option value="<?= esc($kat['kode_kategori']); ?>" <?= old('kode_kategori', $kode_kategori) == $kat['kode_kategori'] ? 'selected' : ''; ?>>
-                    <?= esc($kat['nama_kategori']); ?>
-                </option>
-            <?php endforeach; ?>
+            <option value="<?= esc($kode_kategori); ?>" selected>
+                <?= esc($nama_kategori); ?>
+            </option>
         </select>
 
         <script>
@@ -157,26 +161,26 @@
 
         <label for="gambar">Gambar:</label>
         <input type="file" name="gambar" accept="image/*">
-        
+
         <button type="submit"><i class="fas fa-save"></i> Simpan</button>
-        </div>
-    </form>
+</div>
+</form>
 
 <script>
-document.querySelector('input[name="gambar"]').addEventListener('change', function(e) {
-    let file = e.target.files[0];
-    if (file) {
-        let allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
-        if (!allowedTypes.includes(file.type)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Format gambar tidak valid! Hanya PNG, JPG, dan JPEG diperbolehkan.'
-            });
-            e.target.value = ''; // Hapus file dari input
+    document.querySelector('input[name="gambar"]').addEventListener('change', function(e) {
+        let file = e.target.files[0];
+        if (file) {
+            let allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+            if (!allowedTypes.includes(file.type)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Format gambar tidak valid! Hanya PNG, JPG, dan JPEG diperbolehkan.'
+                });
+                e.target.value = ''; // Hapus file dari input
+            }
         }
-    }
-});
+    });
 </script>
 
 
