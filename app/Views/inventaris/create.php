@@ -16,9 +16,9 @@
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         width: 90%;
-        max-width: 600px; /* Adjusted for a better form width */
+        max-width: 600px;
         margin: 20px auto;
-        border: 2px solid #ddd; /* Box around the form */
+        border: 2px solid #ddd;
     }
 
     h2 {
@@ -44,17 +44,27 @@
         color: #555;
     }
 
-    input {
+    input, select {
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
         font-size: 14px;
         width: 100%;
+        box-sizing: border-box;
+        background-color: #fff;
+        appearance: none; /* untuk tampilan select yang lebih konsisten di semua browser */
+    }
+
+    select {
+        background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 10px;
     }
 
     .form-footer {
         display: flex;
-        justify-content: flex-end; /* Align button to the right */
+        justify-content: flex-end;
     }
 
     button {
