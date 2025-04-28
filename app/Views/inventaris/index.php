@@ -102,6 +102,41 @@
     .btn-history:hover {
         background-color: #e0a800;
     }
+
+    /* CSS untuk form filter */
+    form {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    select {
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    button[type="submit"] {
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
 </style>
 
 <!-- <div class="container">

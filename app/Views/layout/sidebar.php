@@ -5,9 +5,6 @@
     <ul>
         <li><a href="<?= base_url('/dashboard'); ?>">Dashboard</a></li>
 
-        <?php $role = session()->get('role'); ?>
-
-
         <?php if ($role == 'Admin Utama'): ?>
             <li class="dropdown">
                 <a href="javascript:void(0);" onclick="toggleDropdown('inventaris')">
