@@ -1,27 +1,9 @@
 <div class="sidebar">
-    <h2>SARANA DAN PRASARANA</h2>
+    <h2 style="color:#ffffff;">SARANA DAN PRASARANA</h2>
     <img src="<?= base_url('assets/images/logo_ppsdm.png'); ?>" alt="Logo Kantor" class="logo">
 
     <ul>
         <li><a href="<?= base_url('/dashboard'); ?>">Dashboard</a></li>
-
-
-        <!-- <li class="dropdown">
-            <a href="javascript:void(0);" onclick="toggleDropdown('inventaris')">
-                Inventaris <i class="fas fa-chevron-down"></i>
-            </a>
-            <ul id="inventaris" class="submenu">
-                <li><a href="<?= base_url('inventaris/index'); ?>">Daftar Inventaris</a></li>
-                <li><a href="<?= base_url('inventaris/insert'); ?>">Masukkan Inventaris</a></li>
-                <li><a href="<?= base_url('inventaris/transaction_history'); ?>">Riwayat Transaksi</a></li>
-                <li><a href="<?= base_url('inventaris/manage_request'); ?>">Daftar Permintaan</a></li>
-                <li><a href="<?= base_url('inventaris/user_request_item'); ?>">Form Permintaan</a></li>
-                <li><a href="<?= base_url('pembelian/daftar'); ?>">Daftar Permintaan Pembelian</a></li>
-                <li><a href="<?= base_url('pembelian/create'); ?>">Form Permintaan Pembelian</a></li>
-            </ul>
-        </li> -->
-
-        <?php $role = session()->get('role'); ?>
 
         <?php if ($role == 'Admin Utama'): ?>
             <li class="dropdown">
@@ -30,7 +12,7 @@
                 </a>
                 <ul id="inventaris" class="submenu">
                     <li><a href="<?= base_url('inventaris/index'); ?>">Daftar Inventaris</a></li>
-                    <li><a href="<?= base_url('inventaris/insert'); ?>">Insert Inventaris</a></li>
+                    <li><a href="<?= base_url('inventaris/insert'); ?>">Masukkan Inventaris</a></li>
                     <li><a href="<?= base_url('inventaris/transaction_history'); ?>">Riwayat Transaksi</a></li>
                     <li><a href="<?= base_url('inventaris/manage_request'); ?>">Daftar Permintaan</a></li>
                     <li><a href="<?= base_url('inventaris/user_request_item'); ?>">Form Permintaan</a></li>

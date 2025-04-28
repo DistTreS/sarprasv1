@@ -63,8 +63,6 @@ class PeminjamanController extends Controller
     }
 
 
-
-
     // ADMIN: Mengubah status peminjaman
     public function update_status($id_pengajuan)
     {

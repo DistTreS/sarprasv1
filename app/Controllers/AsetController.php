@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\AsetModel;
-use App\Models\KategoriAsetModel; 
+use App\Models\KategoriAsetModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 class AsetController extends BaseController
@@ -80,8 +80,8 @@ class AsetController extends BaseController
                 $data['asetList'] = $this->asetModel
                     ->where('kode_kategori', $kode_kategori)
                     ->groupStart()
-                        ->like('nama_aset', $search)
-                        ->orLike('nup', $search)
+                    ->like('nama_aset', $search)
+                    ->orLike('nup', $search)
                     ->groupEnd()
                     ->findAll();
                 $data['search'] = $search; // Simpan nilai pencarian untuk ditampilkan kembali
@@ -116,8 +116,8 @@ class AsetController extends BaseController
                 $data['asetList'] = $this->asetModel
                     ->where('kode_kategori', $kode_kategori)
                     ->groupStart()
-                        ->like('nama_aset', $search)
-                        ->orLike('nup', $search)
+                    ->like('nama_aset', $search)
+                    ->orLike('nup', $search)
                     ->groupEnd()
                     ->findAll();
                 $data['search'] = $search; // Simpan nilai pencarian untuk ditampilkan kembali
@@ -137,10 +137,20 @@ class AsetController extends BaseController
 
     public function create()
     {
+        $kategori = $this->kategoriAsetModel->findAll();
+        $kode_kategori = $this->request->getGet('kode_kategori');
+        $selectedKategori = null;
+        foreach ($kategori as $kat) {
+            if ($kat['kode_kategori'] == $kode_kategori) {
+                $selectedKategori = $kat['nama_kategori'];
+                break;
+            }
+        }
         $data = [
             'title' => "Tambah Aset",
             'kategori' => $this->kategoriAsetModel->findAll(),
-            'kode_kategori' => old('kode_kategori', ''), // Tambahkan ini
+            'kode_kategori' => $kode_kategori,
+            'nama_kategori' => $selectedKategori,
             'validation' => \Config\Services::validation()
         ];
         return view('peminjaman/tambahAset', $data);
@@ -187,21 +197,23 @@ class AsetController extends BaseController
 
         return redirect()->to('kategoriAset/detail/' . $kode_kategori)->with('success', 'Aset berhasil ditambahkan!');
     }
-    
+
 
     public function update()
     {
         $id_aset = $this->request->getPost('id_aset'); // ambil dari input form
         $asetModel = new AsetModel();
         $aset = $asetModel->find($id_aset);
-        $kode_kategori = $aset['kode_kategori']?? null;
+        $kode_kategori = $aset['kode_kategori'] ?? null;
 
         if (!$aset) {
             return redirect()->to(base_url('aset'))->with('error', 'Data aset tidak ditemukan!');
         }
 
         $data = [
-            'nup' => $this-> request->getPost('nup'),
+
+            'nama_aset' => $this->request->getPost('nama_aset'),
+            'nup' => $this->request->getPost('nup'),
             'status_aset' => $this->request->getPost('status_aset'),
             'kondisi' => $this->request->getPost('kondisi'),
         ];
@@ -222,7 +234,7 @@ class AsetController extends BaseController
     }
 
 
-    
+
 
     public function delete($id)
     {
@@ -231,11 +243,10 @@ class AsetController extends BaseController
             throw PageNotFoundException::forPageNotFound('Aset tidak ditemukan.');
         }
 
-        $kode_kategori = $aset['kode_kategori']?? null;
+        $kode_kategori = $aset['kode_kategori'] ?? null;
 
         $this->asetModel->delete($id);
         return redirect()->to('kategoriAset/detail/' . $kode_kategori)->with('success', 'Aset berhasil dihapus!');
-
     }
 
     public function edit($id_aset)
@@ -247,5 +258,4 @@ class AsetController extends BaseController
 
         return view('peminjaman/editAset', ['title' => 'Edit Aset', 'aset' => $aset]);
     }
-
 }
