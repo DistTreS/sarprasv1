@@ -32,6 +32,14 @@ class PembelianController extends BaseController
         return view('pembelian/form_pembelian', $data);
     }
 
+    public function create_pegawai()
+    {
+        $data['items'] = $this->inventarisModel->findAll();
+        $data['users'] = $this->usersModel->findAll();
+
+        return view('pembelian/form_pembelian_pegawai', $data);
+    }
+
     // Simpan permintaan pembelian
     public function store()
     {
@@ -65,6 +73,40 @@ class PembelianController extends BaseController
         }
 
         return redirect()->to('/pembelian/daftar')->with('success', 'Permintaan pembelian berhasil dikirim.');
+    }
+
+    public function store_pegawai()
+    {
+        $postData = $this->request->getPost();
+
+        if (!isset($postData['items']) || empty($postData['items'])) {
+            return redirect()->back()->with('error', 'Tidak ada barang yang dipilih.');
+        }
+
+        $userId = session()->get('user_id') ?? null;
+        $namaPeminta = $postData['nama_peminta'] ?? session()->get('username') ?? 'Guest';
+
+        $requestData = [
+            'user_id' => $userId,
+            'nama_peminta' => $namaPeminta,
+            'tanggal_request' => date('Y-m-d H:i:s'),
+            'status' => 'diproses'
+        ];
+
+        $requestId = $this->purchaseRequestsModel->insert($requestData);
+
+        foreach ($postData['items'] as $item) {
+            if ($item['jumlah'] > 0) {
+                $detailData = [
+                    'id_request' => $requestId,
+                    'id_barang' => $item['id_barang'],
+                    'jumlah' => $item['jumlah']
+                ];
+                $this->purchaseDetailsModel->insert($detailData);
+            }
+        }
+
+        return redirect()->to('/pembelian/create_pegawai')->with('success', 'Permintaan pembelian berhasil dikirim.');
     }
 
     // Tampilkan daftar permintaan pembelian

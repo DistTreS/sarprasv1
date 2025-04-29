@@ -34,8 +34,16 @@ class LaporanController extends BaseController
 
     $transactions = $query->findAll();
 
+    // Ambil dan encode gambar kop surat
+    $imagePath = FCPATH . 'images/logoppsdm.png'; // Pastikan path gambar benar
+    $imageData = base64_encode(file_get_contents($imagePath));
+    $imageBase64 = 'data:image/png;base64,' . $imageData;
+
     // Generate HTML view
-    $html = view('laporan/cetak', ['transactions' => $transactions]);
+    $html = view('laporan/cetak', [
+        'transactions' => $transactions,
+        'imageBase64'  => $imageBase64
+    ]);
 
     // Dompdf setup
     $options = new \Dompdf\Options();
@@ -49,4 +57,5 @@ class LaporanController extends BaseController
     // Output PDF in browser
     $dompdf->stream('laporan_transaksi.pdf', ['Attachment' => false]);
 }
+
 }
