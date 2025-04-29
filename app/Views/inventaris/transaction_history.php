@@ -160,8 +160,8 @@
                 <tr>
                     <td><?= $index + 1; ?></td>
                     <td><?= htmlspecialchars($t['nama_barang']); ?></td>
-                    <td><?= htmlspecialchars($t['nama_user']); ?></td>
                     <td><?= htmlspecialchars($t['nama_peminta']); ?></td>
+                    <td><?= htmlspecialchars($t['nama_user']); ?></td>
                     <td><?= htmlspecialchars($t['tipe_transaksi']); ?></td>
                     <td><?= htmlspecialchars($t['jumlah']); ?></td>
                     <td><?= htmlspecialchars($t['tanggal_transaksi']); ?></td>

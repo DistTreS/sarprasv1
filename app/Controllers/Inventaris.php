@@ -174,7 +174,7 @@ class Inventaris extends Controller
         $transactionData = [
             'id_barang' => $id_barang,
             'id_user' => '1', // Replace with actual user ID
-            'nama_peminta' => 'Administrator', // Replace if needed
+            'nama_peminta' => 'administrator', // Replace if needed
             'tipe_transaksi' => 'Masuk',
             'jumlah' => $jumlah,
             'tanggal_transaksi' => date('Y-m-d'),
@@ -292,6 +292,13 @@ public function user_request_item()
         return view('inventaris/user_request_item', $data);
     }
 
+    public function pegawai_request_item()
+    {
+        $data['users'] = $this->UsersModel->findAll();
+        $data['items'] = $this->inventarisModel->findAll();
+        return view('inventaris/pegawai_request_item', $data);
+    }
+
 
 
 
@@ -318,77 +325,64 @@ public function manage_request()
 }
 
 
-// public function submit_request()
-// {
-//     $itemRequestsModel = new ItemRequestsModel();
-//     $requestDetailsModel = new RequestDetailsModel();
-//     $db = \Config\Database::connect();
+public function submit_request_pegawai()
+{
+    // Jika request adalah GET, tampilkan form
+    if ($this->request->getMethod() === 'get') {
+        // Ambil data pengguna dan barang dari database
+        $data['id'] = $this->UsersModel->findAll(); // Data pengguna
+        $data['items'] = $this->inventarisModel->findAll(); // Data barang
 
-//     // Get form data
-//     $nama_peminta = $this->request->getPost('nama_peminta');
-//     $items = $this->request->getPost('items');
+        // Tampilkan view dengan data
+        return view('inventaris/pegawai_request_item', $data);
+    }
 
-//     // Basic validation
-//     if (empty($nama_peminta) || empty($items)) {
-//         return redirect()->back()
-//                         ->with('error', 'Nama peminta dan items harus diisi.')
-//                         ->withInput();
-//     }
+    // Jika request adalah POST, tangani submit form
+    if ($this->request->getMethod() === 'post') {
+        // Ambil data dari form
+        $postData = $this->request->getPost();
+        $items = $postData['items'];
+        $id_user = $postData['id_user'];
+        $user_mnita = $this->UsersModel->find($id_user);
+        // Validasi sederhana
+        if (empty($items)) {
+            return redirect()->back()->with('error', 'Items harus diisi.');
+        }
 
-//     // Start transaction
-//     $db->transStart();
+        // Ambil user_id dari session
+        $user_id = session()->get('user_id') ?? 1; // Default user_id jika tidak ada session
 
-//     try {
-//         // Insert main request - now including user_id
-//         $requestData = [
-//             'nama_peminta' => $nama_peminta,
-//             'tanggal_request' => date('Y-m-d H:i:s'),
-//             'status' => 'Sent',
-//             'user_id' => 1  // Set a default user_id or get it from your authentication system
-//         ];
+        // Ambil data pengguna dari database berdasarkan user_id
+        $user = $this->UsersModel->find($user_id);
+        if (!$user) {
+            return redirect()->back()->with('error', 'User tidak ditemukan.');
+        }
 
-//         if (!$itemRequestsModel->insert($requestData)) {
-//             log_message('error', 'Failed to insert request: ' . print_r($itemRequestsModel->errors(), true));
-//             throw new \Exception('Gagal menyimpan data permintaan utama.');
-//         }
+        // Simpan data request utama
+        $requestData = [
+            'nama_peminta' => $user_mnita['full_name'], // Ambil nama dari data pengguna
+            'tanggal_request' => date('Y-m-d H:i:s'),
+            'status' => 'diproses',
+            'user_id' => $id_user,
 
-//         $id_request = $db->insertID();
+        ];
 
-//         // Process each requested item
-//         foreach ($items as $item) {
-//             if (empty($item['id_barang']) || empty($item['jumlah']) || $item['jumlah'] <= 0) {
-//                 throw new \Exception('Data item tidak valid.');
-//             }
+        $id_request = $this->itemRequestsModel->insert($requestData);
 
-//             $detailData = [
-//                 'id_request' => $id_request,
-//                 'id_barang' => $item['id_barang'],
-//                 'jumlah' => $item['jumlah']
-//             ];
-            
-//             if (!$requestDetailsModel->insert($detailData)) {
-//                 log_message('error', 'Failed to insert detail: ' . print_r($requestDetailsModel->errors(), true));
-//                 throw new \Exception('Gagal menyimpan detail permintaan.');
-//             }
-//         }
+        // Simpan detail request
+        foreach ($items as $item) {
+            $detailData = [
+                'id_request' => $id_request,
+                'id_barang' => $item['id_barang'],
+                'jumlah' => $item['jumlah']
+            ];
+            $this->requestDetailsModel->insert($detailData);
+        }
 
-//         $db->transComplete();
-
-//         if ($db->transStatus() === false) {
-//             throw new \Exception('Gagal menyimpan permintaan.');
-//         }
-
-//         return redirect()->to('inventaris/user_request_item')
-//                         ->with('success', 'Permintaan berhasil disubmit.');
-
-//     } catch (\Exception $e) {
-//         $db->transRollback();
-//         log_message('error', 'Request submission error: ' . $e->getMessage());
-//         return redirect()->back()
-//                         ->with('error', $e->getMessage())
-//                         ->withInput();
-//     }
-// }
+        // Redirect dengan pesan sukses
+        return redirect()->to('inventaris/pegawai_request_item')->with('success', 'Permintaan berhasil disubmit.');
+    }
+}
 
 public function submit_request()
 {
@@ -502,6 +496,7 @@ public function update_status($requestId)
                 $this->transactionModel->insert([
                     'id_barang' => $itemId,
                     'id_user' => $requestData['user_id'],
+                    'nama_peminta' => session()->get('full_name'),
                     'jumlah' => $quantity,
                     'tipe_transaksi' => 'Keluar',
                     'tanggal_transaksi' => date('Y-m-d H:i:s'),
@@ -588,6 +583,7 @@ public function store_request()
     return $this->response->setJSON(['success' => true, 'message' => 'Request submitted successfully.']);
 }
 
+
 public function cetak()
 {
     $jenis = $this->request->getGet('jenis');
@@ -600,7 +596,16 @@ public function cetak()
         $persediaan = $model->findAll();
     }
 
-    $html = view('inventaris/cetak', ['persediaan' => $persediaan]);
+    // Ambil dan encode gambar kop surat
+    $imagePath = FCPATH . 'images/logoppsdm.png'; // Sesuaikan path gambarnya
+    $imageData = base64_encode(file_get_contents($imagePath));
+    $imageBase64 = 'data:image/png;base64,' . $imageData;
+
+    // Kirim data + gambar ke view
+    $html = view('inventaris/cetak', [
+        'persediaan' => $persediaan,
+        'imageBase64' => $imageBase64
+    ]);
 
     $options = new \Dompdf\Options();
     $options->set('isRemoteEnabled', true);
@@ -612,6 +617,7 @@ public function cetak()
 
     $dompdf->stream('daftar_inventaris.pdf', ['Attachment' => false]);
 }
+
 
 
 }

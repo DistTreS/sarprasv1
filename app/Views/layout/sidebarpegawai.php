@@ -11,7 +11,8 @@
             </a>
             <ul id="inventaris" class="submenu">
                 <li><a href="<?= base_url('inventaris/index_pegawai'); ?>">Daftar Inventaris</a></li>
-                <li><a href="<?= base_url('inventaris/user_request_item'); ?>">Request Items</a></li>
+                <li><a href="<?= base_url('inventaris/pegawai_request_item'); ?>">Request Items</a></li>
+                <li><a href="<?= base_url('pembelian/create_pegawai'); ?>">Form Permintaan Pembelian</a></li>
             </ul>
         </li>
 

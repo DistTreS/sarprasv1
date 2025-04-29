@@ -138,11 +138,14 @@ $routes->get('/inventaris/insert', 'inventaris::insert',['filter' => 'admin_bara
 $routes->post('inventaris/insert_items', 'Inventaris::insert_items',['filter' => 'admin_barang']);
 $routes->get('inventaris/transaction_history', 'Inventaris::transaction_history',['filter' => 'admin_barang']);
 $routes->get('inventaris/item_history/(:num)', 'Inventaris::item_history/$1',['filter' => 'admin_barang']);
-$routes->get('inventaris/submit_request', 'Inventaris::submit_request');
-$routes->post('inventaris/submit_request', 'Inventaris::submit_request'); // Submit request
+$routes->get('inventaris/submit_request', 'Inventaris::submit_request', ['filter' => 'admin_barang']);
+$routes->post('inventaris/submit_request', 'Inventaris::submit_request', ['filter' => 'admin_barang']); 
+$routes->get('inventaris/submit_request_pegawai', 'Inventaris::submit_request_pegawai', ['filter' => 'pegawai']);
+$routes->post('inventaris/submit_request_pegawai', 'Inventaris::submit_request_pegawai', ['filter' => 'pegawai']); /// Submit request
 $routes->post('inventaris/update_request_status/(:num)', 'Inventaris::updateRequestStatus/$1',['filter' => 'admin_barang']); // Update request status
 $routes->get('inventaris/request_history/(:num)', 'Inventaris::viewRequestHistory/$1',['filter' => 'admin_barang']); // View request history
-$routes->get('inventaris/user_request_item', 'Inventaris::user_request_item'); // User request form
+$routes->get('inventaris/user_request_item', 'Inventaris::user_request_item',['filter' => 'admin_barang']);
+$routes->get('inventaris/pegawai_request_item', 'Inventaris::pegawai_request_item', ['filter' => 'pegawai']); // User request form
 $routes->post('inventaris/store_request', 'Inventaris::store_request',['filter' => 'admin_barang']); // Handle request submission
 $routes->get('inventaris/manage_request', 'Inventaris::manage_request',['filter' => 'admin_barang']); // Admin_utama view
 $routes->get('inventaris/process_request/(:num)/(:alpha)', 'Inventaris::process_request/$1/$2',['filter' => 'admin_barang']); // Accept/Reject request
@@ -153,8 +156,10 @@ $routes->post('inventaris/update_status/(:num)', 'Inventaris::update_status/$1',
 $routes->get('laporan/cetak', 'LaporanController::cetak');
 
 $routes->group('pembelian', function($routes) {
-    $routes->get('create', 'PembelianController::create');
-    $routes->post('store', 'PembelianController::store');
-    $routes->get('daftar', 'PembelianController::daftar');
-    $routes->post('update_status/(:num)', 'PembelianController::update_status/$1');
+    $routes->get('create', 'PembelianController::create',['filter' => 'admin_barang']);
+    $routes->post('store', 'PembelianController::store',['filter' => 'admin_barang']);
+    $routes->get('create_pegawai', 'PembelianController::create_pegawai', ['filter' => 'pegawai']);
+    $routes->post('store_pegawai', 'PembelianController::store_pegawai', ['filter' => 'pegawai']);
+    $routes->get('daftar', 'PembelianController::daftar',['filter' => 'admin_barang']);
+    $routes->post('update_status/(:num)', 'PembelianController::update_status/$1',['filter' => 'admin_barang']);
 });
